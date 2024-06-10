@@ -20,4 +20,6 @@ public class Category {
     @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     @JoinTable(name = "book_category",joinColumns = @JoinColumn(name = "categoryId"),inverseJoinColumns = @JoinColumn(name = "bookId"))
     private List<Book> bookList;
+
+
 }
