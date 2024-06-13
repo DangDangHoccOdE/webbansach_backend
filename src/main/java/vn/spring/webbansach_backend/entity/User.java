@@ -20,8 +20,8 @@ public class User {
     @Column(name = "lastName")
     private String lastName;
 
-    @Column(name = "account")
-    private String account;
+    @Column(name = "userName")
+    private String userName;
 
     @Column(name = "phoneNumber")
     private String phoneNumber;
@@ -30,7 +30,7 @@ public class User {
     private String password;
 
     @Column(name = "sex")
-    private char sex;
+    private String sex;
 
     @Column(name = "email")
     private String email;

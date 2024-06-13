@@ -26,12 +26,12 @@ public class RestConfig implements RepositoryRestConfigurer {
 //        config.exposeIdsFor(User.class);
         config.exposeIdsFor(entityManager.getMetamodel().getEntities().stream().map(Type::getJavaType).toArray(Class[]::new));
 
-        // config disable method
-        HttpMethod[] methods = {HttpMethod.PUT,HttpMethod.DELETE,HttpMethod.POST,HttpMethod.PATCH};
-        disableHttpMethod(config, Category.class,methods);
-
-        HttpMethod[] methodDelete={HttpMethod.DELETE};
-        disableHttpMethod(config,User.class,methodDelete);
+//        // config disable method
+//        HttpMethod[] methods = {HttpMethod.PUT,HttpMethod.DELETE,HttpMethod.POST,HttpMethod.PATCH};
+//        disableHttpMethod(config, Category.class,methods);
+//
+//        HttpMethod[] methodDelete={HttpMethod.DELETE};
+//        disableHttpMethod(config,User.class,methodDelete);
 
         // CORS configuration
         String url = "http://localhost:3000";
