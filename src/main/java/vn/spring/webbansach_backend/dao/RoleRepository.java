@@ -6,4 +6,5 @@ import vn.spring.webbansach_backend.entity.Role;
 
 @RepositoryRestResource(path = "roles")
 public interface RoleRepository extends JpaRepository<Role,Integer> {
+    Role findByRoleName(String roleName);
 }

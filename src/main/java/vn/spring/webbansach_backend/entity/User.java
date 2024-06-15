@@ -1,11 +1,13 @@
 package vn.spring.webbansach_backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@Data
 @Entity
 @Table(name = "user")
 public class User {
@@ -50,7 +52,14 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY,cascade ={CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST},mappedBy = "user")
     private List<Order> orderList;
 
-    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
+    @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     @JoinTable(name = "user_role",joinColumns = @JoinColumn(name = "userId"),inverseJoinColumns = @JoinColumn(name = "roleId"))
     private List<Role> roleList;
+
+    @Column(name = "isActive")
+    private boolean isActive;
+
+    @Column(name = "activationCode")
+    private String activationCode;
+
 }

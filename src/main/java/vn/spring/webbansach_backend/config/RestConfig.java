@@ -33,11 +33,11 @@ public class RestConfig implements RepositoryRestConfigurer {
 //        HttpMethod[] methodDelete={HttpMethod.DELETE};
 //        disableHttpMethod(config,User.class,methodDelete);
 
-        // CORS configuration
-        String url = "http://localhost:3000";
-        cors.addMapping("/**")
-                .allowedOrigins(url)
-                .allowedMethods("GET","POST","PUT","DELETE");
+//        // CORS configuration
+//        String url = "http://localhost:3000";
+//        cors.addMapping("/**")
+//                .allowedOrigins(url)
+//                .allowedMethods("GET","POST","PUT","DELETE");
     }
 
     private void disableHttpMethod(RepositoryRestConfiguration config,Class c,HttpMethod[] methods){
