@@ -12,10 +12,12 @@ public class Endpoints {
           "/users/search/existsByUserName",
           "/category/**",
           "/remark/**",
+           "/account/activatedAccount",
+           "/account/resendActivationCode",
     };
     public static final String[] PUBLIC_POST_ENDPOINTS={
         "/account/register",
-
+        "/account/login"
     };
 
     public static final String[] ADMIN_GET_ENDPOINTS={

@@ -1,8 +1,11 @@
 package vn.spring.webbansach_backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.text.DateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 @Getter
 @Setter
@@ -61,5 +64,8 @@ public class User {
 
     @Column(name = "activationCode")
     private String activationCode;
+
+    @Column(name = "activationExpiry")
+    private LocalDateTime activationExpiry;
 
 }
