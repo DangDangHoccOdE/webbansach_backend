@@ -11,9 +11,11 @@ public class Endpoints {
           "/users/search/existsByEmail",
           "/users/search/existsByUserName",
           "/category/**",
-          "/remark/**",
+          "/remarks/**",
            "/account/activatedAccount",
            "/account/resendActivationCode",
+            "/users",
+            "/users/**",
     };
     public static final String[] PUBLIC_POST_ENDPOINTS={
         "/account/register",
@@ -21,7 +23,13 @@ public class Endpoints {
     };
 
     public static final String[] ADMIN_GET_ENDPOINTS={
-        "/users",
-        "/users/**",
+        "/"
     };
+
+    public static final String[] ADMIN_POST_ENDPOINTS={
+        "/admin/addBook",
+        "/books",
+        "/books/**"
+    };
+
 }

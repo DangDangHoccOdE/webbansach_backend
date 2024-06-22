@@ -38,6 +38,12 @@ public class Book {
     @Column(name = "averageRate")
     private double averageRate;
 
+    @Column(name="soldQuantity")
+    private int soldQuantity;
+
+    @Column(name="discountPercent")
+    private float discountPercent;
+
     @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     @JoinTable(name = "book_category",joinColumns = @JoinColumn(name = "bookId"),inverseJoinColumns = @JoinColumn(name = "categoryId"))
     private List<Category> categoryList;
@@ -51,9 +57,9 @@ public class Book {
     @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST},mappedBy = "book")
     private List<OrderDetail> orderDetailList;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
-    @JoinColumn(name = "wishListId")
-    private WishList wishList;
+    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
+    @JoinTable(name = "book_wishlist",joinColumns = @JoinColumn(name = "bookId"),inverseJoinColumns = @JoinColumn(name = "wishListId"))
+    private List<WishList> wishLists;
 
 
 }

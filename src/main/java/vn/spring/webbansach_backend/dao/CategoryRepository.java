@@ -6,4 +6,6 @@ import vn.spring.webbansach_backend.entity.Category;
 
 @RepositoryRestResource(path = "category")
 public interface CategoryRepository extends JpaRepository<Category,Integer> {
+    Category findByCategoryName(String categoryName);
+    Category findByCategoryId(int categoryId);
 }

@@ -19,7 +19,6 @@ import vn.spring.webbansach_backend.service.inter.IUserService;
 
 @RestController
 @RequestMapping("/account")
-@CrossOrigin(origins = "*")
 public class AccountController {
     @Autowired
     private IAccountService iAccountService;

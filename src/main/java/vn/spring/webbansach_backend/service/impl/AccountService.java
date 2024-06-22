@@ -32,6 +32,14 @@ public class AccountService implements IAccountService {
             return ResponseEntity.badRequest().body(new Notice(("Email đã tồn tại!")));
         }
 
+        // handle Image size
+        if(user.getAvatar() != null && !user.getAvatar().isEmpty()){
+            byte[] compressedImage =  user.getAvatar().getBytes();
+            if(compressedImage.length>1048576){
+                return ResponseEntity.badRequest().body(new Notice(("Đã gặp lỗi do dung luượng ảnh quá lớn hoặc bị lỗi, vui lòng chọn ảnh khác!!")));
+            }
+        }
+
         String encryptPassword = bCryptPasswordEncoder.encode(user.getPassword());
         user.setPassword(encryptPassword);
 
@@ -47,7 +55,7 @@ public class AccountService implements IAccountService {
         // send Email
         sendEmailActive(user.getEmail(),user.getActivationCode());
 
-        return ResponseEntity.ok("Đăng ký thành công!");
+        return ResponseEntity.ok(new Notice("Đăng ký thành công, vui lòng kiểm tra email để kích hoạt!"));
     }
 
     private String createActivationCode(){
@@ -85,7 +93,6 @@ public class AccountService implements IAccountService {
 
     }
 
-    int counter = 0;
     public ResponseEntity<?> resendActivationCode(String email){
         User user = userRepository.findByEmail(email);
         if(user == null){

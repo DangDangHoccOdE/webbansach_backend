@@ -23,8 +23,8 @@ public class WishList {
     @JoinColumn(name = "userId",nullable = false)
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST}
-            ,mappedBy = "wishList")
+    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
+    @JoinTable(name = "book_wishlist",joinColumns = @JoinColumn(name = "wishListId"),inverseJoinColumns = @JoinColumn(name = "bookId"))
     private List<Book> bookList;
 
 }

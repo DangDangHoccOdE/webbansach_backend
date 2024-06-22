@@ -68,4 +68,7 @@ public class User {
     @Column(name = "activationExpiry")
     private LocalDateTime activationExpiry;
 
+    @Column(name = "avatar", columnDefinition = "LONGTEXT")
+    @Lob
+    private String avatar;
 }
