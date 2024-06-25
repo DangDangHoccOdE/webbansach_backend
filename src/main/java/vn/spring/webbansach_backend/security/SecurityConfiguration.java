@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import vn.spring.webbansach_backend.filter.JwtFilter;
+import vn.spring.webbansach_backend.service.IUserSecurityService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 
 import java.util.Arrays;
@@ -34,9 +35,9 @@ public class SecurityConfiguration {
 
     @Bean
     @Autowired
-    public DaoAuthenticationProvider authenticationProvider(IUserService iUserService){
+    public DaoAuthenticationProvider authenticationProvider(IUserSecurityService IUserSecurityService){
         DaoAuthenticationProvider dap = new DaoAuthenticationProvider();
-        dap.setUserDetailsService(iUserService);
+        dap.setUserDetailsService(IUserSecurityService);
         dap.setPasswordEncoder(passwordEncoder());
 
         return dap;
@@ -48,6 +49,7 @@ public class SecurityConfiguration {
                         configurer->configurer
                                 .requestMatchers(HttpMethod.GET,Endpoints.PUBLIC_GET_ENDPOINTS).permitAll()
                                 .requestMatchers(HttpMethod.POST,Endpoints.PUBLIC_POST_ENDPOINTS).permitAll()
+                                .requestMatchers(HttpMethod.PUT,Endpoints.PUBLIC_PUT_ENDPOINTS).permitAll()
                                 .requestMatchers(HttpMethod.GET,Endpoints.ADMIN_GET_ENDPOINTS).hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.POST,Endpoints.ADMIN_POST_ENDPOINTS).hasRole("ADMIN")
                 )

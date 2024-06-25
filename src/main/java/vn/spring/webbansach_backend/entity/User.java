@@ -1,10 +1,9 @@
 package vn.spring.webbansach_backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.GrantedAuthority;
 
-import java.text.DateFormat;
+
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.*;
 @Getter
@@ -24,6 +23,9 @@ public class User {
 
     @Column(name = "lastName")
     private String lastName;
+
+    @Column(name = "dateOfBirth")
+    private Date dateOfBirth;
 
     @Column(name = "userName")
     private String userName;

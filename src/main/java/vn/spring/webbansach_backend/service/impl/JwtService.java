@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import vn.spring.webbansach_backend.entity.Role;
 import vn.spring.webbansach_backend.entity.User;
+import vn.spring.webbansach_backend.service.IUserSecurityService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 import java.util.*;
 
@@ -25,16 +26,17 @@ public class JwtService {
     public static final String SECRET = "dsafwerwdrwerwer01234567894234234rfsdfsdfsdfsdvfuyuytuytu0123456789";
     private final long JWT_EXPIRATION = 604800000L;
     @Autowired
-    private IUserService iUserService;
+    private IUserSecurityService iUserSecurityService;
 
     // Generate token from to username
     public String generateToken(String userName){
         Map<String, Object> claim = new HashMap<>();
-        User user = iUserService.findByUserName(userName);
+        User user = iUserSecurityService.findByUserName(userName);
         claim.put("avatar", user.getAvatar());
         claim.put("enable",user.isActive() );
         claim.put("firstName",user.getFirstName());
         claim.put("userId",user.getUserId());
+        claim.put("email",user.getEmail());
 
         boolean isAdmin = false;
         boolean isStaff = false;

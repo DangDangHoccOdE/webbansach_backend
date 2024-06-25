@@ -18,12 +18,16 @@ public class Endpoints {
             "/users/**",
     };
     public static final String[] PUBLIC_POST_ENDPOINTS={
-        "/account/register",
-        "/account/login"
+        "/user/register",
+        "/user/login",
     };
 
     public static final String[] ADMIN_GET_ENDPOINTS={
         "/"
+    };
+
+    public static final String[] PUBLIC_PUT_ENDPOINTS={
+            "/user/changeInfo",
     };
 
     public static final String[] ADMIN_POST_ENDPOINTS={
@@ -31,5 +35,7 @@ public class Endpoints {
         "/books",
         "/books/**"
     };
+
+
 
 }
