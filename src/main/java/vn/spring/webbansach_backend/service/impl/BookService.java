@@ -3,9 +3,8 @@ package vn.spring.webbansach_backend.service.impl;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.spring.webbansach_backend.Dto.BookDto;
+import vn.spring.webbansach_backend.dto.BookDto;
 import vn.spring.webbansach_backend.dao.BookRepository;
-import vn.spring.webbansach_backend.dao.CategoryRepository;
 import vn.spring.webbansach_backend.entity.Book;
 import java.util.*;
 

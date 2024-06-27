@@ -2,26 +2,20 @@ package vn.spring.webbansach_backend.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import vn.spring.webbansach_backend.Dto.UserDto;
-import vn.spring.webbansach_backend.dao.RoleRepository;
+import vn.spring.webbansach_backend.dto.EmailDto;
+import vn.spring.webbansach_backend.dto.UserDto;
 import vn.spring.webbansach_backend.dao.UserRepository;
 import vn.spring.webbansach_backend.entity.Notice;
-import vn.spring.webbansach_backend.entity.Role;
 import vn.spring.webbansach_backend.entity.User;
+import vn.spring.webbansach_backend.security.JwtResponse;
 import vn.spring.webbansach_backend.service.inter.IEmailService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 import vn.spring.webbansach_backend.utils.ConvertStringToDate;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService {
@@ -31,6 +25,8 @@ public class UserService implements IUserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private IEmailService iEmailService;
+    @Autowired
+    private  JwtService jwtService;
 
     @Override
     public Boolean existsUserByUsernameAndActiveIsTrue(String username) {
@@ -162,11 +158,38 @@ public class UserService implements IUserService {
 
         try{
             userRepository.save(user);
-            return ResponseEntity.ok(new Notice("Đã thay đổi thông tin thành công!"));
+//            String jwt = jwtService.generateToken(user.getUserName());
+            return ResponseEntity.ok(new Notice("Chua ok"));
         }catch (Exception e){
             System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(new Notice("Đã gặp lỗi, không thể chỉnh sửa thông tin thành công!"));
         }
 
+    }
+
+    @Override
+    public ResponseEntity<?> changeEmail(EmailDto emailDto) {
+        User user = userRepository.findByEmail(emailDto.getEmail());
+        boolean existsNewEmail = userRepository.existsByEmail(emailDto.getNewEmail());
+
+        if(user==null){
+            return ResponseEntity.badRequest().body(new Notice("Email không tồn tại!"));
+        }
+
+        if(emailDto.getEmail().equals(emailDto.getNewEmail())){
+            return ResponseEntity.badRequest().body(new Notice("Email mới không thể trùng email cũ!!"));
+        }
+
+        if(existsNewEmail){
+            return ResponseEntity.badRequest().body(new Notice("Email mới đã tồn tại!!"));
+        }
+        user.setEmail(emailDto.getNewEmail());
+        return ResponseEntity.ok(new Notice("Thay đổi email thành công, vui lòng vào email để xác nhận!!"));
+    }
+
+    @Override
+    public ResponseEntity<?> confirmChangeEmail(EmailDto emailDto) {
+
+        return null;
     }
 }

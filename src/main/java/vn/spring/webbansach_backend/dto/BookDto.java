@@ -1,4 +1,4 @@
-package vn.spring.webbansach_backend.Dto;
+package vn.spring.webbansach_backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

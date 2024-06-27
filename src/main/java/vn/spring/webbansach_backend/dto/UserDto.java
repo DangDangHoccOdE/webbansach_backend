@@ -1,4 +1,4 @@
-package vn.spring.webbansach_backend.Dto;
+package vn.spring.webbansach_backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -8,7 +8,6 @@ import vn.spring.webbansach_backend.entity.Remark;
 import vn.spring.webbansach_backend.entity.Role;
 import vn.spring.webbansach_backend.entity.WishList;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.List;
 

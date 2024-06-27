@@ -16,10 +16,13 @@ public class Endpoints {
            "/account/resendActivationCode",
             "/users",
             "/users/**",
+
     };
     public static final String[] PUBLIC_POST_ENDPOINTS={
         "/user/register",
         "/user/login",
+            "/user/refreshToken",
+
     };
 
     public static final String[] ADMIN_GET_ENDPOINTS={
@@ -28,6 +31,7 @@ public class Endpoints {
 
     public static final String[] PUBLIC_PUT_ENDPOINTS={
             "/user/changeInfo",
+            "/user/changeEmail",
     };
 
     public static final String[] ADMIN_POST_ENDPOINTS={

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import vn.spring.webbansach_backend.Dto.BookDto;
+import vn.spring.webbansach_backend.dto.BookDto;
 import vn.spring.webbansach_backend.entity.Notice;
 import vn.spring.webbansach_backend.service.impl.BookService;
 

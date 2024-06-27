@@ -1,9 +1,8 @@
 package vn.spring.webbansach_backend.service.inter;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import vn.spring.webbansach_backend.Dto.UserDto;
-import vn.spring.webbansach_backend.entity.User;
+import vn.spring.webbansach_backend.dto.EmailDto;
+import vn.spring.webbansach_backend.dto.UserDto;
 
 public interface IUserService {
     Boolean existsUserByUsernameAndActiveIsTrue(String username);
@@ -11,5 +10,7 @@ public interface IUserService {
     ResponseEntity<?> activatedAccount(String email, String activationCode);
     ResponseEntity<?> resendActivationCode(String email);
     ResponseEntity<?> changeInformation(UserDto userDto);
+    ResponseEntity<?> changeEmail(EmailDto emailDto);
+    ResponseEntity<?> confirmChangeEmail(EmailDto emailDto);
 
 }
