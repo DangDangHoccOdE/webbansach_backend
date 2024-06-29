@@ -69,6 +69,12 @@ public class User {
     @Column(name = "activationExpiry")
     private LocalDateTime activationExpiry;
 
+    @Column(name = "emailCode")
+    private String emailCode;
+
+    @Column(name = "emailExpiry")
+    private LocalDateTime emailExpiry;
+
     @Column(name = "avatar", columnDefinition = "LONGTEXT")
     @Lob
     private String avatar;

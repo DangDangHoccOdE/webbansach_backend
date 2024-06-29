@@ -69,23 +69,6 @@ public class UserController {
         return ResponseEntity.badRequest().body(new Notice("Xác thực không thành công!"));
     }
 
-    int x = 0;
-//    @PostMapping("/refreshToken")
-//    public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> requestBody) {
-//        String refreshToken = requestBody.get("refreshToken");
-//        if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
-//            refreshToken = refreshToken.substring(7);
-//        }
-//        if (refreshToken != null && jwtService.validateRefreshToken(refreshToken, JwtService.SECRET_REFRESH_TOKEN)) {
-//            String username = jwtService.extractUserName(refreshToken, JwtService.SECRET_REFRESH_TOKEN);
-//            if (username != null) {
-//                String newAccessToken = jwtService.generateToken(username);
-//                System.out.println("Refresh lần thứ: "+ ++x);
-//                return ResponseEntity.ok(new JwtResponse(newAccessToken, refreshToken));
-//            }
-//        }
-//        return ResponseEntity.badRequest().body(new Notice("Refresh token không hợp lệ!"));
-//    }
 
     @PostMapping("/refreshToken")
     public ResponseEntity<?> refreshToken(@RequestHeader(name = "X-Refresh-Token") String refreshToken) {
@@ -96,7 +79,6 @@ public class UserController {
             String username = jwtService.extractUserName(refreshToken, JwtService.SECRET_REFRESH_TOKEN);
             if (username != null) {
                 String newAccessToken = jwtService.generateToken(username);
-                System.out.println("Refresh lần thứ: "+ ++x);
                 return ResponseEntity.ok(new JwtResponse(newAccessToken, refreshToken));
             }
         }
@@ -112,5 +94,10 @@ public class UserController {
     @PutMapping("/changeEmail")
     public ResponseEntity<?> changeEmail(@Validated @RequestBody EmailDto emailDto) {
         return iUserService.changeEmail(emailDto);
+    }
+
+    @GetMapping("/confirmChangeEmail")
+    public ResponseEntity<?> confirmChangeEmail(@RequestParam String email,@RequestParam String emailCode,@RequestParam String newEmail){
+        return iUserService.confirmChangeEmail(email,emailCode,newEmail);
     }
 }

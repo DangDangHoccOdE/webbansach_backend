@@ -9,7 +9,6 @@ import vn.spring.webbansach_backend.dto.UserDto;
 import vn.spring.webbansach_backend.dao.UserRepository;
 import vn.spring.webbansach_backend.entity.Notice;
 import vn.spring.webbansach_backend.entity.User;
-import vn.spring.webbansach_backend.security.JwtResponse;
 import vn.spring.webbansach_backend.service.inter.IEmailService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 import vn.spring.webbansach_backend.utils.ConvertStringToDate;
@@ -66,7 +65,7 @@ public class UserService implements IUserService {
         user.setSex(userDto.getSex());
 
         // set activation info
-        user.setActivationCode(createActivationCode());
+        user.setActivationCode(createRandomCode());
         user.setActive(false);
         LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(3);
         user.setActivationExpiry(expiryTime);
@@ -80,7 +79,7 @@ public class UserService implements IUserService {
         return ResponseEntity.ok(new Notice("Đăng ký thành công, vui lòng kiểm tra email để kích hoạt!"));
     }
 
-    private String createActivationCode(){
+    private String createRandomCode(){
         return UUID.randomUUID().toString();
     }
 
@@ -106,6 +105,7 @@ public class UserService implements IUserService {
 
     }
 
+
     @Override
     public ResponseEntity<?> resendActivationCode(String email){
         User user = userRepository.findByEmail(email);
@@ -116,7 +116,7 @@ public class UserService implements IUserService {
             return ResponseEntity.badRequest().body(new Notice("Tài khoản dùng đã được kích hoạt!"));
         }
 
-        String activationCodeNew = createActivationCode();
+        String activationCodeNew = createRandomCode();
         user.setActivationCode(activationCodeNew);
         LocalDateTime expiry = LocalDateTime.now().plusMinutes(5);
         user.setActivationExpiry(expiry);
@@ -158,8 +158,7 @@ public class UserService implements IUserService {
 
         try{
             userRepository.save(user);
-//            String jwt = jwtService.generateToken(user.getUserName());
-            return ResponseEntity.ok(new Notice("Chua ok"));
+            return ResponseEntity.ok(new Notice("Đã thay đổi thông tin thành công!"));
         }catch (Exception e){
             System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(new Notice("Đã gặp lỗi, không thể chỉnh sửa thông tin thành công!"));
@@ -183,13 +182,40 @@ public class UserService implements IUserService {
         if(existsNewEmail){
             return ResponseEntity.badRequest().body(new Notice("Email mới đã tồn tại!!"));
         }
-        user.setEmail(emailDto.getNewEmail());
+        user.setEmailCode(createRandomCode());
+        LocalDateTime lcd = LocalDateTime.now().plusMinutes(3);
+        user.setEmailExpiry(lcd);
+        userRepository.save(user);
+
+        // send change email;
+        sendEmailChange(user.getEmail(),user.getEmailCode(),emailDto.getNewEmail());
+
         return ResponseEntity.ok(new Notice("Thay đổi email thành công, vui lòng vào email để xác nhận!!"));
     }
 
+    private void sendEmailChange(String email,String emailCode,String emailNew){
+        String subject="Thay đổi email của bạn tại WebBanSach";
+        String text="Click vào đường link để xác nhận thay đổi email tài khoản (Thời gian hết hạn: <b>3 phút<b/>)";
+        String url = "http://localhost:3000/user/confirmChangeEmail/"+email+"/"+emailCode+"/"+emailNew;
+        text+= "<br/> <a href="+url+">"+url+"</a>";
+        text+="<br/> Email mới của bạn sau khi thay đổi sẽ là: <b>"+emailNew+"<b/>";
+        iEmailService.sendMessage("danghoangtest1@gmail.com",email,subject,text);
+    }
     @Override
-    public ResponseEntity<?> confirmChangeEmail(EmailDto emailDto) {
-
-        return null;
+    public ResponseEntity<?> confirmChangeEmail(String email, String emailCode,String newEmail) {
+        User user = userRepository.findByEmail(email);
+        if(user==null){
+            return ResponseEntity.badRequest().body(new Notice("Người dùng không tồn tại!"));
+        }
+        if(user.getEmailExpiry().isBefore(LocalDateTime.now())){
+            return ResponseEntity.badRequest().body(new Notice("Mã xác nhận đã hết thời hạn!"));
+        }
+        if(emailCode.equals(user.getEmailCode())){
+            user.setEmail(newEmail);
+            userRepository.save(user);
+            return ResponseEntity.ok(new Notice("Đã thay đổi email thành công!"));
+        }else{
+            return ResponseEntity.badRequest().body(new Notice("Mã xác nhận không chính xác!"));
+        }
     }
 }

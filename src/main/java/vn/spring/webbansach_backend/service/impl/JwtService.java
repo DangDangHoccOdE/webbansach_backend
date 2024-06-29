@@ -1,9 +1,6 @@
 package vn.spring.webbansach_backend.service.impl;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import vn.spring.webbansach_backend.entity.Role;
 import vn.spring.webbansach_backend.entity.User;
+import vn.spring.webbansach_backend.exception.JwtTokenExpiredException;
 import vn.spring.webbansach_backend.service.IUserSecurityService;
-import vn.spring.webbansach_backend.service.inter.IUserService;
 
 import java.security.Key;
 import java.util.Date;
@@ -96,14 +93,16 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token, String secret) {
-        return Jwts.parser().setSigningKey(getSignKey(secret)).parseClaimsJws(token).getBody();
+        try{
+            return Jwts.parser().setSigningKey(getSignKey(secret)).parseClaimsJws(token).getBody();
+        }catch (JwtException e){
+            System.out.println("Lỗi: "+e.getMessage());
+            throw new JwtTokenExpiredException("Access Token Expired!");
+        }
     }
 
     public <T> T extractClaims(String token, Function<Claims, T> claimsFunction, String secret) {
         Claims claims = extractAllClaims(token, secret);
-        System.out.println("Secret2:"+secret);
-        System.out.println("Claimns: "+claims.getSubject());
-        System.out.println("Claims: "+claims);
         return claimsFunction.apply(claims);
     }
 
@@ -117,8 +116,6 @@ public class JwtService {
 
     public String extractUserName(String token, String secret) {
         try {
-            System.out.println("Token1: "+token);
-            System.out.println("Secret1: "+secret);
             return extractClaims(token, Claims::getSubject, secret);
         } catch (JwtException e) {
             throw new RuntimeException("Failed to extract username", e);

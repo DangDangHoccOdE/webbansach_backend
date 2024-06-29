@@ -11,12 +11,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import vn.spring.webbansach_backend.exception.JwtTokenExpiredException;
 import vn.spring.webbansach_backend.service.IUserSecurityService;
 import vn.spring.webbansach_backend.service.impl.JwtService;
-import vn.spring.webbansach_backend.service.inter.IUserService;
 
 import java.io.IOException;
-import java.util.Date;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -31,7 +30,6 @@ public class JwtFilter extends OncePerRequestFilter {
         if(authHeader == null || !authHeader.startsWith("Bearer ")){
             authHeader = request.getHeader("X-Refresh-Token");
         }
-        System.out.println("AuthHeader: "+authHeader);
         String token = null;
         String username = null;
         String tokenType=null;
@@ -39,7 +37,15 @@ public class JwtFilter extends OncePerRequestFilter {
             token = authHeader.substring(authHeader.startsWith("Bearer ")?7:14);
             tokenType = authHeader.startsWith("Bearer ")?JwtService.SECRET_ACCESS_TOKEN:JwtService.SECRET_REFRESH_TOKEN;
 
-            username = jwtService.extractUserName(token,tokenType);
+            try {
+                username = jwtService.extractUserName(token, tokenType);
+            } catch (JwtTokenExpiredException e) {
+//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                response.setContentType("application/json");
+//                response.getWriter().write("{\"error\": \"accessToken expired\"}");
+//                return;
+                throw e;
+            }
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

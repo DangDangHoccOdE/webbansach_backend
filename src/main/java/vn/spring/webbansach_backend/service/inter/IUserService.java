@@ -11,6 +11,6 @@ public interface IUserService {
     ResponseEntity<?> resendActivationCode(String email);
     ResponseEntity<?> changeInformation(UserDto userDto);
     ResponseEntity<?> changeEmail(EmailDto emailDto);
-    ResponseEntity<?> confirmChangeEmail(EmailDto emailDto);
+    ResponseEntity<?> confirmChangeEmail(String email,String emailCode,String newEmail);
 
 }

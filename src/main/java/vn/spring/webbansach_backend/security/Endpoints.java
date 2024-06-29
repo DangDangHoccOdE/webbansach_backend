@@ -16,12 +16,12 @@ public class Endpoints {
            "/account/resendActivationCode",
             "/users",
             "/users/**",
-
+            "/user/confirmChangeEmail/**"
     };
     public static final String[] PUBLIC_POST_ENDPOINTS={
         "/user/register",
         "/user/login",
-            "/user/refreshToken",
+        "/user/refreshToken",
 
     };
 
