@@ -75,6 +75,12 @@ public class User {
     @Column(name = "emailExpiry")
     private LocalDateTime emailExpiry;
 
+    @Column(name = "forgotPasswordCode")
+    private String forgotPasswordCode;
+
+    @Column(name = "forgotPasswordExpiry")
+    private LocalDateTime forgotPasswordExpiry;
+
     @Column(name = "avatar", columnDefinition = "LONGTEXT")
     @Lob
     private String avatar;

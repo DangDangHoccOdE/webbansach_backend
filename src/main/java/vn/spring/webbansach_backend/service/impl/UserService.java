@@ -12,6 +12,8 @@ import vn.spring.webbansach_backend.entity.User;
 import vn.spring.webbansach_backend.service.inter.IEmailService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 import vn.spring.webbansach_backend.utils.ConvertStringToDate;
+import vn.spring.webbansach_backend.utils.MaskEmail;
+import vn.spring.webbansach_backend.utils.PasswordRegex;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -67,7 +69,7 @@ public class UserService implements IUserService {
         // set activation info
         user.setActivationCode(createRandomCode());
         user.setActive(false);
-        LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(3);
+        LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(10);
         user.setActivationExpiry(expiryTime);
 
         // save user to DB
@@ -118,7 +120,7 @@ public class UserService implements IUserService {
 
         String activationCodeNew = createRandomCode();
         user.setActivationCode(activationCodeNew);
-        LocalDateTime expiry = LocalDateTime.now().plusMinutes(5);
+        LocalDateTime expiry = LocalDateTime.now().plusMinutes(10);
         user.setActivationExpiry(expiry);
 
         userRepository.save(user);
@@ -132,7 +134,7 @@ public class UserService implements IUserService {
     private void sendEmailActive(String email, String activationCode) {
         String subject = "Kích hoạt tài khoản của bạn tại WebBanSach";
         String text = "Vui lòng sử dụng mã sau để kích hoạt tài khoản :" + email + ":<html><body><br/><h1>" + activationCode + "</h1></body></html>";
-        text += "<br/> Click vào đường link để kích hoạt tài khoản (Thời gian hết hạn :<b>3 phút<b/>)";
+        text += "<br/> Click vào đường link để kích hoạt tài khoản (Thời gian hết hạn :<b>10 phút<b/>)";
         String url = "http://localhost:3000/activatedAccount/" + email + "/" + activationCode;
         text += "<br/> <a href=" + url + ">" + url + "</a> ";
 
@@ -183,7 +185,7 @@ public class UserService implements IUserService {
             return ResponseEntity.badRequest().body(new Notice("Email mới đã tồn tại!!"));
         }
         user.setEmailCode(createRandomCode());
-        LocalDateTime lcd = LocalDateTime.now().plusMinutes(3);
+        LocalDateTime lcd = LocalDateTime.now().plusMinutes(10);
         user.setEmailExpiry(lcd);
         userRepository.save(user);
 
@@ -195,7 +197,7 @@ public class UserService implements IUserService {
 
     private void sendEmailChange(String email,String emailCode,String emailNew){
         String subject="Thay đổi email của bạn tại WebBanSach";
-        String text="Click vào đường link để xác nhận thay đổi email tài khoản (Thời gian hết hạn: <b>3 phút<b/>)";
+        String text="Click vào đường link để xác nhận thay đổi email tài khoản (Thời gian hết hạn: <b>10 phút<b/>)";
         String url = "http://localhost:3000/user/confirmChangeEmail/"+email+"/"+emailCode+"/"+emailNew;
         text+= "<br/> <a href="+url+">"+url+"</a>";
         text+="<br/> Email mới của bạn sau khi thay đổi sẽ là: <b>"+emailNew+"<b/>";
@@ -217,5 +219,62 @@ public class UserService implements IUserService {
         }else{
             return ResponseEntity.badRequest().body(new Notice("Mã xác nhận không chính xác!"));
         }
+    }
+
+    @Override
+    public ResponseEntity<?> forgotPassword(String username) {
+        User user = userRepository.findByUserName(username);
+        if(user==null){
+            return ResponseEntity.badRequest().body(new Notice("Không tìm thấy tài khoản!"));
+        }
+
+        LocalDateTime lcd = LocalDateTime.now().plusMinutes(10);
+        user.setForgotPasswordExpiry(lcd);
+        user.setForgotPasswordCode(createRandomCode());
+        userRepository.save(user);
+
+        // send email forgot password
+        sendEmailForgotPassword(user.getEmail(),username,user.getForgotPasswordCode());
+        return ResponseEntity.ok(new Notice("Chúng tôi sẽ gửi link xác nhận đến email "+ MaskEmail.maskEmail(user.getEmail())));
+    }
+
+    private void sendEmailForgotPassword(String email,String username,String forgotPasswordCode){
+        String subject = "Yêu cầu quên mật khẩu của bạn tại WebBanSach";
+        String text = "Click vào đường link xác nhận để thay đổi mật khẩu của tài khoản:<b> "+username+"<b> (Thời gian hết hạn: <b>10 phút<b/>)";
+        String url = "http://localhost:3000/user/confirmForgotPassword/"+username+"/"+forgotPasswordCode;
+        text+="<br/> <a href="+url+">"+url+"</a>";
+
+        iEmailService.sendMessage("danghoangtest1@gmail.com",email,subject,text);
+    }
+
+    @Override
+    public ResponseEntity<?> confirmForgotPassword(String username, String forgotPasswordCode) {
+        User user = userRepository.findByUserName(username);
+        if(user==null){
+            return ResponseEntity.badRequest().body(new Notice("Người dùng không tồn tại!"));
+        }
+        if(user.getForgotPasswordExpiry().isBefore(LocalDateTime.now())){
+            return ResponseEntity.badRequest().body(new Notice("Mã xác nhận đã hết thời hạn!"));
+        }
+        if(forgotPasswordCode.equals(user.getForgotPasswordCode())){
+            return ResponseEntity.ok(new Notice("Mã xác thực đúng!"));
+        }else{
+            return ResponseEntity.badRequest().body(new Notice("Mã xác nhận không chính xác!"));
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> passwordChange(String username,String password, String duplicatePassword) {
+        User user = userRepository.findByUserName(username);
+        if(PasswordRegex.passwordRegex(password) || PasswordRegex.passwordRegex(duplicatePassword)){
+            return ResponseEntity.badRequest().body(new Notice("Mật khẩu phải có ít nhất 8 ký tự và bao gồm ít nhất 1 ký tự đặc biệt (!@#$%^&*)"));
+        }
+        if(!password.equals(duplicatePassword)){
+            return ResponseEntity.badRequest().body(new Notice("Mật khẩu và mật khẩu nhập lại phải giống nhau!"));
+        }
+
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        userRepository.save(user);
+        return ResponseEntity.ok(new Notice("Thay đổi mật khẩu thành công!"));
     }
 }

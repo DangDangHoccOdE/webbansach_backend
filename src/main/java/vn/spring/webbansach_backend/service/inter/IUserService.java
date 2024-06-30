@@ -12,5 +12,9 @@ public interface IUserService {
     ResponseEntity<?> changeInformation(UserDto userDto);
     ResponseEntity<?> changeEmail(EmailDto emailDto);
     ResponseEntity<?> confirmChangeEmail(String email,String emailCode,String newEmail);
+    ResponseEntity<?> forgotPassword(String username);
+    ResponseEntity<?> confirmForgotPassword(String username,String forgotPasswordCode);
+    ResponseEntity<?> passwordChange(String username,String password,String duplicatePassword);
+
 
 }

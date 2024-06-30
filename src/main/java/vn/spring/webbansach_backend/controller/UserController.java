@@ -10,6 +10,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.spring.webbansach_backend.dto.EmailDto;
+import vn.spring.webbansach_backend.dto.PasswordDto;
 import vn.spring.webbansach_backend.dto.UserDto;
 import vn.spring.webbansach_backend.entity.Notice;
 import vn.spring.webbansach_backend.security.JwtResponse;
@@ -99,5 +100,24 @@ public class UserController {
     @GetMapping("/confirmChangeEmail")
     public ResponseEntity<?> confirmChangeEmail(@RequestParam String email,@RequestParam String emailCode,@RequestParam String newEmail){
         return iUserService.confirmChangeEmail(email,emailCode,newEmail);
+    }
+
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String,String> map){
+        String username = map.get("username");
+        return iUserService.forgotPassword(username);
+    }
+
+    @GetMapping("/confirmForgotPassword")
+    public ResponseEntity<?> confirmForgotPassword(@RequestParam String username,@RequestParam String forgotPasswordCode){
+        return iUserService.confirmForgotPassword(username,forgotPasswordCode);
+    }
+
+    @PostMapping("/passwordChange")
+    public ResponseEntity<?> passwordChange(@RequestBody PasswordDto passwordDto){
+        String username = passwordDto.getUsername();
+        String password = passwordDto.getPassword();
+        String duplicatePassword = passwordDto.getDuplicatePassword();
+        return iUserService.passwordChange(username,password,duplicatePassword);
     }
 }
