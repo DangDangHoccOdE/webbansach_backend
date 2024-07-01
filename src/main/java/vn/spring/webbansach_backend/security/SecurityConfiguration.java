@@ -53,6 +53,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.PUT,Endpoints.USER_PUT_ENDPOINTS).hasAnyRole("USER","ADMIN")
                                 .requestMatchers(HttpMethod.GET,Endpoints.ADMIN_GET_ENDPOINTS).hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.POST,Endpoints.ADMIN_POST_ENDPOINTS).hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.PUT,Endpoints.ADMIN_PUT_ENDPOINTS).hasRole("ADMIN")
                 )
                 .cors(cors->{
                     cors.configurationSource(request -> {

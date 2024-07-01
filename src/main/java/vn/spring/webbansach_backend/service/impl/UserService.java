@@ -13,7 +13,6 @@ import vn.spring.webbansach_backend.service.inter.IEmailService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 import vn.spring.webbansach_backend.utils.ConvertStringToDate;
 import vn.spring.webbansach_backend.utils.MaskEmail;
-import vn.spring.webbansach_backend.utils.PasswordRegex;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -172,7 +171,6 @@ public class UserService implements IUserService {
     public ResponseEntity<?> changeEmail(EmailDto emailDto) {
         User user = userRepository.findByEmail(emailDto.getEmail());
         boolean existsNewEmail = userRepository.existsByEmail(emailDto.getNewEmail());
-
         if(user==null){
             return ResponseEntity.badRequest().body(new Notice("Email không tồn tại!"));
         }
@@ -266,9 +264,6 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<?> passwordChange(String username,String password, String duplicatePassword) {
         User user = userRepository.findByUserName(username);
-        if(PasswordRegex.passwordRegex(password) || PasswordRegex.passwordRegex(duplicatePassword)){
-            return ResponseEntity.badRequest().body(new Notice("Mật khẩu phải có ít nhất 8 ký tự và bao gồm ít nhất 1 ký tự đặc biệt (!@#$%^&*)"));
-        }
         if(!password.equals(duplicatePassword)){
             return ResponseEntity.badRequest().body(new Notice("Mật khẩu và mật khẩu nhập lại phải giống nhau!"));
         }

@@ -45,6 +45,10 @@ public class Endpoints {
         "/books/**"
     };
 
+    public static final String[] ADMIN_PUT_ENDPOINTS={
+        "/admin/editBook",
+    };
+
 
 
 }

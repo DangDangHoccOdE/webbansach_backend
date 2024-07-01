@@ -9,9 +9,11 @@ import vn.spring.webbansach_backend.entity.Book;
 
 @RepositoryRestResource(path = "books")
 public interface BookRepository extends JpaRepository<Book,Integer> {
+    Book findByBookId(int id);
     Page<Book> findByBookNameContaining(@RequestParam("bookName") String bookName, Pageable pageable);
 
     Page<Book> findByCategoryList_categoryId(@RequestParam("categoryId") int categoryId, Pageable pageable);
+    Page<Book> findByImageList_imageId(@RequestParam("imageId") int imageId, Pageable pageable);
 
     Page<Book> findByBookNameContainingAndCategoryList_categoryId(@RequestParam("bookName") String bookName,@RequestParam("categoryId") int categoryId, Pageable pageable);
 }

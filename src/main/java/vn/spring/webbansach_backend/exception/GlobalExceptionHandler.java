@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
+import vn.spring.webbansach_backend.entity.Notice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -14,5 +15,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleJwtTokenExpiredException(JwtTokenExpiredException e) {
         System.out.println("Error: "+e.getMessage());
         return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleException(Exception e){
+        System.out.println("Exception: "+e.getMessage());
+        return ResponseEntity.badRequest().body(new Notice(e.getMessage()));
     }
 }

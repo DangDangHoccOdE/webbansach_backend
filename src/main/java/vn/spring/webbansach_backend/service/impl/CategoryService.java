@@ -19,4 +19,9 @@ public class CategoryService implements ICategoryService {
     public Category findCategoryByCategoryId(int id) {
         return categoryRepository.findByCategoryId(id);
     }
+
+    @Override
+    public void deleteCategory(Category category) {
+        categoryRepository.delete(category);
+    }
 }
