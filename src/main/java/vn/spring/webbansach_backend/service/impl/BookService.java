@@ -37,7 +37,7 @@ public class BookService implements IBookService {
     public ResponseEntity<?> editBook(BookDto bookDto) {
         Book book = bookRepository.findByBookId(bookDto.getBookId());
         if(book==null){
-          return   ResponseEntity.badRequest().body(new Notice("Sách không tồn tại!"));
+          return ResponseEntity.badRequest().body(new Notice("Sách không tồn tại!"));
         }else {
 
             // XÓa ảnh
@@ -51,7 +51,16 @@ public class BookService implements IBookService {
     }
 
     private void updateAndSaveBook(BookDto bookDto, Book book) {
-        // Các thiết lập thông tin sách...
+        book.setBookName(bookDto.getBookName());
+        book.setPrice(bookDto.getPrice());
+        book.setISBN(bookDto.getIsbn());
+        book.setDiscountPercent(bookDto.getDiscountPercent());
+        book.setQuantity(bookDto.getQuantity());
+        book.setSoldQuantity(bookDto.getSoldQuantity());
+        book.setListedPrice(bookDto.getListedPrice());
+        book.setAuthor(bookDto.getAuthor());
+        book.setAverageRate(bookDto.getAverageRate());
+        book.setDescription(bookDto.getDescription());
 
         List<Image> imageList = new ArrayList<>();
         if (bookDto.getRelatedImage() != null) {
@@ -64,7 +73,6 @@ public class BookService implements IBookService {
             }
         }
 
-        // Thêm thumbnail vào cuối danh sách imageList
         if (bookDto.getThumbnail() != null) {
             Image thumbnailImage = new Image();
             thumbnailImage.setBook(book);
@@ -76,6 +84,15 @@ public class BookService implements IBookService {
 
         book.setImageList(imageList);
 
+        // lưu category
+        List<Category> categoryList = new ArrayList<>();
+        for(int id : bookDto.getCategoryList()){
+            Category category = iCategoryService.findCategoryByCategoryId(id);
+            categoryList.add(category);
+        }
+
+        book.setCategoryList(categoryList);
+
         // Lưu book vào cơ sở dữ liệu
         try {
             bookRepository.save(book);
@@ -84,5 +101,19 @@ public class BookService implements IBookService {
         }
     }
 
+    @Override
+    public ResponseEntity<?> deleteBook(int bookId) {
+        Book book = bookRepository.findByBookId(bookId);
+        if(book == null){
+            return ResponseEntity.badRequest().body(new Notice("Sách không tồn tại!"));
+        }
 
+        try{
+            bookRepository.delete(book);
+            return ResponseEntity.ok(new Notice("Đã xóa sách thành công!"));
+        }catch (Exception e){
+            System.out.println("Exception: "+e.getMessage());
+            return ResponseEntity.badRequest().body(new Notice("Không thể xóa sách!"+e.getMessage()));
+        }
+    }
 }

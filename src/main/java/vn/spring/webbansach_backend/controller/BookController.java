@@ -31,4 +31,10 @@ public class BookController {
             return response;
     }
 
+    @DeleteMapping("/deleteBook")
+    public ResponseEntity<?> deleteBook(@RequestParam("bookId") int bookId) {
+        ResponseEntity<?> response = bookService.deleteBook(bookId);
+        return response;
+    }
+
 }

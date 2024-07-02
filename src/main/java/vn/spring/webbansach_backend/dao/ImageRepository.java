@@ -11,7 +11,7 @@ import vn.spring.webbansach_backend.entity.Image;
 @RepositoryRestResource(path = "images")
 public interface ImageRepository extends JpaRepository<Image,Integer> {
     Page<Image> findByBook_BookId(@RequestParam("bookId") int bookId, Pageable pageable);
-
+    Page<Image> findByBook_BookIdAndIsIcon(@RequestParam("bookId") int bookId,@RequestParam("isIcon") boolean isIcon,Pageable pageable);
     void deleteByImageId(int id);
 
 }

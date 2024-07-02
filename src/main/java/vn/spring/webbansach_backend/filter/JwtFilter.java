@@ -30,6 +30,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if(authHeader == null || !authHeader.startsWith("Bearer ")){
             authHeader = request.getHeader("X-Refresh-Token");
         }
+        System.out.println("Header: "+authHeader);
         String token = null;
         String username = null;
         String tokenType=null;

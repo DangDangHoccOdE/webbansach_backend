@@ -49,6 +49,10 @@ public class Endpoints {
         "/admin/editBook",
     };
 
+    public static final String[] ADMIN_DELETE_ENDPOINTS={
+        "/admin/deleteBook",
+    };
+
 
 
 }
