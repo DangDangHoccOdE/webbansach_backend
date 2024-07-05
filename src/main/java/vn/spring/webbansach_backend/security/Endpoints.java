@@ -30,6 +30,10 @@ public class Endpoints {
             "/user/refreshToken",
     };
 
+    public static final String[] USER_DELETE_ENDPOINTS={
+            "/wishList/deleteWishList/**",
+    };
+
     public static final String[] ADMIN_GET_ENDPOINTS={
         "/"
     };
@@ -50,8 +54,8 @@ public class Endpoints {
     };
 
     public static final String[] ADMIN_DELETE_ENDPOINTS={
-        "/admin/deleteBook",
-        "/user/deleteUser",
+        "/admin/deleteBook/**",
+        "/user/deleteUser/**",
     };
 
 

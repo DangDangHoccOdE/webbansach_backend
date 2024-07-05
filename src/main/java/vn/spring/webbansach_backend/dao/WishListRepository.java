@@ -6,4 +6,5 @@ import vn.spring.webbansach_backend.entity.WishList;
 
 @RepositoryRestResource(path = "wish-list")
 public interface WishListRepository extends JpaRepository<WishList,Integer> {
+    WishList findByWishListId(int id);
 }

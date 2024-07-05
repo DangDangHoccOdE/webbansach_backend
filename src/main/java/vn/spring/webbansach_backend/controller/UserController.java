@@ -122,9 +122,11 @@ public class UserController {
         return iUserService.passwordChange(username,password,duplicatePassword);
     }
 
-    @DeleteMapping("/deleteUser")
-    public ResponseEntity<?> deleteUser(@RequestParam("username") String username){
-        System.out.println("username"+username);
+    @DeleteMapping("/deleteUser/{username}")
+    public ResponseEntity<?> deleteUser(@PathVariable String username){
+        System.out.println("Username:"+username);
         return iUserService.deleteUser(username);
     }
+
+
 }

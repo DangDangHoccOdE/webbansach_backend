@@ -51,7 +51,7 @@ public class User {
     private List<Remark> remarkList;
 
     @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.ALL},mappedBy = "user")
-    private List<WishList> wishListList;
+    private List<WishList> wishList;
 
     @OneToMany(fetch = FetchType.LAZY,cascade ={CascadeType.ALL},mappedBy = "user")
     private List<Order> orderList;
