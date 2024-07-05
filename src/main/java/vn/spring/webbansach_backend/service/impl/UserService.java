@@ -272,4 +272,15 @@ public class UserService implements IUserService {
         userRepository.save(user);
         return ResponseEntity.ok(new Notice("Thay đổi mật khẩu thành công!"));
     }
+
+    @Override
+    public ResponseEntity<?> deleteUser(String username){
+        User user=userRepository.findByUserName(username);
+        if(user==null){
+            return ResponseEntity.badRequest().body(new Notice(("Không tìm thấy user cần xóa!")));
+        }
+
+        userRepository.delete(user);
+        return ResponseEntity.ok(new Notice("Đã xóa thành công!"));
+    }
 }

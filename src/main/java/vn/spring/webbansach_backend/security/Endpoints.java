@@ -14,7 +14,7 @@ public class Endpoints {
           "/remarks/**",
            "/account/activatedAccount",
            "/account/resendActivationCode",
-            "/users",
+//            "/users",
             "/users/**",
             "/user/confirmChangeEmail/**",
             "/user/confirmForgotPassword",
@@ -51,6 +51,7 @@ public class Endpoints {
 
     public static final String[] ADMIN_DELETE_ENDPOINTS={
         "/admin/deleteBook",
+        "/user/deleteUser",
     };
 
 

@@ -47,13 +47,13 @@ public class User {
     @Column(name = "purchaseAddress")
     private String purchaseAddress;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST},mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.ALL},mappedBy = "user")
     private List<Remark> remarkList;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST},mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.ALL},mappedBy = "user")
     private List<WishList> wishListList;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade ={CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST},mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY,cascade ={CascadeType.ALL},mappedBy = "user")
     private List<Order> orderList;
 
     @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})

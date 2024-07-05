@@ -13,6 +13,7 @@ import vn.spring.webbansach_backend.dto.EmailDto;
 import vn.spring.webbansach_backend.dto.PasswordDto;
 import vn.spring.webbansach_backend.dto.UserDto;
 import vn.spring.webbansach_backend.entity.Notice;
+import vn.spring.webbansach_backend.entity.User;
 import vn.spring.webbansach_backend.security.JwtResponse;
 import vn.spring.webbansach_backend.security.LoginRequest;
 import vn.spring.webbansach_backend.service.impl.JwtService;
@@ -119,5 +120,11 @@ public class UserController {
         String password = passwordDto.getPassword();
         String duplicatePassword = passwordDto.getDuplicatePassword();
         return iUserService.passwordChange(username,password,duplicatePassword);
+    }
+
+    @DeleteMapping("/deleteUser")
+    public ResponseEntity<?> deleteUser(@RequestParam("username") String username){
+        System.out.println("username"+username);
+        return iUserService.deleteUser(username);
     }
 }
