@@ -1,4 +1,5 @@
 package vn.spring.webbansach_backend.entity;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -51,6 +52,7 @@ public class User {
     private List<Remark> remarkList;
 
     @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.ALL},mappedBy = "user")
+    @JsonManagedReference
     private List<WishList> wishList;
 
     @OneToMany(fetch = FetchType.LAZY,cascade ={CascadeType.ALL},mappedBy = "user")

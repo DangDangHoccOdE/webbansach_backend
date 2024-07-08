@@ -44,7 +44,6 @@ public class UserService implements IUserService {
     }
 
     @Override
-    @Transactional
     public User findUserByUserId(Long id) {
         return userRepository.findByUserId(id);
     }
