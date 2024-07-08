@@ -22,8 +22,8 @@ import java.util.function.Function;
 public class JwtService {
     public static final String SECRET_ACCESS_TOKEN = "dsafwerwdrwerwer01234567894234234rfsdfsdfsdfsdvfuyuytuytu0123456789";
     public static final String SECRET_REFRESH_TOKEN = "EUOIQWEUQWEJQOWIDKJASDNASDNM1231290KCMASKMDQSLKMDK323I912I3KMCADASD";
-    private final long ACCESS_TOKEN_EXPIRATION = 60 * 1000; // 1 minute
-    private final long REFRESH_TOKEN_EXPIRATION = 60 * 60 * 1000; // 3 minutes
+    private final long ACCESS_TOKEN_EXPIRATION = 2*60 * 60 * 1000; // 2 hours
+    private final long REFRESH_TOKEN_EXPIRATION = 24*60 * 60 * 1000; // 24 hours
 
     @Autowired
     private IUserSecurityService iUserSecurityService;

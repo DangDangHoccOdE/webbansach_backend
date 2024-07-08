@@ -1,7 +1,13 @@
 package vn.spring.webbansach_backend.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.spring.webbansach_backend.dto.EmailDto;
@@ -9,13 +15,17 @@ import vn.spring.webbansach_backend.dto.UserDto;
 import vn.spring.webbansach_backend.dao.UserRepository;
 import vn.spring.webbansach_backend.entity.Notice;
 import vn.spring.webbansach_backend.entity.User;
+import vn.spring.webbansach_backend.entity.WishList;
 import vn.spring.webbansach_backend.service.inter.IEmailService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 import vn.spring.webbansach_backend.utils.ConvertStringToDate;
 import vn.spring.webbansach_backend.utils.MaskEmail;
 
+import java.nio.file.AccessDeniedException;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserService implements IUserService {
@@ -32,6 +42,18 @@ public class UserService implements IUserService {
     public Boolean existsUserByUsernameAndActiveIsTrue(String username) {
         return userRepository.existsByUserNameAndActiveIsTrue(username);
     }
+
+    @Override
+    @Transactional
+    public User findUserByUserId(Long id) {
+        return userRepository.findByUserId(id);
+    }
+
+    @Override
+    public User findUserByUsername(String username) {
+        return userRepository.findByUserName(username);
+    }
+
     @Override
     public ResponseEntity<?> registerUser(UserDto userDto){
         User user = new User();
@@ -88,7 +110,7 @@ public class UserService implements IUserService {
     public ResponseEntity<?> activatedAccount(String email, String activationCode){
         User user = userRepository.findByEmail(email);
         if(user==null){
-            return ResponseEntity.badRequest().body(new Notice("Người dùng không tồn tại!"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Người dùng không tồn tại!"));
         }
         if(user.getActivationExpiry().isBefore(LocalDateTime.now())){
             return ResponseEntity.badRequest().body(new Notice("Mã kích hoạt đã hết hạn!"));
@@ -111,7 +133,7 @@ public class UserService implements IUserService {
     public ResponseEntity<?> resendActivationCode(String email){
         User user = userRepository.findByEmail(email);
         if(user == null){
-            return ResponseEntity.badRequest().body(new Notice("Tài khoản email không tồn tại!"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Tài khoản email không tồn tại!"));
         }
         if(user.isActive()){
             return ResponseEntity.badRequest().body(new Notice("Tài khoản dùng đã được kích hoạt!"));
@@ -172,7 +194,7 @@ public class UserService implements IUserService {
         User user = userRepository.findByEmail(emailDto.getEmail());
         boolean existsNewEmail = userRepository.existsByEmail(emailDto.getNewEmail());
         if(user==null){
-            return ResponseEntity.badRequest().body(new Notice("Email không tồn tại!"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Email không tồn tại!"));
         }
 
         if(emailDto.getEmail().equals(emailDto.getNewEmail())){
@@ -205,7 +227,7 @@ public class UserService implements IUserService {
     public ResponseEntity<?> confirmChangeEmail(String email, String emailCode,String newEmail) {
         User user = userRepository.findByEmail(email);
         if(user==null){
-            return ResponseEntity.badRequest().body(new Notice("Người dùng không tồn tại!"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Người dùng không tồn tại!"));
         }
         if(user.getEmailExpiry().isBefore(LocalDateTime.now())){
             return ResponseEntity.badRequest().body(new Notice("Mã xác nhận đã hết thời hạn!"));
@@ -223,7 +245,7 @@ public class UserService implements IUserService {
     public ResponseEntity<?> forgotPassword(String username) {
         User user = userRepository.findByUserName(username);
         if(user==null){
-            return ResponseEntity.badRequest().body(new Notice("Không tìm thấy tài khoản!"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy tài khoản!"));
         }
 
         LocalDateTime lcd = LocalDateTime.now().plusMinutes(10);
@@ -249,7 +271,7 @@ public class UserService implements IUserService {
     public ResponseEntity<?> confirmForgotPassword(String username, String forgotPasswordCode) {
         User user = userRepository.findByUserName(username);
         if(user==null){
-            return ResponseEntity.badRequest().body(new Notice("Người dùng không tồn tại!"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Người dùng không tồn tại!"));
         }
         if(user.getForgotPasswordExpiry().isBefore(LocalDateTime.now())){
             return ResponseEntity.badRequest().body(new Notice("Mã xác nhận đã hết thời hạn!"));
@@ -277,10 +299,11 @@ public class UserService implements IUserService {
     public ResponseEntity<?> deleteUser(String username){
         User user=userRepository.findByUserName(username);
         if(user==null){
-            return ResponseEntity.badRequest().body(new Notice(("Không tìm thấy user cần xóa!")));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice(("Không tìm thấy user cần xóa!")));
         }
 
         userRepository.delete(user);
         return ResponseEntity.ok(new Notice("Đã xóa thành công!"));
     }
+
 }

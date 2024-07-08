@@ -1,7 +1,10 @@
 package vn.spring.webbansach_backend.controller;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import jakarta.servlet.http.HttpServletRequest;
+import netscape.javascript.JSObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +23,7 @@ import vn.spring.webbansach_backend.service.impl.JwtService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 
 import java.util.Map;
+import net.minidev.json.JSONObject;
 
 @RestController
 @RequestMapping("/user")
@@ -30,6 +34,29 @@ public class UserController {
     private IUserService iUserService;
     @Autowired
     private JwtService jwtService;
+    @GetMapping("/findUserByUsername")
+    public ResponseEntity<JSONObject> findUserByUsername(@RequestParam String username){
+        User user = iUserService.findUserByUsername(username);
+        JSONObject data = new JSONObject();
+        if(user ==null){
+            data.put("notice","Không tìm thấy người sử dụng!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(data);
+        }
+        data.put("userId",user.getUserId());
+        data.put("firstName",user.getFirstName());
+        data.put("lastName",user.getLastName());
+        data.put("userName",user.getUserName());
+        data.put("dateOfBirth",user.getDateOfBirth());
+        data.put("phoneNumber",user.getPhoneNumber());
+        data.put("password",user.getPassword());
+        data.put("sex",user.getSex());
+        data.put("email",user.getEmail());
+        data.put("deliveryAddress",user.getDeliveryAddress());
+        data.put("purchaseAddress",user.getPurchaseAddress());
+        data.put("avatar",user.getAvatar());
+        data.put("active",user.isActive());
+        return ResponseEntity.ok(data);
+    }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Validated @RequestBody UserDto user) {
@@ -127,6 +154,5 @@ public class UserController {
         System.out.println("Username:"+username);
         return iUserService.deleteUser(username);
     }
-
 
 }

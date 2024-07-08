@@ -37,6 +37,11 @@ public class Endpoints {
     public static final String[] ADMIN_GET_ENDPOINTS={
         "/"
     };
+ public static final String[] USER_GET_ENDPOINTS={
+        "/wishList/showWishList/**",
+         "/wish-list/**",
+         "/user/findUserByUsername/**"
+    };
 
     public static final String[] USER_PUT_ENDPOINTS={
             "/user/changeInfo",

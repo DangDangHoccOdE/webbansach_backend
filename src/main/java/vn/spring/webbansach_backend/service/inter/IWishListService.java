@@ -6,4 +6,5 @@ import vn.spring.webbansach_backend.dao.WishListRepository;
 
 public interface IWishListService {
     ResponseEntity<?> deleteWishListById(int wishListId);
+    ResponseEntity<?> showWishListByUserId(Long userId);
 }

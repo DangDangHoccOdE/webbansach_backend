@@ -1,5 +1,6 @@
 package vn.spring.webbansach_backend.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,6 +12,7 @@ import vn.spring.webbansach_backend.entity.Role;
 import vn.spring.webbansach_backend.entity.User;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,4 +39,5 @@ public class UserSecurityService implements IUserSecurityService{
     private Collection<? extends GrantedAuthority> roleToAuthorities(Collection<Role> roles){
         return roles.stream().map(role->new SimpleGrantedAuthority(role.getRoleName())).collect(Collectors.toList());
     }
+
 }

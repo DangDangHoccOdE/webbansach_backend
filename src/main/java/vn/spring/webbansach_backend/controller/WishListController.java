@@ -2,10 +2,9 @@ package vn.spring.webbansach_backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import vn.spring.webbansach_backend.annotation.UserCheckAuthorize;
+import vn.spring.webbansach_backend.service.MySecurityService;
 import vn.spring.webbansach_backend.service.inter.IWishListService;
 
 @RestController
@@ -13,10 +12,17 @@ import vn.spring.webbansach_backend.service.inter.IWishListService;
 public class WishListController {
     @Autowired
     private IWishListService iWishListService;
+    @Autowired
+    private MySecurityService mySecurityService;
 
     @DeleteMapping("/deleteWishList/{wishListId}")
     public ResponseEntity<?> deleteWishList(@PathVariable int wishListId){
         return iWishListService.deleteWishListById(wishListId);
+    }
+
+    @GetMapping("/showWishList/{userId}")
+    public ResponseEntity<?> showWishList(@PathVariable Long userId){
+        return iWishListService.showWishListByUserId(userId);
     }
 
 }

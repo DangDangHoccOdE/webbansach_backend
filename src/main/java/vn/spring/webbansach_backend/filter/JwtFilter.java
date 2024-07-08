@@ -41,11 +41,10 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 username = jwtService.extractUserName(token, tokenType);
             } catch (JwtTokenExpiredException e) {
-//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//                response.setContentType("application/json");
-//                response.getWriter().write("{\"error\": \"accessToken expired\"}");
-//                return;
-                throw e;
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"accessToken expired\"}");
+                return;
             }
         }
 
