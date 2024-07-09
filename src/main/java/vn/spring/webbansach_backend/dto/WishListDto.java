@@ -9,4 +9,5 @@ public class WishListDto {
 
     @NotBlank(message = "Tên danh sách yêu thích không được bỏ trống!")
     private String newWishListName;
+
 }

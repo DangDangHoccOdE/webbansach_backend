@@ -2,6 +2,7 @@ package vn.spring.webbansach_backend.service.impl;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import vn.spring.webbansach_backend.dto.BookDto;
@@ -33,11 +34,16 @@ public class BookService implements IBookService {
     }
 
     @Override
+    public Book findBookById(int bookId) {
+        return bookRepository.findByBookId(bookId);
+    }
+
+    @Override
     @Transactional
     public ResponseEntity<?> editBook(BookDto bookDto) {
         Book book = bookRepository.findByBookId(bookDto.getBookId());
         if(book==null){
-          return ResponseEntity.badRequest().body(new Notice("Sách không tồn tại!"));
+          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Sách không tồn tại!"));
         }else {
 
             // XÓa ảnh
@@ -105,7 +111,7 @@ public class BookService implements IBookService {
     public ResponseEntity<?> deleteBook(int bookId) {
         Book book = bookRepository.findByBookId(bookId);
         if(book == null){
-            return ResponseEntity.badRequest().body(new Notice("Sách không tồn tại!"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Sách không tồn tại!"));
         }
 
         try{

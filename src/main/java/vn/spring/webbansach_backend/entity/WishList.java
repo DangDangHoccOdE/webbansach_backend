@@ -1,6 +1,7 @@
 package vn.spring.webbansach_backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,8 +26,12 @@ public class WishList {
     @JsonBackReference
     private User user;
 
+    @Column(name = "quantity",nullable = false,columnDefinition = "int default 0")
+    private int quantity=0;
+
     @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     @JoinTable(name = "book_wishlist",joinColumns = @JoinColumn(name = "wishListId"),inverseJoinColumns = @JoinColumn(name = "bookId"))
+    @JsonIgnore
     private List<Book> bookList;
 
 }

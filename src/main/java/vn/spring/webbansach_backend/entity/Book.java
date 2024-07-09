@@ -1,6 +1,7 @@
 package vn.spring.webbansach_backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 
 import java.util.*;
 @Getter
@@ -62,4 +63,16 @@ public class Book {
     private List<WishList> wishLists;
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Book)) return false;
+        Book book = (Book) o;
+        return bookId == book.bookId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(bookId);
+    }
 }

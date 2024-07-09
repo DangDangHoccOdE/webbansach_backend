@@ -29,6 +29,7 @@ public class Endpoints {
     public static final String[] USER_POST_ENDPOINTS={
             "/user/refreshToken",
             "/wishList/addWishList",
+            "/wishList/addBookToWishList",
     };
 
     public static final String[] USER_DELETE_ENDPOINTS={

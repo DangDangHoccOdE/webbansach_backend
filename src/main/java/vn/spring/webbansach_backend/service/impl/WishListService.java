@@ -10,9 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import vn.spring.webbansach_backend.dao.WishListRepository;
 import vn.spring.webbansach_backend.dto.WishListDto;
+import vn.spring.webbansach_backend.entity.Book;
 import vn.spring.webbansach_backend.entity.Notice;
 import vn.spring.webbansach_backend.entity.User;
 import vn.spring.webbansach_backend.entity.WishList;
+import vn.spring.webbansach_backend.service.inter.IBookService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 import vn.spring.webbansach_backend.service.inter.IWishListService;
 
@@ -22,6 +24,8 @@ public class WishListService implements IWishListService {
     private WishListRepository wishListRepository;
     @Autowired
     private IUserService iUserService;
+    @Autowired
+    private IBookService iBookService;
 
     @Override
     @Transactional
@@ -64,5 +68,27 @@ public class WishListService implements IWishListService {
         data.put("wishLists",findWishListByUser);
 
         return ResponseEntity.ok().body(data);
+    }
+
+    @Override
+    public ResponseEntity<?> addBookToWishList(int wishListId, int bookId) {
+        Book book = iBookService.findBookById(bookId);
+        WishList wishList = wishListRepository.findByWishListId(wishListId);
+
+        if(book==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Sách không tồn tại!"));
+        }
+
+        if(wishList==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Danh sách yêu thích không tồn tại không tồn tại!"));
+        }
+
+        if(wishList.getBookList().contains(book)){
+            return ResponseEntity.badRequest().body(new Notice("Sách đã nằm trong danh sách yêu thích này!"));
+        }
+        wishList.getBookList().add(book);
+        wishList.setQuantity(wishList.getQuantity()+1);
+        wishListRepository.save(wishList);
+        return ResponseEntity.ok(new Notice("Thêm vào danh sách yêu thích thành công!"));
     }
 }

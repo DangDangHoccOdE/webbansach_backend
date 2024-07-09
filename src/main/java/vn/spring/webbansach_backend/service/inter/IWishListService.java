@@ -9,5 +9,6 @@ import vn.spring.webbansach_backend.dto.WishListDto;
 public interface IWishListService {
     ResponseEntity<?> deleteWishListById(int wishListId);
     ResponseEntity<?> addWishList(WishListDto wishListDto);
+    ResponseEntity<?> addBookToWishList(int wishListId, int bookId);
     ResponseEntity<JSONObject> showWishListByUserId(Long userId);
 }

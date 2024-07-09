@@ -14,14 +14,8 @@ public class Image {
     @Column(name = "imageId")
     private int imageId;
 
-    @Column(name = "imageName",length = 256)
-    private String imageName;
-
     @Column(name = "isIcon")
     private boolean isIcon;
-
-    @Column(name = "link")
-    private String link;
 
     @Column(name = "imageData",columnDefinition = "LONGTEXT")
     @Lob
