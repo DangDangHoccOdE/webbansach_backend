@@ -37,6 +37,9 @@ public class WishListService implements IWishListService {
         if(wishListRepository.existsByUser_UserIdAndWishListName(wishListDto.getUserId(),wishListDto.getNewWishListName())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Notice("Tên danh sách yêu thích đã tồn tại!"));
         }
+        if(user.getWishList().size()>=10){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Notice("Chỉ được phép tạo tối đa 10 danh sách yêu thích!!"));
+        }
 
         WishList wishList = new WishList();
         wishList.setWishListName(wishListDto.getNewWishListName());
@@ -80,7 +83,7 @@ public class WishListService implements IWishListService {
         }
 
         if(wishList==null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Danh sách yêu thích không tồn tại không tồn tại!"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Danh sách yêu thích không tồn tại!"));
         }
 
         if(wishList.getBookList().contains(book)){
