@@ -17,6 +17,8 @@ import vn.spring.webbansach_backend.entity.WishList;
 import vn.spring.webbansach_backend.service.inter.IBookService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 import vn.spring.webbansach_backend.service.inter.IWishListService;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class WishListService implements IWishListService {
@@ -34,11 +36,8 @@ public class WishListService implements IWishListService {
         if(user == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy người sử dụng!"));
         }
-        if(wishListRepository.existsByUser_UserIdAndWishListName(wishListDto.getUserId(),wishListDto.getNewWishListName())){
+        if(wishListRepository.existsByUser_UserIdAndWishListName(wishListDto.getUserId(),wishListDto.getNewWishListName())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Notice("Tên danh sách yêu thích đã tồn tại!"));
-        }
-        if(user.getWishList().size()>=10){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Notice("Chỉ được phép tạo tối đa 10 danh sách yêu thích!!"));
         }
 
         WishList wishList = new WishList();
@@ -93,5 +92,46 @@ public class WishListService implements IWishListService {
         wishList.setQuantity(wishList.getQuantity()+1);
         wishListRepository.save(wishList);
         return ResponseEntity.ok(new Notice("Thêm vào danh sách yêu thích thành công!"));
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> editWishListName(int wishListId, String newWishListName) {
+        WishList wishList = wishListRepository.findByWishListId(wishListId);
+        if(wishList ==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Danh sách yêu thích không tồn tại!"));
+        }
+
+        if(wishList.getWishListName().equals(newWishListName)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Notice("Tên danh sách yêu thích mới không thể trùng!"));
+        }
+        wishList.setWishListName(newWishListName);
+        wishListRepository.save(wishList);
+        return ResponseEntity.ok(new Notice("Đã đổi tên thành công"));
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> deleteBookOfWishList(int bookId, int wishListId) {
+        Book book = iBookService.findBookById(bookId);
+        WishList wishList = wishListRepository.findByWishListId(wishListId);
+
+        if(book == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Sách không tồn tại!"));
+        }
+        if(wishList ==null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Danh sách yêu thích không tồn tại!"));
+        }
+
+        List<Book> bookList = wishList.getBookList();
+        if(!bookList.contains(book)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Notice("Sách không thuộc danh sách yêu thích này!!"));
+        }
+
+        List<Book> bookList1 = bookList.stream().filter(book1 -> book1.getBookId()!=book.getBookId()).collect(Collectors.toList());
+        wishList.setBookList(bookList1);
+        wishList.setQuantity(wishList.getQuantity()-1);
+        wishListRepository.save(wishList);
+        return ResponseEntity.ok(new Notice("Đã xóa thành công!"));
     }
 }

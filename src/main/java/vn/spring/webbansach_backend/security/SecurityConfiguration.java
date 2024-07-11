@@ -18,10 +18,12 @@ import org.springframework.security.web.access.expression.WebExpressionAuthoriza
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import vn.spring.webbansach_backend.exception.CustomAccessDeniedHandler;
 import vn.spring.webbansach_backend.filter.JwtFilter;
 import vn.spring.webbansach_backend.service.IUserSecurityService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Arrays;
 
 @Configuration
@@ -71,7 +73,7 @@ public class SecurityConfiguration {
                         return configuration;
                     });
                 })
-
+                .exceptionHandling(exceptionHandling->exceptionHandling.accessDeniedHandler(new CustomAccessDeniedHandler()))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())

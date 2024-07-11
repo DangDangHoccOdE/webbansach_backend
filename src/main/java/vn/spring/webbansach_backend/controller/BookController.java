@@ -2,6 +2,7 @@ package vn.spring.webbansach_backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.spring.webbansach_backend.dto.BookDto;
@@ -14,6 +15,7 @@ import vn.spring.webbansach_backend.service.impl.BookService;
 public class BookController {
     @Autowired
     private BookService bookService;
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/addBook")
     public ResponseEntity<?> addBook(@Validated  @RequestBody BookDto bookDto){
         try{
@@ -25,12 +27,14 @@ public class BookController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/editBook")
     public ResponseEntity<?> editBook(@Validated @RequestBody BookDto bookDto) {
             ResponseEntity<?> response = bookService.editBook(bookDto);
             return response;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/deleteBook/{bookId}")
     public ResponseEntity<?> deleteBook(@PathVariable int bookId) {
         ResponseEntity<?> response = bookService.deleteBook(bookId);

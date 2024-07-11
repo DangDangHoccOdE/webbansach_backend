@@ -29,6 +29,11 @@ public class WishListController {
         return iWishListService.addBookToWishList(wishListId,bookId);
     }
 
+
+    @PutMapping("/editWishListName")
+    public ResponseEntity<?> editWishListName(@RequestBody WishListDto wishListDto){
+        return iWishListService.editWishListName(wishListDto.getWishListId(),wishListDto.getNewWishListName());
+    }
     @DeleteMapping("/deleteWishList/{wishListId}")
     public ResponseEntity<?> deleteWishList(@PathVariable int wishListId){
         return iWishListService.deleteWishListById(wishListId);
@@ -37,6 +42,13 @@ public class WishListController {
     @GetMapping("/showWishList/{userId}")
     public ResponseEntity<?> showWishList(@PathVariable Long userId){
         return iWishListService.showWishListByUserId(userId);
+    }
+
+    @DeleteMapping("/deleteBookOfWishList")
+    public ResponseEntity<?> deleteBookOfWishList(@RequestBody Map<String,Integer> map){
+        int bookId = map.get("bookId");
+        int wishListId = map.get("wishListId");
+        return iWishListService.deleteBookOfWishList(bookId,wishListId);
     }
 
 }

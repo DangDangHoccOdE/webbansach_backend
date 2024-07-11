@@ -34,6 +34,7 @@ public class Endpoints {
 
     public static final String[] USER_DELETE_ENDPOINTS={
             "/wishList/deleteWishList/**",
+            "/wishList/deleteBookOfWishList/**",
     };
 
     public static final String[] ADMIN_GET_ENDPOINTS={
@@ -48,6 +49,7 @@ public class Endpoints {
     public static final String[] USER_PUT_ENDPOINTS={
             "/user/changeInfo",
             "/user/changeEmail",
+            "/wishList/editWishListName"
     };
 
     public static final String[] ADMIN_POST_ENDPOINTS={

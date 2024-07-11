@@ -11,4 +11,6 @@ public interface IWishListService {
     ResponseEntity<?> addWishList(WishListDto wishListDto);
     ResponseEntity<?> addBookToWishList(int wishListId, int bookId);
     ResponseEntity<JSONObject> showWishListByUserId(Long userId);
+    ResponseEntity<?> editWishListName(int wishListId,String wishListName);
+    ResponseEntity<?> deleteBookOfWishList(int bookId,int wishListId);
 }

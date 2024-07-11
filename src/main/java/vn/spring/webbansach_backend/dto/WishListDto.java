@@ -7,6 +7,9 @@ import lombok.Data;
 public class WishListDto {
     private Long userId;
 
+    private int wishListId;
+
+
     @NotBlank(message = "Tên danh sách yêu thích không được bỏ trống!")
     private String newWishListName;
 
