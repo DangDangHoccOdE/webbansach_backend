@@ -17,6 +17,9 @@ import java.util.Map;
 @Aspect
 @Component
 public class WishListAOP {
+
+    private static final String ACCESS_DENIED_MESSAGE = "Bạn không có quyền truy cập!";
+
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
@@ -25,45 +28,43 @@ public class WishListAOP {
     private WishListRepository wishListRepository;
 
     @Before("execution(* vn.spring.webbansach_backend.controller.WishListController.showWishList(..)) && args(..,userId)")
-    public void hasAccess(Long userId) throws AccessDeniedException{
-        if (!securityUtils.hasAccessByUserId(userId)) {
-            throw new AccessDeniedException("Bạn không có quyền truy cập!");
-        }
+    public void hasAccessByUserId(Long userId) throws AccessDeniedException {
+        checkAccessByUserId(userId);
     }
 
     @Before("execution(* vn.spring.webbansach_backend.controller.WishListController.deleteWishList(..)) && args(..,wishListId)")
-    public void hasAccess(int wishListId) throws AccessDeniedException{
+    public void hasAccessByWishListId(int wishListId) throws AccessDeniedException {
         User user = userRepository.findUserByWishList_WishListId(wishListId);
-        if (!securityUtils.hasAccessByUserId(user.getUserId())) {
-            throw new AccessDeniedException("Bạn không có quyền truy cập!");
-        }
+        checkAccessByUser(user);
     }
 
     @Before("(execution(* vn.spring.webbansach_backend.controller.WishListController.addWishList(..))" +
             "|| execution(* vn.spring.webbansach_backend.controller.WishListController.editWishListName(..))) && args(..,wishListDto)")
-    public void hasAccess(WishListDto wishListDto) throws AccessDeniedException{
+    public void hasAccessByWishListDto(WishListDto wishListDto) throws AccessDeniedException {
         WishList wishList = wishListRepository.findByWishListId(wishListDto.getWishListId());
-        if(wishList!=null){
-            User user = wishList.getUser();
-            if (!securityUtils.hasAccessByUserId(user.getUserId())) {
-                throw new AccessDeniedException("Bạn không có quyền truy cập!");
-            }
+        if (wishList != null) {
+            checkAccessByUser(wishList.getUser());
         }
-
     }
 
-    @Before("(execution(* vn.spring.webbansach_backend.controller.WishListController.addBookToWishList(..))"+
+    @Before("(execution(* vn.spring.webbansach_backend.controller.WishListController.addBookToWishList(..))" +
             "|| execution(* vn.spring.webbansach_backend.controller.WishListController.deleteBookOfWishList(..))) && args(..,map)")
-    public void hasAccess(Map<String,Integer> map) throws AccessDeniedException {
+    public void hasAccessByMap(Map<String, Integer> map) throws AccessDeniedException {
         WishList wishList = wishListRepository.findByWishListId(map.get("wishListId"));
         if (wishList != null) {
-            User user = wishList.getUser();
-            if (!securityUtils.hasAccessByUserId(user.getUserId())) {
-                throw new AccessDeniedException("Bạn không có quyền truy cập!");
-            }
+            checkAccessByUser(wishList.getUser());
         }
     }
 
+    private void checkAccessByUserId(Long userId) throws AccessDeniedException {
+        if (!securityUtils.hasAccessByUserId(userId)) {
+            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
+        }
+    }
 
-
+    private void checkAccessByUser(User user) throws AccessDeniedException {
+        if (user != null && !securityUtils.hasAccessByUserId(user.getUserId())) {
+            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
+        }
+    }
 }

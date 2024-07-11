@@ -68,7 +68,7 @@ public class UserService implements IUserService {
         if(userDto.getAvatar() != null && !userDto.getAvatar().isEmpty()){
             byte[] compressedImage =  userDto.getAvatar().getBytes();
             if(compressedImage.length>1048576){
-                return ResponseEntity.badRequest().body(new Notice(("Đã gặp lỗi do dung luượng ảnh quá lớn hoặc bị lỗi, vui lòng chọn ảnh khác!!")));
+                return ResponseEntity.badRequest().body(new Notice(("Đã gặp lỗi do dung luượng ảnh quá lớn hoặc bị lỗi, vui lòng chọn ảnh khác!")));
             }
         }
 
@@ -197,11 +197,11 @@ public class UserService implements IUserService {
         }
 
         if(emailDto.getEmail().equals(emailDto.getNewEmail())){
-            return ResponseEntity.badRequest().body(new Notice("Email mới không thể trùng email cũ!!"));
+            return ResponseEntity.badRequest().body(new Notice("Email mới không thể trùng email cũ!"));
         }
 
         if(existsNewEmail){
-            return ResponseEntity.badRequest().body(new Notice("Email mới đã tồn tại!!"));
+            return ResponseEntity.badRequest().body(new Notice("Email mới đã tồn tại!"));
         }
         user.setEmailCode(createRandomCode());
         LocalDateTime lcd = LocalDateTime.now().plusMinutes(10);
@@ -211,7 +211,7 @@ public class UserService implements IUserService {
         // send change email;
         sendEmailChange(user.getEmail(),user.getEmailCode(),emailDto.getNewEmail());
 
-        return ResponseEntity.ok(new Notice("Thay đổi email thành công, vui lòng vào email để xác nhận!!"));
+        return ResponseEntity.ok(new Notice("Thay đổi email thành công, vui lòng vào email để xác nhận!"));
     }
 
     private void sendEmailChange(String email,String emailCode,String emailNew){

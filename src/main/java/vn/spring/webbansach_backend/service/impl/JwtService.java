@@ -73,13 +73,13 @@ public class JwtService {
                 .compact();
     }
 
-    public String refreshAccessToken(String refreshToken) {
-        if (validateRefreshToken(refreshToken, SECRET_REFRESH_TOKEN)) {
-            String username = extractUserName(refreshToken, SECRET_REFRESH_TOKEN);
-            return generateToken(username);
-        }
-        throw new RuntimeException("Invalid refresh token");
-    }
+//    public String refreshAccessToken(String refreshToken) {
+//        if (validateRefreshToken(refreshToken, SECRET_REFRESH_TOKEN)) {
+//            String username = extractUserName(refreshToken, SECRET_REFRESH_TOKEN);
+//            return generateToken(username);
+//        }
+//        throw new RuntimeException("Invalid refresh token");
+//    }
 
     public String generateRefreshToken(String username) {
         Map<String, Object> claims = new HashMap<>();
@@ -96,7 +96,6 @@ public class JwtService {
         try{
             return Jwts.parser().setSigningKey(getSignKey(secret)).parseClaimsJws(token).getBody();
         }catch (JwtException e){
-            System.out.println("Lỗi: "+e.getMessage());
             throw new JwtTokenExpiredException("Access Token Expired!");
         }
     }
@@ -130,20 +129,20 @@ public class JwtService {
         return expiration.before(new Date());
     }
 
-    public String extractType(String token,String secret){
-        try {
-            Claims claims = Jwts.parser()
-                    .setSigningKey(getSignKey(secret)) // Thay yourSecretKey bằng mã secret tương ứng
-                    .parseClaimsJws(token)
-                    .getBody();
-
-            // Trích xuất thông tin từ payload
-            return (String) claims.get("type"); // Trả về giá trị của trường "type" trong payload
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
-    }
+//    public String extractType(String token,String secret){
+//        try {
+//            Claims claims = Jwts.parser()
+//                    .setSigningKey(getSignKey(secret)) // Thay yourSecretKey bằng mã secret tương ứng
+//                    .parseClaimsJws(token)
+//                    .getBody();
+//
+//            // Trích xuất thông tin từ payload
+//            return (String) claims.get("type"); // Trả về giá trị của trường "type" trong payload
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//            return null;
+//        }
+//    }
     public Boolean validateToken(String token, UserDetails userDetails, String secret) {
          String userName = extractUserName(token, secret);
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token, secret));

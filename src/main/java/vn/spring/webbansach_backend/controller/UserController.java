@@ -1,11 +1,9 @@
 package vn.spring.webbansach_backend.controller;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import jakarta.servlet.http.HttpServletRequest;
-import netscape.javascript.JSObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -60,20 +58,17 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Validated @RequestBody UserDto user) {
-        ResponseEntity<?> response = iUserService.registerUser(user);
-        return response;
+        return iUserService.registerUser(user);
     }
 
     @GetMapping("/activatedAccount")
     public ResponseEntity<?> activatedAccount(@RequestParam String email, @RequestParam String activationCode) {
-        ResponseEntity<?> response = iUserService.activatedAccount(email, activationCode);
-        return response;
+        return iUserService.activatedAccount(email, activationCode);
     }
 
     @GetMapping("/resendActivationCode")
     public ResponseEntity<?> resendActivationCode(@RequestParam String email) {
-        ResponseEntity<?> response = iUserService.resendActivationCode(email);
-        return response;
+        return iUserService.resendActivationCode(email);
     }
 
     @PostMapping("/login")
@@ -149,6 +144,7 @@ public class UserController {
         return iUserService.passwordChange(username,password,duplicatePassword);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/deleteUser/{username}")
     public ResponseEntity<?> deleteUser(@PathVariable String username){
         return iUserService.deleteUser(username);

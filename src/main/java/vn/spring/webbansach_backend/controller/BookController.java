@@ -30,15 +30,13 @@ public class BookController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/editBook")
     public ResponseEntity<?> editBook(@Validated @RequestBody BookDto bookDto) {
-            ResponseEntity<?> response = bookService.editBook(bookDto);
-            return response;
+            return bookService.editBook(bookDto);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/deleteBook/{bookId}")
     public ResponseEntity<?> deleteBook(@PathVariable int bookId) {
-        ResponseEntity<?> response = bookService.deleteBook(bookId);
-        return response;
+        return bookService.deleteBook(bookId);
     }
 
 }
