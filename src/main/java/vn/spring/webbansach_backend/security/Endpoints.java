@@ -65,6 +65,7 @@ public class Endpoints {
     public static final String[] ADMIN_DELETE_ENDPOINTS={
         "/admin/deleteBook/**",
         "/user/deleteUser/**",
+        "/category/deleteCategory/**",
     };
 
 
