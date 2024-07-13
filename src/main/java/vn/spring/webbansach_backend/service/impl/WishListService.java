@@ -33,9 +33,6 @@ public class WishListService implements IWishListService {
     @Override
     @Transactional
     public ResponseEntity<?> addWishList(WishListDto wishListDto) {
-        if(wishListDto.getNewWishListName().isEmpty()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Notice("Tên danh sách yêu thích mới không thể bỏ trống"));
-        }
         User user = iUserService.findUserByUserId(wishListDto.getUserId());
         if(user == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy người sử dụng!"));

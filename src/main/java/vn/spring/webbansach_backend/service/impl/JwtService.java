@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import vn.spring.webbansach_backend.entity.Role;
 import vn.spring.webbansach_backend.entity.User;
-import vn.spring.webbansach_backend.exception.JwtTokenExpiredException;
 import vn.spring.webbansach_backend.service.IUserSecurityService;
 
 import java.security.Key;
@@ -73,14 +72,6 @@ public class JwtService {
                 .compact();
     }
 
-//    public String refreshAccessToken(String refreshToken) {
-//        if (validateRefreshToken(refreshToken, SECRET_REFRESH_TOKEN)) {
-//            String username = extractUserName(refreshToken, SECRET_REFRESH_TOKEN);
-//            return generateToken(username);
-//        }
-//        throw new RuntimeException("Invalid refresh token");
-//    }
-
     public String generateRefreshToken(String username) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("type","refreshToken");
@@ -93,11 +84,7 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token, String secret) {
-        try{
             return Jwts.parser().setSigningKey(getSignKey(secret)).parseClaimsJws(token).getBody();
-        }catch (JwtException e){
-            throw new JwtTokenExpiredException("Access Token Expired!");
-        }
     }
 
     public <T> T extractClaims(String token, Function<Claims, T> claimsFunction, String secret) {
@@ -114,11 +101,7 @@ public class JwtService {
     }
 
     public String extractUserName(String token, String secret) {
-        try {
             return extractClaims(token, Claims::getSubject, secret);
-        } catch (JwtException e) {
-            throw new RuntimeException("Failed to extract username", e);
-        }
     }
 
     private Boolean isTokenExpired(String token, String secret) {
@@ -129,20 +112,6 @@ public class JwtService {
         return expiration.before(new Date());
     }
 
-//    public String extractType(String token,String secret){
-//        try {
-//            Claims claims = Jwts.parser()
-//                    .setSigningKey(getSignKey(secret)) // Thay yourSecretKey bằng mã secret tương ứng
-//                    .parseClaimsJws(token)
-//                    .getBody();
-//
-//            // Trích xuất thông tin từ payload
-//            return (String) claims.get("type"); // Trả về giá trị của trường "type" trong payload
-//        } catch (Exception e) {
-//            System.out.println(e.getMessage());
-//            return null;
-//        }
-//    }
     public Boolean validateToken(String token, UserDetails userDetails, String secret) {
          String userName = extractUserName(token, secret);
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token, secret));

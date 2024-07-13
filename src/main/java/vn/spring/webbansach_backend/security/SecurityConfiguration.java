@@ -1,6 +1,5 @@
 package vn.spring.webbansach_backend.security;
 
-import io.jsonwebtoken.Jwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,21 +13,22 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import vn.spring.webbansach_backend.exception.CustomAccessDeniedHandler;
+import vn.spring.webbansach_backend.exception.JwtAuthenticationEntryPoint;
 import vn.spring.webbansach_backend.filter.JwtFilter;
 import vn.spring.webbansach_backend.service.IUserSecurityService;
-import vn.spring.webbansach_backend.service.inter.IUserService;
 
-import java.nio.file.AccessDeniedException;
 import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+    @Autowired
+    private JwtAuthenticationEntryPoint authenticationEntryPoint;
+    @Autowired
+    private CustomBasicAuthenticationEntryPoint customBasicAuthenticationEntryPoint;
     @Autowired
     private JwtFilter jwtFilter;
     @Bean
@@ -73,10 +73,10 @@ public class SecurityConfiguration {
                         return configuration;
                     });
                 })
-                .exceptionHandling(exceptionHandling->exceptionHandling.accessDeniedHandler(new CustomAccessDeniedHandler()))
+                .exceptionHandling(exception->exception.authenticationEntryPoint(authenticationEntryPoint))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .httpBasic(Customizer.withDefaults())
+                .httpBasic(httpBasic->httpBasic.authenticationEntryPoint(customBasicAuthenticationEntryPoint))
                .csrf(csrfConfigurer->csrfConfigurer.disable());
 
         return httpSecurity.build();

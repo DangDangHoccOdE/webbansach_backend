@@ -1,5 +1,9 @@
 package vn.spring.webbansach_backend.filter;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import vn.spring.webbansach_backend.exception.JwtTokenExpiredException;
+import vn.spring.webbansach_backend.entity.Notice;
 import vn.spring.webbansach_backend.service.IUserSecurityService;
 import vn.spring.webbansach_backend.service.impl.JwtService;
 
@@ -38,14 +42,27 @@ public class JwtFilter extends OncePerRequestFilter {
             token = authHeader.substring(authHeader.startsWith("Bearer ")?7:14);
             tokenType = authHeader.startsWith("Bearer ")?JwtService.SECRET_ACCESS_TOKEN:JwtService.SECRET_REFRESH_TOKEN;
 
-            try {
+//            try {
                 username = jwtService.extractUserName(token, tokenType);
-            } catch (JwtTokenExpiredException e) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType("application/json");
-                response.getWriter().write("{\"error\": \"accessToken expired\"}");
-                return;
-            }
+//            } catch (JwtTokenExpiredException e) {
+//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                response.setContentType("application/json");
+//                response.getWriter().write("{\"error\": \"accessToken expired\"}");
+//                return;
+//            }
+                try {
+                    username = jwtService.extractUserName(token, tokenType);
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Token không hợp lệ", e);
+                } catch (ExpiredJwtException e) {
+                    throw new ExpiredJwtException(null, null, "Token đã hết hiệu lực");
+                } catch (SignatureException e) {
+                    throw new SignatureException("Chữ ký token không đúng", e);
+                } catch (MalformedJwtException e) {
+                    throw new MalformedJwtException("Token không đúng định dạng", e);
+                } catch (UnsupportedJwtException e) {
+                    throw new UnsupportedJwtException("Token không được hỗ trợ", e);
+                }
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
