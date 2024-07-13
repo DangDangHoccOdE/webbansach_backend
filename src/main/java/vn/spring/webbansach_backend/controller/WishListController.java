@@ -2,6 +2,7 @@ package vn.spring.webbansach_backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.spring.webbansach_backend.annotation.UserCheckAuthorize;
 import vn.spring.webbansach_backend.dto.WishListDto;
@@ -18,7 +19,7 @@ public class WishListController {
     @Autowired
     private MySecurityService mySecurityService;
     @PostMapping("/addWishList")
-    public ResponseEntity<?> addWishList(@RequestBody WishListDto wishListDto){
+    public ResponseEntity<?> addWishList(@Validated @RequestBody WishListDto wishListDto){
         return iWishListService.addWishList(wishListDto);
     }
 
@@ -31,7 +32,7 @@ public class WishListController {
 
 
     @PutMapping("/editWishListName")
-    public ResponseEntity<?> editWishListName(@RequestBody WishListDto wishListDto){
+    public ResponseEntity<?> editWishListName(@Validated @RequestBody WishListDto wishListDto){
         return iWishListService.editWishListName(wishListDto.getWishListId(),wishListDto.getNewWishListName());
     }
     @DeleteMapping("/deleteWishList/{wishListId}")

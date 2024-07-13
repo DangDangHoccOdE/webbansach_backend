@@ -24,6 +24,18 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
+    public ResponseEntity<?> addCategory(String newCategoryName) {
+        Category category = categoryRepository.findByCategoryName((newCategoryName));
+        if(category!=null){
+            return ResponseEntity.badRequest().body(new Notice("Tên thể loại đã tồn tại!"));
+        }
+        Category newCategory= new Category();
+        newCategory.setCategoryName(newCategoryName);
+        categoryRepository.save(newCategory);
+        return ResponseEntity.ok(new Notice("Đã thêm thể loại mới thành công!"));
+    }
+
+    @Override
     public ResponseEntity<?> deleteCategory(int categoryId) {
         Category category = categoryRepository.findByCategoryId(categoryId);
         if(category == null){

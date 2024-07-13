@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import vn.spring.webbansach_backend.dao.WishListRepository;
 import vn.spring.webbansach_backend.dto.WishListDto;
 import vn.spring.webbansach_backend.entity.Book;
@@ -32,6 +33,9 @@ public class WishListService implements IWishListService {
     @Override
     @Transactional
     public ResponseEntity<?> addWishList(WishListDto wishListDto) {
+        if(wishListDto.getNewWishListName().isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Notice("Tên danh sách yêu thích mới không thể bỏ trống"));
+        }
         User user = iUserService.findUserByUserId(wishListDto.getUserId());
         if(user == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy người sử dụng!"));

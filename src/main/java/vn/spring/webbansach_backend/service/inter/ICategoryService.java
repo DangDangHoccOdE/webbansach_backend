@@ -8,4 +8,6 @@ public interface ICategoryService {
     Category findCategoryByCategoryName(String name);
     Category findCategoryByCategoryId(int id);
     ResponseEntity<?> deleteCategory(int categoryId);
+
+    ResponseEntity<?> addCategory(String newCategoryName);
 }

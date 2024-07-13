@@ -13,9 +13,8 @@ public class Endpoints {
           "/category/**",
           "/remarks/**",
            "/account/activatedAccount",
-           "/account/resendActivationCode",
-//            "/users",
-            "/users/**",
+           "/account/resendActivationCode",//            "/users/**",
+
             "/user/confirmChangeEmail/**",
             "/user/confirmForgotPassword",
     };
@@ -38,7 +37,8 @@ public class Endpoints {
     };
 
     public static final String[] ADMIN_GET_ENDPOINTS={
-        "/"
+        "/",
+         "/users/**"
     };
  public static final String[] USER_GET_ENDPOINTS={
         "/wishList/showWishList/**",
@@ -55,7 +55,8 @@ public class Endpoints {
     public static final String[] ADMIN_POST_ENDPOINTS={
         "/admin/addBook",
         "/books",
-        "/books/**"
+        "/books/**",
+        "/category/addCategory"
     };
 
     public static final String[] ADMIN_PUT_ENDPOINTS={
