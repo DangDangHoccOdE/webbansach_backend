@@ -1,6 +1,7 @@
 package vn.spring.webbansach_backend.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,6 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import vn.spring.webbansach_backend.exception.CustomAccessDeniedHandler;
 import vn.spring.webbansach_backend.exception.JwtAuthenticationEntryPoint;
 import vn.spring.webbansach_backend.filter.JwtFilter;
 import vn.spring.webbansach_backend.service.IUserSecurityService;
@@ -26,11 +29,19 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfiguration {
     @Autowired
-    private JwtAuthenticationEntryPoint authenticationEntryPoint;
-    @Autowired
     private CustomBasicAuthenticationEntryPoint customBasicAuthenticationEntryPoint;
+
     @Autowired
-    private JwtFilter jwtFilter;
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
+
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver handlerExceptionResolver;
+
+    @Bean
+    public JwtFilter jwtFilter(){
+        return new JwtFilter(handlerExceptionResolver);
+    }
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -73,14 +84,17 @@ public class SecurityConfiguration {
                         return configuration;
                     });
                 })
-                .exceptionHandling(exception->exception.authenticationEntryPoint(authenticationEntryPoint))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(handling -> handling // Xử lý các lỗi 403 như @PreAuthorized
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                )
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .httpBasic(httpBasic->httpBasic.authenticationEntryPoint(customBasicAuthenticationEntryPoint))
+                .httpBasic(httpBasic->httpBasic.authenticationEntryPoint(customBasicAuthenticationEntryPoint)) //Tùy chọn cách xác thực ngoại lệ đăng nhập
                .csrf(csrfConfigurer->csrfConfigurer.disable());
 
         return httpSecurity.build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{

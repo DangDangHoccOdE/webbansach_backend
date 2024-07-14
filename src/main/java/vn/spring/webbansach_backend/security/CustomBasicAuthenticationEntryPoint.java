@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @Component
 public class CustomBasicAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    //
+    // giải quyết các exception xác thực đăng nhập
     private final HandlerExceptionResolver resolver;
     public CustomBasicAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver){
         this.resolver = resolver;
