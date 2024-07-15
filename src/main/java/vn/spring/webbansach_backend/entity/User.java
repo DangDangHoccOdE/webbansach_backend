@@ -49,7 +49,7 @@ public class User {
     private String purchaseAddress;
 
     @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.ALL},mappedBy = "user")
-    private List<Remark> remarkList;
+    private List<Review> reviewList;
 
     @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.ALL},mappedBy = "user")
     @JsonManagedReference
@@ -61,6 +61,9 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     @JoinTable(name = "user_role",joinColumns = @JoinColumn(name = "userId"),inverseJoinColumns = @JoinColumn(name = "roleId"))
     private List<Role> roleList;
+
+    @OneToOne(cascade = CascadeType.ALL,mappedBy = "user")
+    private Cart cart;
 
     @Column(name = "isActive")
     private boolean isActive;

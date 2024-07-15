@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import vn.spring.webbansach_backend.entity.Order;
-import vn.spring.webbansach_backend.entity.Remark;
+import vn.spring.webbansach_backend.entity.Review;
 import vn.spring.webbansach_backend.entity.Role;
 import vn.spring.webbansach_backend.entity.WishList;
 
@@ -43,7 +43,7 @@ public class UserDto {
 
         private String purchaseAddress;
 
-        private List<Remark> remarkList;
+        private List<Review> reviewList;
 
         private List<WishList> wishListList;
 

@@ -1,7 +1,6 @@
 package vn.spring.webbansach_backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
-import net.minidev.json.annotate.JsonIgnore;
 
 import java.util.*;
 @Getter
@@ -53,7 +52,7 @@ public class Book {
     private List<Image> imageList;
 
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "book")
-    private List<Remark> remarkList;
+    private List<Review> reviewList;
 
     @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST},mappedBy = "book")
     private List<OrderDetail> orderDetailList;
@@ -62,6 +61,16 @@ public class Book {
     @JoinTable(name = "book_wishlist",joinColumns = @JoinColumn(name = "bookId"),inverseJoinColumns = @JoinColumn(name = "wishListId"))
     private List<WishList> wishLists;
 
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH
+    })
+    @JoinTable(
+            name = "cart_book",
+            joinColumns = @JoinColumn(name = "bookId"),
+            inverseJoinColumns = @JoinColumn(name = "cartId")
+    )
+    private List<Cart> carts;
 
     @Override
     public boolean equals(Object o) {

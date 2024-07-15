@@ -11,10 +11,9 @@ public class Endpoints {
           "/users/search/existsByEmail",
           "/users/search/existsByUserName",
           "/category/**",
-          "/remarks/**",
+          "/feedbacks/**",
            "/account/activatedAccount",
-           "/account/resendActivationCode",//            "/users/**",
-
+           "/account/resendActivationCode",
             "/user/confirmChangeEmail/**",
             "/user/confirmForgotPassword",
     };
@@ -43,7 +42,8 @@ public class Endpoints {
  public static final String[] USER_GET_ENDPOINTS={
         "/wishList/showWishList/**",
          "/wish-list/**",
-         "/user/findUserByUsername/**"
+         "/user/findUserByUsername/**",
+         "/carts/**"
     };
 
     public static final String[] USER_PUT_ENDPOINTS={

@@ -7,12 +7,12 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "remark")
-public class Remark {
+@Table(name = "review")
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "remarkId")
-    private long remarkId;
+    @Column(name = "reviewId")
+    private long feedbackId;
 
     @Column(name = "rate")
     private float rate;

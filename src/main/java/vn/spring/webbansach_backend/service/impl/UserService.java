@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import vn.spring.webbansach_backend.dto.EmailDto;
 import vn.spring.webbansach_backend.dto.UserDto;
 import vn.spring.webbansach_backend.dao.UserRepository;
+import vn.spring.webbansach_backend.entity.Cart;
 import vn.spring.webbansach_backend.entity.Notice;
 import vn.spring.webbansach_backend.entity.User;
 import vn.spring.webbansach_backend.service.inter.IEmailService;
@@ -111,6 +112,11 @@ public class UserService implements IUserService {
         }
         if(activationCode.equals(user.getActivationCode())){
             user.setActive(true);
+
+            // Tạo giỏ hàng cho user
+            Cart cart = new Cart();
+            cart.setUser(user);
+
             userRepository.save(user);
             return ResponseEntity.ok(new Notice("Đã kích hoạt tài khoản thành công, đăng nhập tài khoản và sử dụng dịch vụ!"));
         }else{

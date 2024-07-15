@@ -17,8 +17,8 @@ import java.util.*;
 
 @Service
 public class CategoryService implements ICategoryService {
-    private CategoryRepository categoryRepository;
-    private IBookService iBookService;
+    private final CategoryRepository categoryRepository;
+    private final IBookService iBookService;
 
     @Autowired
     public CategoryService(CategoryRepository categoryRepository,@Lazy IBookService iBookService) {
