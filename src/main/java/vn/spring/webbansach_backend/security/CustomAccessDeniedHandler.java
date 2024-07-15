@@ -1,4 +1,4 @@
-package vn.spring.webbansach_backend.exception;
+package vn.spring.webbansach_backend.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -17,6 +17,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write("{\"message\": \"Bạn không có quyền truy cập!\"}");
+        response.getWriter().write("{\"message\": \"Bạn không có quyền truy cập !\"}");
     }
 }

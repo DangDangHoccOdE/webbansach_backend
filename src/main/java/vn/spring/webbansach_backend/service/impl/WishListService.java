@@ -5,6 +5,7 @@ import java.util.*;
 import jakarta.transaction.Transactional;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,12 +24,20 @@ import java.util.stream.Collectors;
 
 @Service
 public class WishListService implements IWishListService {
+    private final WishListRepository wishListRepository;
+    private final IUserService iUserService;
+    private final IBookService iBookService;
     @Autowired
-    private WishListRepository wishListRepository;
-    @Autowired
-    private IUserService iUserService;
-    @Autowired
-    private IBookService iBookService;
+    public WishListService(WishListRepository wishListRepository, IUserService iUserService, @Lazy IBookService iBookService) {
+        this.wishListRepository = wishListRepository;
+        this.iUserService = iUserService;
+        this.iBookService = iBookService;
+    }
+
+    @Override
+    public void saveWishList(WishList wishList) {
+        wishListRepository.save(wishList);
+    }
 
     @Override
     @Transactional

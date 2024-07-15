@@ -23,7 +23,6 @@ import vn.spring.webbansach_backend.service.IUserSecurityService;
 import vn.spring.webbansach_backend.service.impl.JwtService;
 
 import java.io.IOException;
-
 public class JwtFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver resolver;
     @Autowired

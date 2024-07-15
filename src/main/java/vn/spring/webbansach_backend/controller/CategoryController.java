@@ -24,8 +24,22 @@ public class CategoryController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/editCategory")
+    public ResponseEntity<?> deleteCategory(@Validated @RequestBody CategoryDto categoryDto){
+        return iCategoryService.editCategory(categoryDto);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/deleteCategory/{categoryId}")
     public ResponseEntity<?> deleteCategory(@PathVariable int categoryId){
         return iCategoryService.deleteCategory(categoryId);
     }
+
+   @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("{categoryIdNumber}/books/{bookIdNumber}")
+    public ResponseEntity<?> deleteBookOfCategory(@PathVariable int categoryIdNumber,@PathVariable int bookIdNumber){
+        return iCategoryService.deleteBookOfCategory(categoryIdNumber,bookIdNumber);
+    }
+
+
 }

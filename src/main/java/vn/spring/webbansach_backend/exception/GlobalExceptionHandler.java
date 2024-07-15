@@ -20,7 +20,6 @@ import vn.spring.webbansach_backend.entity.Notice;
 @RestControllerAdvice
 public class GlobalExceptionHandler{
     @ExceptionHandler(UsernameNotFoundException.class)  //Username not found
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> handleUsernameNotFoundException(UsernameNotFoundException e) {
         System.out.println("UsernameNotFound: "+e.getMessage());
         return ResponseEntity.badRequest().body(e.getMessage());
@@ -44,7 +43,7 @@ public class GlobalExceptionHandler{
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Notice("Mật khẩu không đúng"));
     }
 
-    @ExceptionHandler(InternalAuthenticationServiceException.class) // tài khoản sai
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
     public ResponseEntity<Notice> handleInternalAuthenticationServiceException(InternalAuthenticationServiceException e) {
         System.out.println("InternalAuthenticationServiceException:"+e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Notice("Tài khoản không đúng"));

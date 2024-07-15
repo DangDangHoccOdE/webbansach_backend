@@ -13,8 +13,12 @@ import vn.spring.webbansach_backend.service.impl.BookService;
 @RestController
 @RequestMapping("/admin")
 public class BookController {
+    private final BookService bookService;
     @Autowired
-    private BookService bookService;
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/addBook")
     public ResponseEntity<?> addBook(@Validated  @RequestBody BookDto bookDto){

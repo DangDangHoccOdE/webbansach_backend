@@ -18,8 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import vn.spring.webbansach_backend.exception.CustomAccessDeniedHandler;
-import vn.spring.webbansach_backend.exception.JwtAuthenticationEntryPoint;
 import vn.spring.webbansach_backend.filter.JwtFilter;
 import vn.spring.webbansach_backend.service.IUserSecurityService;
 
@@ -84,7 +82,7 @@ public class SecurityConfiguration {
                         return configuration;
                     });
                 })
-                .exceptionHandling(handling -> handling // Xử lý các lỗi 403 như @PreAuthorized
+                .exceptionHandling(handling -> handling // Xử lý các lỗi 403 như @PreAuthorized, hasRole("Admin")
                         .accessDeniedHandler(customAccessDeniedHandler)
                 )
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)

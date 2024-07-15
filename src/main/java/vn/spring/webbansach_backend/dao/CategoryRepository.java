@@ -8,5 +8,6 @@ import vn.spring.webbansach_backend.entity.Category;
 public interface CategoryRepository extends JpaRepository<Category,Integer> {
     Category findByCategoryName(String categoryName);
     Category findByCategoryId(int categoryId);
+    boolean existsByCategoryName(String categoryName);
     void deleteByCategoryId(int id);
 }

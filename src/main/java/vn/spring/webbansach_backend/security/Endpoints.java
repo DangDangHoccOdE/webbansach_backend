@@ -61,12 +61,14 @@ public class Endpoints {
 
     public static final String[] ADMIN_PUT_ENDPOINTS={
         "/admin/editBook",
+         "/category/editCategory"
     };
 
     public static final String[] ADMIN_DELETE_ENDPOINTS={
         "/admin/deleteBook/**",
         "/user/deleteUser/**",
         "/category/deleteCategory/**",
+        "/category/*/books/*"
     };
 
 

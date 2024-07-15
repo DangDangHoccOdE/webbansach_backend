@@ -2,29 +2,36 @@ package vn.spring.webbansach_backend.service.impl;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import vn.spring.webbansach_backend.dto.BookDto;
 import vn.spring.webbansach_backend.dao.BookRepository;
-import vn.spring.webbansach_backend.entity.Book;
+import vn.spring.webbansach_backend.entity.*;
+
 import java.util.*;
 
-import vn.spring.webbansach_backend.entity.Category;
-import vn.spring.webbansach_backend.entity.Image;
-import vn.spring.webbansach_backend.entity.Notice;
 import vn.spring.webbansach_backend.service.inter.IBookService;
 import vn.spring.webbansach_backend.service.inter.ICategoryService;
 import vn.spring.webbansach_backend.service.inter.IImageService;
+import vn.spring.webbansach_backend.service.inter.IWishListService;
 
 @Service
 public class BookService implements IBookService {
+    private final BookRepository bookRepository;
+    private final ICategoryService iCategoryService;
+
+    private final IWishListService iWishListService;
+
+    private final IImageService iImageService;
     @Autowired
-    private BookRepository bookRepository;
-    @Autowired
-    private ICategoryService iCategoryService;
-    @Autowired
-    private IImageService iImageService;
+    public BookService(BookRepository bookRepository,@Lazy ICategoryService iCategoryService, @Lazy IWishListService iWishListService, IImageService iImageService) {
+        this.bookRepository = bookRepository;
+        this.iCategoryService = iCategoryService;
+        this.iWishListService = iWishListService;
+        this.iImageService = iImageService;
+    }
 
     @Override
     @Transactional
@@ -94,6 +101,7 @@ public class BookService implements IBookService {
         List<Category> categoryList = new ArrayList<>();
         for(int id : bookDto.getCategoryList()){
             Category category = iCategoryService.findCategoryByCategoryId(id);
+            category.setBookQuantity(category.getBookQuantity()+1);
             categoryList.add(category);
         }
 
@@ -108,6 +116,7 @@ public class BookService implements IBookService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> deleteBook(int bookId) {
         Book book = bookRepository.findByBookId(bookId);
         if(book == null){
@@ -115,6 +124,17 @@ public class BookService implements IBookService {
         }
 
         try{
+            List<WishList> wishLists = book.getWishLists();
+            for(WishList wishList : wishLists){
+                wishList.setQuantity(wishList.getQuantity()-1);
+                iWishListService.saveWishList(wishList);
+            }
+
+            List<Category> categoryList = book.getCategoryList();
+            for(Category category : categoryList){
+                category.setBookQuantity(category.getBookQuantity()-1);
+                iCategoryService.saveCategory(category);
+            }
             bookRepository.delete(book);
             return ResponseEntity.ok(new Notice("Đã xóa sách thành công!"));
         }catch (Exception e){
