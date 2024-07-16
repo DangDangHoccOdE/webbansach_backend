@@ -28,11 +28,13 @@ public class Endpoints {
             "/user/refreshToken",
             "/wishList/addWishList",
             "/wishList/addBookToWishList",
+            "/cart-items"
     };
 
     public static final String[] USER_DELETE_ENDPOINTS={
             "/wishList/deleteWishList/**",
             "/wishList/deleteBookOfWishList/**",
+            "/cart-items/{cartItemId}"
     };
 
     public static final String[] ADMIN_GET_ENDPOINTS={
@@ -43,7 +45,7 @@ public class Endpoints {
         "/wishList/showWishList/**",
          "/wish-list/**",
          "/user/findUserByUsername/**",
-         "/carts/**"
+         "/cart-items/**"
     };
 
     public static final String[] USER_PUT_ENDPOINTS={

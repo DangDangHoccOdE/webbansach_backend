@@ -1,5 +1,6 @@
 package vn.spring.webbansach_backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,26 +10,23 @@ import java.util.*;
 @Data
 @NoArgsConstructor
 @Entity
-public class Cart {
+@Table(name = "cartItem")
+public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cartId")
-    private Long cartId;
+    @Column(name = "cartItemId")
+    private Long cartItemId;
 
     @Column(name = "quantity",nullable = false,columnDefinition = "int default 0")
     private int quantity=0;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "userId")
+    @ManyToOne(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
+    @JoinColumn(name = "userId",nullable = false)
     private User user;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {
             CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH
     })
-    @JoinTable(
-            name = "cart_book",
-            joinColumns = @JoinColumn(name = "cartId"),
-            inverseJoinColumns = @JoinColumn(name = "bookId")
-    )
-    private List<Book> books;
+    @JoinColumn(name = "bookId",nullable = false)
+    private Book books;
 }

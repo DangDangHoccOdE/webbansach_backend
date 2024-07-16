@@ -62,8 +62,8 @@ public class User {
     @JoinTable(name = "user_role",joinColumns = @JoinColumn(name = "userId"),inverseJoinColumns = @JoinColumn(name = "roleId"))
     private List<Role> roleList;
 
-    @OneToOne(cascade = CascadeType.ALL,mappedBy = "user")
-    private Cart cart;
+    @OneToMany(fetch = FetchType.LAZY,cascade ={CascadeType.ALL},mappedBy = "user")
+    private List<CartItem> cartItems;
 
     @Column(name = "isActive")
     private boolean isActive;

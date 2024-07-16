@@ -1,4 +1,5 @@
 package vn.spring.webbansach_backend.entity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,6 +9,7 @@ import java.util.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "book")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,15 +64,10 @@ public class Book {
     private List<WishList> wishLists;
 
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+    @OneToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH
-    })
-    @JoinTable(
-            name = "cart_book",
-            joinColumns = @JoinColumn(name = "bookId"),
-            inverseJoinColumns = @JoinColumn(name = "cartId")
-    )
-    private List<Cart> carts;
+    },mappedBy = "books")
+    private List<CartItem> cartItems;
 
     @Override
     public boolean equals(Object o) {

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import vn.spring.webbansach_backend.dto.EmailDto;
 import vn.spring.webbansach_backend.dto.UserDto;
 import vn.spring.webbansach_backend.dao.UserRepository;
-import vn.spring.webbansach_backend.entity.Cart;
+import vn.spring.webbansach_backend.entity.CartItem;
 import vn.spring.webbansach_backend.entity.Notice;
 import vn.spring.webbansach_backend.entity.User;
 import vn.spring.webbansach_backend.service.inter.IEmailService;
@@ -18,7 +18,6 @@ import vn.spring.webbansach_backend.utils.MaskEmail;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-import java.util.*;
 
 @Service
 public class UserService implements IUserService {
@@ -114,8 +113,8 @@ public class UserService implements IUserService {
             user.setActive(true);
 
             // Tạo giỏ hàng cho user
-            Cart cart = new Cart();
-            cart.setUser(user);
+            CartItem cartItem = new CartItem();
+            cartItem.setUser(user);
 
             userRepository.save(user);
             return ResponseEntity.ok(new Notice("Đã kích hoạt tài khoản thành công, đăng nhập tài khoản và sử dụng dịch vụ!"));
