@@ -17,13 +17,13 @@ public class CartItemController {
         this.iCartItemService = iCartItemService;
     }
 
-    @PostMapping()
+    @PostMapping("/addCartItem")
     public ResponseEntity<?> addCartItem(@Validated @RequestBody CartItemDto cartItemDto){
         return iCartItemService.addCartItem(cartItemDto);
     }
 
-    @DeleteMapping("/{cartItemId}")
-    public ResponseEntity<?> deleteBooksOfCart(@PathVariable long cartItemId){
+    @DeleteMapping("/deleteCartItem/{cartItemId}")
+    public ResponseEntity<?> deleteBooksOfCart(@PathVariable Long cartItemId){
         return iCartItemService.deleteCartItem(cartItemId);
     }
 }

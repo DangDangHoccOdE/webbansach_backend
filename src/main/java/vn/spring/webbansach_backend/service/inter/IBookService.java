@@ -7,7 +7,7 @@ import vn.spring.webbansach_backend.entity.Book;
 public interface IBookService {
     void addBook(BookDto bookDto);
     Book findBookById(int bookId);
-    ResponseEntity<?> editBook(BookDto bookDto);
-    ResponseEntity<?> deleteBook(int bookId);
+    ResponseEntity<?> editBook(Integer bookId,BookDto bookDto);
+    ResponseEntity<?> deleteBook(Integer bookId);
 
 }

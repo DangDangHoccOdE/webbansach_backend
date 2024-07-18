@@ -15,6 +15,8 @@ import vn.spring.webbansach_backend.service.inter.IBookService;
 import vn.spring.webbansach_backend.service.inter.ICartItemService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 
+import java.time.LocalDateTime;
+
 @Service
 public class CartItemService implements ICartItemService {
     private final CartItemRepository cartItemRepository;
@@ -41,11 +43,19 @@ public class CartItemService implements ICartItemService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy sách!"));
         }
 
-        CartItem cartItem = new CartItem();
-        cartItem.setUser(user);
-        cartItem.setQuantity(1);
-        cartItem.setBooks(book);
-        cartItemRepository.save(cartItem);
+        CartItem cartItemExist = cartItemRepository.findByBooks_BookIdAndUser_UserId(book.getBookId(),user.getUserId());
+        if(cartItemExist!=null){
+            cartItemExist.setQuantity(cartItemExist.getQuantity()+cartItemDto.getQuantity());
+            cartItemExist.setCreatedAt(LocalDateTime.now());
+            cartItemRepository.save(cartItemExist);
+        }else {
+            CartItem cartItem = new CartItem();
+            cartItem.setUser(user);
+            cartItem.setQuantity(cartItemDto.getQuantity());
+            cartItem.setBooks(book);
+            cartItem.setCreatedAt(LocalDateTime.now());
+            cartItemRepository.save(cartItem);
+        }
         return ResponseEntity.ok(new Notice("Thêm sản phẩm thành công!"));
     }
 

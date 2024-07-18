@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Data
@@ -29,4 +30,7 @@ public class CartItem {
     })
     @JoinColumn(name = "bookId",nullable = false)
     private Book books;
+
+    @Column(name = "createAt")
+    private LocalDateTime createdAt;
 }

@@ -11,7 +11,7 @@ import vn.spring.webbansach_backend.service.impl.BookService;
 
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/books")
 public class BookController {
     private final BookService bookService;
     @Autowired
@@ -32,9 +32,9 @@ public class BookController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/editBook")
-    public ResponseEntity<?> editBook(@Validated @RequestBody BookDto bookDto) {
-            return bookService.editBook(bookDto);
+    @PutMapping("/editBook/{bookId}")
+    public ResponseEntity<?> editBook(@PathVariable Integer bookId,@Validated @RequestBody BookDto bookDto) {
+            return bookService.editBook(bookId,bookDto);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

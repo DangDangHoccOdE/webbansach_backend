@@ -3,7 +3,6 @@ package vn.spring.webbansach_backend.security;
 public class Endpoints {
     public static final String front_end_host = "http://localhost:3000";
     public static final String[] PUBLIC_GET_ENDPOINTS={
-        "/books",
          "/books/**",
          "/images",
          "/images/**",
@@ -28,13 +27,13 @@ public class Endpoints {
             "/user/refreshToken",
             "/wishList/addWishList",
             "/wishList/addBookToWishList",
-            "/cart-items"
+            "/cart-items/addCartItem"
     };
 
     public static final String[] USER_DELETE_ENDPOINTS={
             "/wishList/deleteWishList/**",
             "/wishList/deleteBookOfWishList/**",
-            "/cart-items/{cartItemId}"
+            "/cart-items/deleteCartItem/{cartItemId}"
     };
 
     public static final String[] ADMIN_GET_ENDPOINTS={
@@ -55,14 +54,12 @@ public class Endpoints {
     };
 
     public static final String[] ADMIN_POST_ENDPOINTS={
-        "/admin/addBook",
-        "/books",
-        "/books/**",
+        "/books/addBook/**",
         "/category/addCategory"
     };
 
     public static final String[] ADMIN_PUT_ENDPOINTS={
-        "/admin/editBook",
+        "/books/editBook/{bookId}",
          "/category/editCategory"
     };
 

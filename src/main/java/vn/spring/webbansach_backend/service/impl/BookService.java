@@ -47,8 +47,8 @@ public class BookService implements IBookService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> editBook(BookDto bookDto) {
-        Book book = bookRepository.findByBookId(bookDto.getBookId());
+    public ResponseEntity<?> editBook(Integer bookId,BookDto bookDto) {
+        Book book = bookRepository.findByBookId(bookId);
         if(book==null){
           return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Sách không tồn tại!"));
         }else {
@@ -117,7 +117,7 @@ public class BookService implements IBookService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> deleteBook(int bookId) {
+    public ResponseEntity<?> deleteBook(Integer bookId) {
         Book book = bookRepository.findByBookId(bookId);
         if(book == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Sách không tồn tại!"));
