@@ -21,14 +21,15 @@ import java.util.UUID;
 
 @Service
 public class UserService implements IUserService {
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final IEmailService iEmailService;
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-    @Autowired
-    private IEmailService iEmailService;
-    @Autowired
-    private  JwtService jwtService;
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, IEmailService iEmailService) {
+        this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.iEmailService = iEmailService;
+    }
 
     @Override
     public Boolean existsUserByUsernameAndActiveIsTrue(String username) {

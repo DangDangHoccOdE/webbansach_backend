@@ -14,10 +14,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/wishList")
 public class WishListController {
+    private final IWishListService iWishListService;
     @Autowired
-    private IWishListService iWishListService;
-    @Autowired
-    private MySecurityService mySecurityService;
+    public WishListController(IWishListService iWishListService) {
+        this.iWishListService = iWishListService;
+    }
+
     @PostMapping("/addWishList")
     public ResponseEntity<?> addWishList(@Validated @RequestBody WishListDto wishListDto){
         return iWishListService.addWishList(wishListDto);

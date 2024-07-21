@@ -19,13 +19,17 @@ import java.util.Map;
 public class WishListAOP {
 
     private static final String ACCESS_DENIED_MESSAGE = "Bạn không có quyền truy cập!";
+    private final SecurityUtils securityUtils;
+    private final UserRepository userRepository;
+    private final WishListRepository wishListRepository;
+    @Autowired
+    public WishListAOP(SecurityUtils securityUtils, UserRepository userRepository, WishListRepository wishListRepository) {
+        this.securityUtils = securityUtils;
+        this.userRepository = userRepository;
+        this.wishListRepository = wishListRepository;
+    }
 
-    @Autowired
-    private SecurityUtils securityUtils;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private WishListRepository wishListRepository;
+
 
     @Before("execution(* vn.spring.webbansach_backend.controller.WishListController.showWishList(..)) && args(..,userId)")
     public void hasAccessByUserId(Long userId) throws AccessDeniedException {

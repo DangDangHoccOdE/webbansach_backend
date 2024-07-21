@@ -12,10 +12,11 @@ import vn.spring.webbansach_backend.service.inter.ICategoryService;
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
+    private final ICategoryService iCategoryService;
     @Autowired
-    private CategoryRepository categoryRepository;
-    @Autowired
-    private ICategoryService iCategoryService;
+    public CategoryController(ICategoryService iCategoryService) {
+        this.iCategoryService = iCategoryService;
+    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/addCategory")

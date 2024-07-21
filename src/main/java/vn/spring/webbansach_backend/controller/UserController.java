@@ -26,12 +26,16 @@ import net.minidev.json.JSONObject;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    private final AuthenticationManager authenticationManager;
+    private final IUserService iUserService;
+    private final JwtService jwtService;
     @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private IUserService iUserService;
-    @Autowired
-    private JwtService jwtService;
+    public UserController(AuthenticationManager authenticationManager, IUserService iUserService, JwtService jwtService) {
+        this.authenticationManager = authenticationManager;
+        this.iUserService = iUserService;
+        this.jwtService = jwtService;
+    }
+
     @GetMapping("/findUserByUsername")
     public ResponseEntity<JSONObject> findUserByUsername(@RequestParam String username){
         User user = iUserService.findUserByUsername(username);

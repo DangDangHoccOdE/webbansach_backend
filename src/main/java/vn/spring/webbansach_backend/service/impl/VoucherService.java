@@ -2,6 +2,7 @@ package vn.spring.webbansach_backend.service.impl;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import vn.spring.webbansach_backend.dao.VoucherRepository;
@@ -12,6 +13,7 @@ import vn.spring.webbansach_backend.service.inter.IVoucherService;
 import vn.spring.webbansach_backend.utils.ConvertStringToDate;
 
 import java.sql.Date;
+import java.util.Optional;
 
 @Service
 public class VoucherService implements IVoucherService {
@@ -41,5 +43,38 @@ public class VoucherService implements IVoucherService {
 
         voucherRepository.save(voucher);
         return ResponseEntity.ok(new Notice("Đã tạo voucher thành công"));
+    }
+
+    @Override
+    public ResponseEntity<?> editVoucherAdmin(long voucherId, VoucherDto voucherDto) {
+        Voucher voucher = voucherRepository.findByVoucherId(voucherId);
+        if(voucherRepository.existsByCode(voucherDto.getCode())){
+            return ResponseEntity.badRequest().body(new Notice("Mã voucher đã tồn tại!"));
+        }
+        if(voucher==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy voucher cần chỉnh sửa!"));
+        }
+        String expiredDate =voucherDto.getExpiredDate();
+        voucher.setExpiredDate(ConvertStringToDate.convert(expiredDate));
+        voucher.setVoucherImage(voucherDto.getVoucherImage());
+        voucher.setDiscountValue(voucherDto.getDiscountValue());
+        voucher.setCode(voucherDto.getCode());
+        voucher.setDescribe(voucherDto.getDescribe());
+        voucher.setIsActive(voucherDto.getIsActive());
+        voucher.setQuantity(voucherDto.getQuantity());
+        voucherRepository.save(voucher);
+        return ResponseEntity.ok(new Notice("Chỉnh sửa voucher thành công"));
+    }
+
+    @Override
+    public ResponseEntity<?> deleteVoucherAdmin(long voucherId) {
+        Voucher voucher = voucherRepository.findByVoucherId(voucherId);
+
+        if(voucher==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy voucher cần xóa!"));
+        }
+
+        voucherRepository.delete(voucher);
+        return ResponseEntity.ok(new Notice("Đã xóa voucher thành công!"));
     }
 }

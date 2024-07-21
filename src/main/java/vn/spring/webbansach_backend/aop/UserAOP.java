@@ -17,10 +17,13 @@ public class UserAOP {
 
     private static final String ACCESS_DENIED_MESSAGE = "Bạn không có quyền truy cập!";
 
+    private final SecurityUtils securityUtils;
+    private final UserRepository userRepository;
     @Autowired
-    private SecurityUtils securityUtils;
-    @Autowired
-    private UserRepository userRepository;
+    public UserAOP(SecurityUtils securityUtils, UserRepository userRepository) {
+        this.securityUtils = securityUtils;
+        this.userRepository = userRepository;
+    }
 
     @Before("execution(* vn.spring.webbansach_backend.controller.UserController.findUserByUsername(..)) && args(..,username)")
     public void hasAccessByUsername(String username) throws AccessDeniedException {
