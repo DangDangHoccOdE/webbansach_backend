@@ -44,8 +44,10 @@ public class Endpoints {
         "/wishList/showWishList/**",
          "/wish-list/**",
          "/user/findUserByUsername/**",
-         "/cart-items/**"
-    };
+         "/cart-items/**",
+         "/vouchers/**"
+
+ };
 
     public static final String[] USER_PUT_ENDPOINTS={
             "/user/changeInfo",
@@ -55,7 +57,8 @@ public class Endpoints {
 
     public static final String[] ADMIN_POST_ENDPOINTS={
         "/books/addBook/**",
-        "/category/addCategory"
+        "/category/addCategory",
+            "/vouchers/addVoucherAdmin"
     };
 
     public static final String[] ADMIN_PUT_ENDPOINTS={

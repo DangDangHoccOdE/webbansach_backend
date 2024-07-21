@@ -43,6 +43,9 @@ public class Order {
     @Column(name = "deliveryStatus")
     private String deliveryStatus;
 
+    @Column(name = "noteFromUser")
+    private String noteFromUser;
+
     @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     @JoinColumn(name = "paymentId",nullable = false)
     private Payment payment;
