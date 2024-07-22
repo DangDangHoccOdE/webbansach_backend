@@ -1,5 +1,6 @@
 package vn.spring.webbansach_backend.service.impl;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import vn.spring.webbansach_backend.utils.ConvertStringToDate;
 import vn.spring.webbansach_backend.utils.MaskEmail;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -29,6 +31,17 @@ public class UserService implements IUserService {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.iEmailService = iEmailService;
+    }
+
+    @Override
+    @Transactional
+    public User saveUser(User user) {
+        return userRepository.save((user));
+    }
+
+    @Override
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.spring.webbansach_backend.dto.VoucherDto;
 import vn.spring.webbansach_backend.service.impl.VoucherService;
+import java.util.*;
 
 @RequestMapping("/vouchers")
 @RestController
@@ -16,6 +17,11 @@ public class VoucherController {
     @Autowired
     public VoucherController(VoucherService voucherService) {
         this.voucherService = voucherService;
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/giftVouchersToUsers")
+    public ResponseEntity<?> giftVouchersToUsers( @RequestBody List<Long> selectedVouchers){
+        return voucherService.giftVouchersTouUsers(selectedVouchers);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

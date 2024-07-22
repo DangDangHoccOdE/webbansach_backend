@@ -1,5 +1,6 @@
 package vn.spring.webbansach_backend.service.impl;
 
+import jakarta.transaction.Transactional;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,20 +9,47 @@ import org.springframework.stereotype.Service;
 import vn.spring.webbansach_backend.dao.VoucherRepository;
 import vn.spring.webbansach_backend.dto.VoucherDto;
 import vn.spring.webbansach_backend.entity.Notice;
+import vn.spring.webbansach_backend.entity.User;
 import vn.spring.webbansach_backend.entity.Voucher;
 import vn.spring.webbansach_backend.service.inter.IVoucherService;
 import vn.spring.webbansach_backend.utils.ConvertStringToDate;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class VoucherService implements IVoucherService {
     private final VoucherRepository voucherRepository;
+    private final UserService userService;
 
     @Autowired
-    public VoucherService(VoucherRepository voucherRepository) {
+    public VoucherService(VoucherRepository voucherRepository, UserService userService) {
         this.voucherRepository = voucherRepository;
+        this.userService = userService;
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> giftVouchersTouUsers(List<Long> vouchersId) {
+        List<User> users = userService.findAllUsers();
+
+        List<Voucher> vouchers = new ArrayList<>();
+        for (Long voucherId : vouchersId){
+            Voucher voucher = voucherRepository.findByVoucherId(voucherId);
+            if(voucher==null){
+               return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy voucher cần tặng"));
+            }
+            vouchers.add(voucher);
+        }
+
+        for(User user : users){
+            List<Voucher> userVouchers = user.getVouchers();
+            userVouchers.addAll(vouchers);
+            userService.saveUser(user);
+        }
+        return ResponseEntity.ok(new Notice("Đã tặng thành công voucher cho tất cả người dùng"));
     }
 
     @Override

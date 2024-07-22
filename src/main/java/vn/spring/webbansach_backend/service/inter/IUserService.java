@@ -11,6 +11,8 @@ import java.security.Principal;
 import java.util.*;
 
 public interface IUserService {
+    User saveUser(User user);
+    List<User> findAllUsers();
     Boolean existsUserByUsernameAndActiveIsTrue(String username);
     User findUserByUserId(Long id);
     User findUserByUsername(String username);

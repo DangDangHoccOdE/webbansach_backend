@@ -58,7 +58,8 @@ public class Endpoints {
     public static final String[] ADMIN_POST_ENDPOINTS={
         "/books/addBook/**",
         "/category/addCategory",
-            "/vouchers/addVoucherAdmin"
+         "/vouchers/addVoucherAdmin",
+         "/vouchers/giftVouchersToUsers",
     };
 
     public static final String[] ADMIN_PUT_ENDPOINTS={
