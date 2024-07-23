@@ -12,6 +12,7 @@ import java.util.*;
 
 public interface IUserService {
     User saveUser(User user);
+    List<User> saveAllUser(List<User> users);
     List<User> findAllUsers();
     Boolean existsUserByUsernameAndActiveIsTrue(String username);
     User findUserByUserId(Long id);

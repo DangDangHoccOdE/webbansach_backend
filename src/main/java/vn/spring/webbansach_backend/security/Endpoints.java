@@ -74,7 +74,8 @@ public class Endpoints {
         "/user/deleteUser/**",
         "/category/deleteCategory/**",
         "/category/*/books/*",
-        "/vouchers/deleteVoucherAdmin/{voucherId}"
+        "/vouchers/deleteVoucherAdmin/{voucherId}",
+         "/vouchers/deleteVouchersSelected"
     };
 
 

@@ -39,4 +39,9 @@ public class VoucherController {
     public ResponseEntity<?> addVoucherAdmin(@PathVariable long voucherId){
         return voucherService.deleteVoucherAdmin(voucherId);
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/deleteVouchersSelected")
+    public ResponseEntity<?> deleteVouchersSelected(@RequestBody List<Long> selectedVouchers){
+        return voucherService.deleteVouchersSelected(selectedVouchers);
+    }
 }

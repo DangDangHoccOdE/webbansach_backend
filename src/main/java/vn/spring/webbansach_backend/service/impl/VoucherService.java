@@ -34,20 +34,31 @@ public class VoucherService implements IVoucherService {
     @Transactional
     public ResponseEntity<?> giftVouchersTouUsers(List<Long> vouchersId) {
         List<User> users = userService.findAllUsers();
-
-        List<Voucher> vouchers = new ArrayList<>();
-        for (Long voucherId : vouchersId){
-            Voucher voucher = voucherRepository.findByVoucherId(voucherId);
-            if(voucher==null){
-               return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy voucher cần tặng"));
-            }
-            vouchers.add(voucher);
+        if(users.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy người cần tặng"));
         }
+
+        List<Voucher> vouchers = voucherRepository.findAllById(vouchersId);
+        if(vouchers.size()!=vouchersId.size()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy voucher cần tặng"));
+        }
+
+        int batchSize = 20; // Đặt max người là 20 => Lưu theo lô
+        List<User> batch =new ArrayList<>(batchSize);
 
         for(User user : users){
             List<Voucher> userVouchers = user.getVouchers();
             userVouchers.addAll(vouchers);
-            userService.saveUser(user);
+            batch.add(user);
+
+            if(batch.size() == batchSize){
+                userService.saveAllUser(batch);
+                batch.clear();
+            }
+        }
+
+        if(!batch.isEmpty()){
+            userService.saveAllUser(batch);
         }
         return ResponseEntity.ok(new Notice("Đã tặng thành công voucher cho tất cả người dùng"));
     }
@@ -104,5 +115,18 @@ public class VoucherService implements IVoucherService {
 
         voucherRepository.delete(voucher);
         return ResponseEntity.ok(new Notice("Đã xóa voucher thành công!"));
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> deleteVouchersSelected(List<Long> vouchersId) {
+        List<Voucher> vouchers = voucherRepository.findAllById(vouchersId);
+
+        if(vouchers.size()!=vouchersId.size()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy voucher cần xóa!"));
+        }
+
+        voucherRepository.deleteAll(vouchers);
+        return ResponseEntity.ok(new Notice("Đã xóa voucher đã chọn thành công!"));
     }
 }

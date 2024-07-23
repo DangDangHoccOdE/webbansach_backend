@@ -40,6 +40,11 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public List<User> saveAllUser(List<User> user) {
+        return userRepository.saveAll((user));
+    }
+
+    @Override
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }

@@ -9,4 +9,5 @@ public interface IVoucherService {
     ResponseEntity<?> giftVouchersTouUsers(List<Long> vouchersId);
     ResponseEntity<?> editVoucherAdmin(long voucherId,VoucherDto voucherDto);
     ResponseEntity<?> deleteVoucherAdmin(long voucherId);
+    ResponseEntity<?> deleteVouchersSelected(List<Long> vouchersId);
 }
