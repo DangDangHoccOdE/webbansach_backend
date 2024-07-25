@@ -1,5 +1,6 @@
 package vn.spring.webbansach_backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,6 +40,13 @@ public class Voucher {
     @Column(name = "isActive",nullable = false)
     private Boolean isActive;
 
+    @Column(name = "isAvailable",nullable = false)
+    private Boolean isAvailable;
+
+    @Column(name = "typeVoucher",nullable = false)
+    private String typeVoucher;
+
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.DETACH,CascadeType.REFRESH,CascadeType.MERGE,CascadeType.PERSIST})
     @JoinTable(name = "user_voucher",joinColumns = @JoinColumn(name = "voucherId"),inverseJoinColumns = @JoinColumn(name = "userId"))
     private List<User> users;

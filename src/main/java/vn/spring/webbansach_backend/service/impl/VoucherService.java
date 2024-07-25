@@ -15,8 +15,13 @@ import vn.spring.webbansach_backend.service.inter.IVoucherService;
 import vn.spring.webbansach_backend.utils.ConvertStringToDate;
 
 import java.sql.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -28,6 +33,46 @@ public class VoucherService implements IVoucherService {
     public VoucherService(VoucherRepository voucherRepository, UserService userService) {
         this.voucherRepository = voucherRepository;
         this.userService = userService;
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> saveVoucherByUser(Map<String, Integer> voucherByUserMap) {
+        long userId = voucherByUserMap.get("userId");
+        long voucherId = voucherByUserMap.get("voucherId");
+
+        User user = userService.findUserByUserId(userId);
+        Voucher voucher = voucherRepository.findByVoucherId(voucherId);
+
+        if(user == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy người sử dụng!"));
+        }if(voucher == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy voucher"));
+        }
+
+        List<Voucher> vouchers = user.getVouchers();
+        vouchers.add(voucher);
+        userService.saveUser(user);
+        return ResponseEntity.ok(new Notice("Đã lưu voucher thành công"));
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> addVouchersToVoucherAvailable(List<Long> vouchersId) {
+        List<Voucher> vouchers = voucherRepository.findAllById(vouchersId);
+
+        if(vouchers.size()!=vouchersId.size()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy voucher cần thêm!"));
+        }
+
+        for(Voucher voucher:vouchers){
+            if(voucher.getIsAvailable()){
+                break;
+            }
+            voucher.setIsAvailable(true);
+        }
+        voucherRepository.saveAll(vouchers);
+        return ResponseEntity.ok(new Notice("Đã thêm voucher vào danh sách voucher có sẵn thành công!"));
     }
 
     @Override
@@ -64,6 +109,25 @@ public class VoucherService implements IVoucherService {
     }
 
     @Override
+    @Transactional
+    public ResponseEntity<?> updateIsActive(Long voucherId) {
+        Voucher voucher = voucherRepository.findByVoucherId(voucherId);
+
+        if(voucher == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy voucher"));
+        }
+
+        LocalDateTime nowDate = LocalDateTime.now().minusDays(1);
+        LocalDateTime expiredTime = voucher.getExpiredDate().toLocalDate().atStartOfDay();
+        if(expiredTime.isBefore(nowDate) && voucher.getIsActive()) {
+            voucher.setIsActive(false);
+            voucherRepository.save(voucher);
+            return ResponseEntity.ok().body(voucher);
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @Override
     public ResponseEntity<?> addVoucherAdmin(VoucherDto voucherDto) {
         if(voucherRepository.existsByCode(voucherDto.getCode())){
             return ResponseEntity.badRequest().body(new Notice("Mã voucher đã tồn tại!"));
@@ -72,6 +136,13 @@ public class VoucherService implements IVoucherService {
         Date date = ConvertStringToDate.convert(expiredDate);
 
         Voucher voucher = new Voucher();
+        setVoucher(voucher,voucherDto,date);
+
+        voucherRepository.save(voucher);
+        return ResponseEntity.ok(new Notice("Đã tạo voucher thành công"));
+    }
+
+    private static void setVoucher(Voucher voucher,VoucherDto voucherDto, Date date) {
         voucher.setCode(voucherDto.getCode());
         voucher.setVoucherImage(voucherDto.getVoucherImage());
         voucher.setDiscountValue(voucherDto.getDiscountValue());
@@ -79,28 +150,24 @@ public class VoucherService implements IVoucherService {
         voucher.setDescribe(voucherDto.getDescribe());
         voucher.setQuantity(voucherDto.getQuantity());
         voucher.setExpiredDate(date);
-
-        voucherRepository.save(voucher);
-        return ResponseEntity.ok(new Notice("Đã tạo voucher thành công"));
+        voucher.setIsAvailable(voucherDto.getIsAvailable());
+        voucher.setTypeVoucher(voucherDto.getTypeVoucher());
     }
 
     @Override
     public ResponseEntity<?> editVoucherAdmin(long voucherId, VoucherDto voucherDto) {
         Voucher voucher = voucherRepository.findByVoucherId(voucherId);
-        if(voucherRepository.existsByCode(voucherDto.getCode())){
+        Voucher voucherByCode = voucherRepository.findByCode(voucherDto.getCode());
+        if(voucherRepository.existsByCode(voucherDto.getCode()) && !voucherByCode.getVoucherId().equals(voucherDto.getVoucherId())){
             return ResponseEntity.badRequest().body(new Notice("Mã voucher đã tồn tại!"));
         }
         if(voucher==null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy voucher cần chỉnh sửa!"));
         }
-        String expiredDate =voucherDto.getExpiredDate();
-        voucher.setExpiredDate(ConvertStringToDate.convert(expiredDate));
-        voucher.setVoucherImage(voucherDto.getVoucherImage());
-        voucher.setDiscountValue(voucherDto.getDiscountValue());
-        voucher.setCode(voucherDto.getCode());
-        voucher.setDescribe(voucherDto.getDescribe());
-        voucher.setIsActive(voucherDto.getIsActive());
-        voucher.setQuantity(voucherDto.getQuantity());
+        String expiredDate = voucherDto.getExpiredDate();
+        Date date = ConvertStringToDate.convert(expiredDate);
+
+        setVoucher(voucher,voucherDto,date);
         voucherRepository.save(voucher);
         return ResponseEntity.ok(new Notice("Chỉnh sửa voucher thành công"));
     }

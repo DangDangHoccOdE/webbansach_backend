@@ -29,4 +29,9 @@ public class VoucherDto {
     private String voucherImage;
 
     private Boolean isActive;
+    private Boolean isAvailable;
+
+    @NotBlank(message = "Không thể bỏ trống loại voucher")
+    private String typeVoucher;
+
 }

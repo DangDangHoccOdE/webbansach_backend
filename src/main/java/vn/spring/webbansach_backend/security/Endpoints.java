@@ -11,10 +11,11 @@ public class Endpoints {
           "/users/search/existsByUserName",
           "/category/**",
           "/feedbacks/**",
-           "/account/activatedAccount",
-           "/account/resendActivationCode",
+           "/user/activatedAccount",
+           "/user/resendActivationCode",
             "/user/confirmChangeEmail/**",
             "/user/confirmForgotPassword",
+            "vouchers/search/findByIsAvailable/**"
     };
     public static final String[] PUBLIC_POST_ENDPOINTS={
         "/user/register",
@@ -23,11 +24,16 @@ public class Endpoints {
             "/user/passwordChange"
 
     };
+
+    public static final String[] PUBLIC_PUT_ENDPOINTS={
+            "/vouchers/updateIsActive/{voucherId}",
+    };
     public static final String[] USER_POST_ENDPOINTS={
             "/user/refreshToken",
             "/wishList/addWishList",
             "/wishList/addBookToWishList",
-            "/cart-items/addCartItem"
+            "/cart-items/addCartItem",
+            "/vouchers/saveVoucherByUser"
     };
 
     public static final String[] USER_DELETE_ENDPOINTS={
@@ -60,6 +66,7 @@ public class Endpoints {
         "/category/addCategory",
          "/vouchers/addVoucherAdmin",
          "/vouchers/giftVouchersToUsers",
+         "/vouchers/addVouchersToVoucherAvailable",
     };
 
     public static final String[] ADMIN_PUT_ENDPOINTS={

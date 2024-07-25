@@ -30,9 +30,24 @@ public class VoucherController {
         return voucherService.addVoucherAdmin(voucherDto);
     }
     @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/addVouchersToVoucherAvailable")
+    public ResponseEntity<?> addVouchersToVoucherAvailable(@RequestBody List<Long> selectedVouchers){
+        return voucherService.addVouchersToVoucherAvailable(selectedVouchers);
+    }
+
+    @PostMapping("/saveVoucherByUser")
+    public ResponseEntity<?> saveVoucherByUser(@RequestBody Map<String,Integer> voucherByUserMap){
+        return voucherService.saveVoucherByUser(voucherByUserMap);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/editVoucherAdmin/{voucherId}")
-    public ResponseEntity<?> addVoucherAdmin(@PathVariable long voucherId,@Validated @RequestBody VoucherDto voucherDto){
+    public ResponseEntity<?> editVoucherAdmin(@PathVariable long voucherId,@Validated @RequestBody VoucherDto voucherDto){
         return voucherService.editVoucherAdmin(voucherId,voucherDto);
+    }
+    @PutMapping("/updateIsActive/{voucherId}")
+    public ResponseEntity<?> updateIsActive(@PathVariable long voucherId){
+        return voucherService.updateIsActive(voucherId);
     }
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/deleteVoucherAdmin/{voucherId}")
