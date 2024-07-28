@@ -15,7 +15,7 @@ public class Endpoints {
            "/user/resendActivationCode",
             "/user/confirmChangeEmail/**",
             "/user/confirmForgotPassword",
-            "vouchers/search/findByIsAvailable/**"
+            "vouchers/search/findByIsAvailableAndIsActive/**"
     };
     public static final String[] PUBLIC_POST_ENDPOINTS={
         "/user/register",
