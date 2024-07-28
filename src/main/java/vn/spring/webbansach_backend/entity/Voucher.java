@@ -46,6 +46,7 @@ public class Voucher {
     @Column(name = "typeVoucher",nullable = false)
     private String typeVoucher;
 
+    @JsonIgnore
     @OneToMany(mappedBy ="voucher",fetch = FetchType.LAZY,cascade = {CascadeType.DETACH,CascadeType.REFRESH,CascadeType.MERGE,CascadeType.PERSIST})
     private List<UserVoucher> userVouchers;
 }

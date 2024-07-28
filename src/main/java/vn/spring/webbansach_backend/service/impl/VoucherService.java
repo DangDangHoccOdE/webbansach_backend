@@ -1,15 +1,19 @@
 package vn.spring.webbansach_backend.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import vn.spring.webbansach_backend.dao.UserVoucherRepository;
 import vn.spring.webbansach_backend.dao.VoucherRepository;
 import vn.spring.webbansach_backend.dto.VoucherDto;
 import vn.spring.webbansach_backend.entity.Notice;
 import vn.spring.webbansach_backend.entity.User;
+import vn.spring.webbansach_backend.entity.UserVoucher;
 import vn.spring.webbansach_backend.entity.Voucher;
 import vn.spring.webbansach_backend.service.inter.IVoucherService;
 import vn.spring.webbansach_backend.utils.ConvertStringToDate;
@@ -28,11 +32,56 @@ import java.util.Optional;
 public class VoucherService implements IVoucherService {
     private final VoucherRepository voucherRepository;
     private final UserService userService;
+    private final UserVoucherRepository userVoucherRepository;
+    private final EntityManager entityManager;
 
     @Autowired
-    public VoucherService(VoucherRepository voucherRepository, UserService userService) {
+    public VoucherService(VoucherRepository voucherRepository, UserService userService, UserVoucherRepository userVoucherRepository, EntityManager entityManager) {
         this.voucherRepository = voucherRepository;
         this.userService = userService;
+        this.userVoucherRepository = userVoucherRepository;
+        this.entityManager = entityManager;
+    }
+
+    @Override
+    public ResponseEntity<?> showVoucherByUserId(Long userId) {
+        User user = userService.findUserByUserId(userId);
+
+        if(user==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy người sử dụng"));
+        }
+
+        List<Voucher> vouchers = new ArrayList<>();
+        List<UserVoucher> userVouchers = user.getUserVouchers();
+        for(UserVoucher userVoucher : userVouchers){
+            Voucher voucher = voucherRepository.findByVoucherId(userVoucher.getVoucher().getVoucherId());
+            vouchers.add(voucher);
+        }
+        return ResponseEntity.ok(vouchers);
+    }
+
+    @Override
+    public ResponseEntity<?> findVoucherByVoucherCodeAndUserId(String code, Long userId) {
+        Voucher voucher = voucherRepository.findByCode(code);
+        User user = userService.findUserByUserId(userId);
+
+        if(user==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy người sử dụng"));
+        }
+
+        if(voucher!=null){
+            // Check xem voucher có phải của user k ?
+            List<UserVoucher> userVouchers = user.getUserVouchers();
+            for(UserVoucher userVoucher:userVouchers){
+                if(userVoucher.getVoucher().getCode().equals(voucher.getCode())){
+                    List<Voucher> vouchers = new ArrayList<>();
+                    vouchers.add(voucher);
+                    return ResponseEntity.ok(vouchers);
+                }
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy voucher"));
     }
 
     @Override
@@ -50,9 +99,20 @@ public class VoucherService implements IVoucherService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy voucher"));
         }
 
-        List<Voucher> vouchers = user.getVouchers();
-        vouchers.add(voucher);
-        userService.saveUser(user);
+        UserVoucher userVoucher = userVoucherRepository.findByVoucher_CodeAndUser_UserId(voucher.getCode(),userId);
+        UserVoucher userVoucherFind ;
+
+        if(userVoucher==null){
+            userVoucherFind = new UserVoucher();
+            userVoucherFind.setVoucher(voucher);
+            userVoucherFind.setUser(user);
+            userVoucherFind.setQuantity(1);
+        }else{
+            userVoucherFind = userVoucher;
+            userVoucherFind.setQuantity(userVoucherFind.getQuantity()+1);
+        }
+
+        userVoucherRepository.save(userVoucherFind);
         return ResponseEntity.ok(new Notice("Đã lưu voucher thành công"));
     }
 
@@ -84,27 +144,31 @@ public class VoucherService implements IVoucherService {
         }
 
         List<Voucher> vouchers = voucherRepository.findAllById(vouchersId);
-        if(vouchers.size()!=vouchersId.size()){
+        if(vouchers.size()!=vouchersId.size() || vouchers.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy voucher cần tặng"));
         }
 
         int batchSize = 20; // Đặt max người là 20 => Lưu theo lô
-        List<User> batch =new ArrayList<>(batchSize);
+        int count = 0;
+        String sql;
+        sql = "INSERT INTO user_voucher (user_id, voucher_id, quantity)"+
+                    "VALUE (:userId, :voucherId, 1)"+
+                    "ON DUPLICATE KEY UPDATE quantity = quantity + 1";
+        Query query = entityManager.createNativeQuery(sql);
 
         for(User user : users){
-            List<Voucher> userVouchers = user.getVouchers();
-            userVouchers.addAll(vouchers);
-            batch.add(user);
+            for(Voucher voucher: vouchers){
+                query.setParameter("userId",user.getUserId());
+                query.setParameter("voucherId",voucher.getVoucherId());
+                query.executeUpdate();
 
-            if(batch.size() == batchSize){
-                userService.saveAllUser(batch);
-                batch.clear();
+                if(++count % batchSize == 0){
+                    entityManager.flush();
+                    entityManager.clear();
+                }
             }
         }
 
-        if(!batch.isEmpty()){
-            userService.saveAllUser(batch);
-        }
         return ResponseEntity.ok(new Notice("Đã tặng thành công voucher cho tất cả người dùng"));
     }
 

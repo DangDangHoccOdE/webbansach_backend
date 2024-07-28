@@ -1,18 +1,17 @@
 package vn.spring.webbansach_backend.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_voucher")
 public class UserVoucher {
     @EmbeddedId
-    private UserVoucherId id;
+    private UserVoucherId id=new UserVoucherId();
 
     @ManyToOne
     @MapsId("userId")

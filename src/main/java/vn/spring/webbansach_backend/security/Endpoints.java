@@ -51,8 +51,10 @@ public class Endpoints {
          "/wish-list/**",
          "/user/findUserByUsername/**",
          "/cart-items/**",
-         "/vouchers/**"
-
+         "/vouchers/**",
+         "/user-voucher/**",
+         "/vouchers/findVoucherByVoucherCodeAndUserId/{code}/{userId}",
+         "/vouchers/showVoucherByUserId/{userId}"
  };
 
     public static final String[] USER_PUT_ENDPOINTS={

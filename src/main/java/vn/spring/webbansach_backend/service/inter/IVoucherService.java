@@ -5,6 +5,8 @@ import vn.spring.webbansach_backend.dto.VoucherDto;
 import java.util.*;
 
 public interface IVoucherService {
+    ResponseEntity<?> showVoucherByUserId(Long userId);
+    ResponseEntity<?> findVoucherByVoucherCodeAndUserId(String code,Long userId);
     ResponseEntity<?> addVoucherAdmin(VoucherDto voucherDto);
     ResponseEntity<?> saveVoucherByUser(Map<String,Integer> voucherByUserMap);
     ResponseEntity<?> addVouchersToVoucherAvailable(List<Long> vouchersId);

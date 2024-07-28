@@ -18,6 +18,18 @@ public class VoucherController {
     public VoucherController(VoucherService voucherService) {
         this.voucherService = voucherService;
     }
+    @GetMapping("/findVoucherByVoucherCodeAndUserId/{code}/{userId}")
+    public ResponseEntity<?> findVoucherByVoucherCodeAndUserId(@PathVariable String code,@PathVariable Long userId){
+        return voucherService.findVoucherByVoucherCodeAndUserId(code,userId);
+    }
+
+
+
+    @GetMapping("/showVoucherByUserId/{userId}")
+    public ResponseEntity<?> showVoucherByUserId(@PathVariable Long userId){
+        return voucherService.showVoucherByUserId(userId);
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/giftVouchersToUsers")
     public ResponseEntity<?> giftVouchersToUsers( @RequestBody List<Long> selectedVouchers){
