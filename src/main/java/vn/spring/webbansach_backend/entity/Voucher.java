@@ -46,8 +46,6 @@ public class Voucher {
     @Column(name = "typeVoucher",nullable = false)
     private String typeVoucher;
 
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.DETACH,CascadeType.REFRESH,CascadeType.MERGE,CascadeType.PERSIST})
-    @JoinTable(name = "user_voucher",joinColumns = @JoinColumn(name = "voucherId"),inverseJoinColumns = @JoinColumn(name = "userId"))
-    private List<User> users;
+    @OneToMany(mappedBy ="voucher",fetch = FetchType.LAZY,cascade = {CascadeType.DETACH,CascadeType.REFRESH,CascadeType.MERGE,CascadeType.PERSIST})
+    private List<UserVoucher> userVouchers;
 }

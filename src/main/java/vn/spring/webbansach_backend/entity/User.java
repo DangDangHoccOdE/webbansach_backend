@@ -65,9 +65,8 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY,cascade ={CascadeType.ALL},mappedBy = "user")
     private List<CartItem> cartItems;
 
-    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
-    @JoinTable(name = "user_voucher",joinColumns = @JoinColumn(name = "userId"),inverseJoinColumns = @JoinColumn(name = "voucherId"))
-    private List<Voucher> vouchers;
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
+    private List<UserVoucher> userVouchers;
 
     @Column(name = "isActive")
     private boolean isActive;
