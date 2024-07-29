@@ -16,10 +16,10 @@ public class Book {
     @Column(name = "bookId")
     private int bookId;
 
-    @Column(name = "bookName")
+    @Column(name = "bookName",nullable = false)
     private String bookName;
 
-    @Column(name = "author",length = 512)
+    @Column(name = "author",length = 512,nullable = false)
     private String author;
 
     @Column(name = "isbn")
@@ -28,23 +28,33 @@ public class Book {
     @Column(name = "description",columnDefinition = "text")
     private String description ;
 
-    @Column(name = "price")
+    @Column(name = "price",nullable = false)
     private double price;
 
     @Column(name = "listedPrice")
     private double listedPrice;
 
-    @Column(name = "quantity")
+    @Column(name = "quantity",nullable = false)
     private int quantity;
 
-    @Column(name = "averageRate")
+    @Column(name = "averageRate",nullable = false)
     private double averageRate;
 
-    @Column(name="soldQuantity")
+    @Column(name="soldQuantity",nullable = false)
     private int soldQuantity;
 
     @Column(name="discountPercent")
     private float discountPercent;
+
+    @Column(name = "publishingYear",nullable = false)
+    private int publishingYear;
+
+    @Column(name = "pageNumber",nullable = false)
+    private int pageNumber;
+
+    @Column(name = "language",nullable = false)
+    private String language;
+
 
     @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     @JoinTable(name = "book_category",joinColumns = @JoinColumn(name = "bookId"),inverseJoinColumns = @JoinColumn(name = "categoryId"))
