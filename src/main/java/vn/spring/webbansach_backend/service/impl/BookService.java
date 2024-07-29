@@ -74,6 +74,9 @@ public class BookService implements IBookService {
         book.setAuthor(bookDto.getAuthor());
         book.setAverageRate(bookDto.getAverageRate());
         book.setDescription(bookDto.getDescription());
+        book.setLanguage(bookDto.getLanguage());
+        book.setPublishingYear(bookDto.getPublishingYear());
+        book.setPageNumber(bookDto.getPageNumber());
 
         List<Image> imageList = new ArrayList<>();
         if (bookDto.getRelatedImage() != null) {

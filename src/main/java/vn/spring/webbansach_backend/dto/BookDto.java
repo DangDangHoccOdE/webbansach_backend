@@ -1,5 +1,7 @@
 package vn.spring.webbansach_backend.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -23,6 +25,7 @@ public class BookDto {
     private String description;
 
     @NotNull(message = "Giá không được để trống")
+    @Min(value = 0,message = "Giá phải lớn hơn 0")
     private Double price;
 
     @NotNull(message = "Giá niêm yết không được để trống")
@@ -34,11 +37,24 @@ public class BookDto {
     @NotNull(message = "Số sao đánh giá không được để trống")
     private Double averageRate;
 
-    @NotNull(message = "Số lượng đã bán không được để trống")
+    @NotNull(message = "Số lượng đã bán không được thể bỏ trống")
+    @Min(value = 0,message = "Số lượng phải lớn hơn 0")
     private Integer soldQuantity;
 
     @NotNull(message = "Phần trăm giảm giá không được để trống")
     private Float discountPercent;
+
+    @NotNull(message = "Số trang không được để trống")
+    @Min(value = 1,message = "Số trang tối thiểu là 1")
+    private Integer pageNumber;
+
+    @NotNull(message = "Năm xuất bán không được bỏ trống")
+    @Min(value = 0,message = "Năm xuất bản phải lớn hơn 0")
+    @Max(value = 2024,message = "Năm xuất bán không được lón hơn năm hiện tại")
+    private Integer publishingYear;
+
+    @NotBlank(message = "Ngôn ngữ không được để trống")
+    private String language;
 
     @NotBlank(message = "Ảnh chính không được để trống")
     private String thumbnail;
