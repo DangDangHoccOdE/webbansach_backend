@@ -60,7 +60,8 @@ public class Endpoints {
     public static final String[] USER_PUT_ENDPOINTS={
             "/user/changeInfo",
             "/user/changeEmail",
-            "/wishList/editWishListName"
+            "/wishList/editWishListName",
+            "/cart-items/updateQuantityOfCartItem/{cartItemId}"
     };
 
     public static final String[] ADMIN_POST_ENDPOINTS={
@@ -79,7 +80,8 @@ public class Endpoints {
     };
 
     public static final String[] ADMIN_DELETE_ENDPOINTS={
-        "/admin/deleteBook/**",
+        "/books/deleteBook/**",
+        "/books/deleteBook/**",
         "/user/deleteUser/**",
         "/category/deleteCategory/**",
         "/category/*/books/*",

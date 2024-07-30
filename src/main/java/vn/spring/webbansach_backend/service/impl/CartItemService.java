@@ -31,6 +31,25 @@ public class CartItemService implements ICartItemService {
     }
 
     @Override
+    public ResponseEntity<?> updateQuantityOfCartItem(Long cartItemId,int quantity) {
+        CartItem cartItem = cartItemRepository.findByCartItemId(cartItemId);
+        if(cartItem == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy sản phẩm cần xóa"));
+        }
+        if(quantity==0){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Notice("Số lượng phải lớn hơn 0"));
+        }
+        Book book = cartItem.getBooks();
+        if(quantity>book.getQuantity()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Notice("Số lượng không thể lớn hơn số lượng trong kho"));
+        }
+
+        cartItem.setQuantity(quantity);
+        cartItemRepository.save(cartItem);
+        return ResponseEntity.ok(new Notice("Cập nhât thành công"));
+    }
+
+    @Override
     @Transactional
     public ResponseEntity<?> addCartItem(CartItemDto cartItemDto) {
         User user= iUserService.findUserByUserId(cartItemDto.getUserId());

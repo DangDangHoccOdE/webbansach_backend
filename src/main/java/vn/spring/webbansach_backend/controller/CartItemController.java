@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import vn.spring.webbansach_backend.dto.CartItemDto;
 import vn.spring.webbansach_backend.service.inter.ICartItemService;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/cart-items")
 public class CartItemController {
@@ -20,6 +22,11 @@ public class CartItemController {
     @PostMapping("/addCartItem")
     public ResponseEntity<?> addCartItem(@Validated @RequestBody CartItemDto cartItemDto){
         return iCartItemService.addCartItem(cartItemDto);
+    }
+
+    @PutMapping("/updateQuantityOfCartItem/{cartItemId}")
+    public ResponseEntity<?> updateQuantityOfCartItem(@PathVariable Long cartItemId,@RequestBody Map<String,Integer> map){
+        return iCartItemService.updateQuantityOfCartItem(cartItemId,map.get("quantity"));
     }
 
     @DeleteMapping("/deleteCartItem/{cartItemId}")
