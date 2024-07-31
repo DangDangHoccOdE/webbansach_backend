@@ -18,8 +18,6 @@ public class Payment {
     @Column(name = "paymentName")
     private String paymentName;
 
-    @Column(name = "price")
-    private double price;
 
     @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST},mappedBy = "payment")
     private List<Order> orderList;

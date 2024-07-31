@@ -3,6 +3,7 @@ package vn.spring.webbansach_backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.*;
 @Getter
@@ -17,7 +18,7 @@ public class Order {
     private int orderId;
 
     @Column(name = "date")
-    private Date date;
+    private LocalDateTime date;
 
     @Column(name = "purchaseAddress")
     private String purchaseAddress;
@@ -25,8 +26,8 @@ public class Order {
     @Column(name = "deliveryAddress")
     private String deliveryAddress;
 
-    @Column(name = "totalProductCost")
-    private double totalProductCost;
+    @Column(name = "totalProduct")
+    private double totalProduct;
 
     @Column(name = "totalPrice")
     private double totalPrice;

@@ -6,5 +6,6 @@ import vn.spring.webbansach_backend.entity.Payment;
 
 @RepositoryRestResource(path = "payment")
 public interface PaymentRepository extends JpaRepository<Payment,Integer> {
+    Payment findByPaymentName(String paymentName);
 }
 

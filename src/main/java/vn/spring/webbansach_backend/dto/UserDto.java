@@ -21,7 +21,7 @@ public class UserDto {
         @NotBlank(message = "Họ đệm không được bỏ trống! ")
         private String lastName;
 
-        @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}",message = "Ngày sinh không đúng định dang: yyyy/MM/dd!")
+        @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}",message = "Ngày sinh không đúng định dạng: yyyy/MM/dd!")
         private String dateOfBirth;
 
         @NotBlank(message = "Tài khoản không thể bỏ trống!")

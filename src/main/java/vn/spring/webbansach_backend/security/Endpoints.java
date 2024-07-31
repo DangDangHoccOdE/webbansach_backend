@@ -15,7 +15,8 @@ public class Endpoints {
            "/user/resendActivationCode",
             "/user/confirmChangeEmail/**",
             "/user/confirmForgotPassword",
-            "vouchers/search/findByIsAvailableAndIsActive/**"
+            "/vouchers/search/findByIsAvailableAndIsActive/**",
+            "/orders/**"
     };
     public static final String[] PUBLIC_POST_ENDPOINTS={
         "/user/register",
@@ -33,7 +34,8 @@ public class Endpoints {
             "/wishList/addWishList",
             "/wishList/addBookToWishList",
             "/cart-items/addCartItem",
-            "/vouchers/saveVoucherByUser"
+            "/vouchers/saveVoucherByUser",
+            "/order/addOrder"
     };
 
     public static final String[] USER_DELETE_ENDPOINTS={

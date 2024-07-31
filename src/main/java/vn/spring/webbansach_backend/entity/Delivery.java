@@ -17,8 +17,6 @@ public class Delivery {
     @Column(name = "deliveryName")
     private String deliveryName;
 
-    @Column(name = "description")
-    private String description ;
 
     @Column(name = "shippingFee")
     private double shippingFee;

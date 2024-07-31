@@ -7,5 +7,6 @@ import vn.spring.webbansach_backend.entity.Delivery;
 
 @RepositoryRestResource(path = "delivery")
 public interface DeliveryRepository extends JpaRepository<Delivery,Integer> {
+    Delivery findByDeliveryName(String deliveryName);
 }
 
