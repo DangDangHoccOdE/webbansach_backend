@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.*;
 @Data
 public class OrderDto {
-    private int orderId;
+    private Long orderId;
 
     @Pattern(regexp = "\\d{4}/\\d{2}/\\d{2} \\d{2}:\\d{2}:\\d{2}", message = "Ngày đặt hàng không đúng định dạng: yyyy/MM/dd HH:mm:ss!")
     private String date;

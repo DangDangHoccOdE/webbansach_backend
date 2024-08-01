@@ -17,4 +17,9 @@ public class PaymentService implements IPaymentService {
     public Payment findByPaymentName(String paymentName) {
         return paymentRepository.findByPaymentName(paymentName);
     }
+
+    @Override
+    public void save(Payment payment) {
+        paymentRepository.save(payment);
+    }
 }

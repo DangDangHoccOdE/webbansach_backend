@@ -7,68 +7,70 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.spring.webbansach_backend.dto.VoucherDto;
 import vn.spring.webbansach_backend.service.impl.VoucherService;
+import vn.spring.webbansach_backend.service.inter.IVoucherService;
+
 import java.util.*;
 
 @RequestMapping("/vouchers")
 @RestController
 public class VoucherController {
-    private final VoucherService voucherService;
+    private final IVoucherService iVoucherService;
 
     @Autowired
-    public VoucherController(VoucherService voucherService) {
-        this.voucherService = voucherService;
+    public VoucherController(VoucherService iVoucherService) {
+        this.iVoucherService = iVoucherService;
     }
     @GetMapping("/findVoucherByVoucherCodeAndUserId/{code}/{userId}")
     public ResponseEntity<?> findVoucherByVoucherCodeAndUserId(@PathVariable String code,@PathVariable Long userId){
-        return voucherService.findVoucherByVoucherCodeAndUserId(code,userId);
+        return iVoucherService.findVoucherByVoucherCodeAndUserId(code,userId);
     }
 
 
 
     @GetMapping("/showVoucherByUserId/{userId}")
     public ResponseEntity<?> showVoucherByUserId(@PathVariable Long userId){
-        return voucherService.showVoucherByUserId(userId);
+        return iVoucherService.showVoucherByUserId(userId);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/giftVouchersToUsers")
     public ResponseEntity<?> giftVouchersToUsers( @RequestBody List<Long> selectedVouchers){
-        return voucherService.giftVouchersTouUsers(selectedVouchers);
+        return iVoucherService.giftVouchersTouUsers(selectedVouchers);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/addVoucherAdmin")
     public ResponseEntity<?> addVoucherAdmin(@Validated @RequestBody VoucherDto voucherDto){
-        return voucherService.addVoucherAdmin(voucherDto);
+        return iVoucherService.addVoucherAdmin(voucherDto);
     }
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/addVouchersToVoucherAvailable")
     public ResponseEntity<?> addVouchersToVoucherAvailable(@RequestBody List<Long> selectedVouchers){
-        return voucherService.addVouchersToVoucherAvailable(selectedVouchers);
+        return iVoucherService.addVouchersToVoucherAvailable(selectedVouchers);
     }
 
     @PostMapping("/saveVoucherByUser")
     public ResponseEntity<?> saveVoucherByUser(@RequestBody Map<String,Integer> voucherByUserMap){
-        return voucherService.saveVoucherByUser(voucherByUserMap);
+        return iVoucherService.saveVoucherByUser(voucherByUserMap);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/editVoucherAdmin/{voucherId}")
     public ResponseEntity<?> editVoucherAdmin(@PathVariable long voucherId,@Validated @RequestBody VoucherDto voucherDto){
-        return voucherService.editVoucherAdmin(voucherId,voucherDto);
+        return iVoucherService.editVoucherAdmin(voucherId,voucherDto);
     }
     @PutMapping("/updateIsActive/{voucherId}")
     public ResponseEntity<?> updateIsActive(@PathVariable long voucherId){
-        return voucherService.updateIsActive(voucherId);
+        return iVoucherService.updateIsActive(voucherId);
     }
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/deleteVoucherAdmin/{voucherId}")
     public ResponseEntity<?> addVoucherAdmin(@PathVariable long voucherId){
-        return voucherService.deleteVoucherAdmin(voucherId);
+        return iVoucherService.deleteVoucherAdmin(voucherId);
     }
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/deleteVouchersSelected")
     public ResponseEntity<?> deleteVouchersSelected(@RequestBody List<Long> selectedVouchers){
-        return voucherService.deleteVouchersSelected(selectedVouchers);
+        return iVoucherService.deleteVouchersSelected(selectedVouchers);
     }
 }

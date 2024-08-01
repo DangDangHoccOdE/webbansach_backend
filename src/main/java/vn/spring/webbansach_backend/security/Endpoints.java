@@ -17,6 +17,7 @@ public class Endpoints {
             "/user/confirmForgotPassword",
             "/vouchers/search/findByIsAvailableAndIsActive/**",
             "/orders/**"
+
     };
     public static final String[] PUBLIC_POST_ENDPOINTS={
         "/user/register",
@@ -56,7 +57,10 @@ public class Endpoints {
          "/vouchers/**",
          "/user-voucher/**",
          "/vouchers/findVoucherByVoucherCodeAndUserId/{code}/{userId}",
-         "/vouchers/showVoucherByUserId/{userId}"
+         "/vouchers/showVoucherByUserId/{userId}",
+         "/orders/search/**",
+         "/order/getBooksOfOrder/{orderId}",
+         "/order-detail/getOrderDetailsFromOrderId/{orderId}",
  };
 
     public static final String[] USER_PUT_ENDPOINTS={
