@@ -42,6 +42,22 @@ public class OrderService implements IOrderService {
     }
 
     @Override
+    public ResponseEntity<?> cancelOder(Long orderId) {
+        Order order = findOrderById(orderId);
+        if(order == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng!"));
+        }
+
+        if(order.getOrderStatus().equals("Đã hủy")){
+            return ResponseEntity.badRequest().body(new Notice("Hủy đơn hàng thất bại"));
+        }
+        order.setOrderStatus("Đã hủy");
+        order.setDeliveryStatus("");
+        orderRepository.save(order);
+        return ResponseEntity.ok(new Notice("Đã hủy đơn hàng thành công"));
+    }
+
+    @Override
     public ResponseEntity<?> getBooksOfOrder(Long orderId) {
         Order order = findOrderById(orderId);
         if(order == null){

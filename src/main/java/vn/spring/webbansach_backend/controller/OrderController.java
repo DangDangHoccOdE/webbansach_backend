@@ -28,4 +28,8 @@ public class OrderController {
     public ResponseEntity<?> addOrder(@Validated @RequestBody OrderDto orderDto){
         return iOrderService.addOrder(orderDto);
     }
+    @PutMapping("/cancelOrder/{orderId}")
+    public ResponseEntity<?> cancelOrder(@PathVariable Long orderId){
+        return iOrderService.cancelOder(orderId);
+    }
 }
