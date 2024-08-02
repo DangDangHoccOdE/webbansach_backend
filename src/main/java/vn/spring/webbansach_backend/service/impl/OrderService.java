@@ -15,6 +15,8 @@ import vn.spring.webbansach_backend.dto.OrderDto;
 import vn.spring.webbansach_backend.entity.*;
 import vn.spring.webbansach_backend.service.inter.*;
 import vn.spring.webbansach_backend.utils.ConvertStringToDate;
+
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,15 +27,13 @@ public class OrderService implements IOrderService {
     private final IDeliveryService iDeliveryService;
     private final IPaymentService iPaymentService;
     private final UserService userService;
-    private final IOrderDetailService iOrderDetailService;
     @Autowired
-    public OrderService(OrderRepository orderRepository, ICartItemService iCartItemService, IDeliveryService iDeliveryService, IPaymentService iPaymentService, UserService userService,@Lazy IOrderDetailService iOrderDetailService) {
+    public OrderService(OrderRepository orderRepository, ICartItemService iCartItemService, IDeliveryService iDeliveryService, IPaymentService iPaymentService, UserService userService) {
         this.orderRepository = orderRepository;
         this.iCartItemService = iCartItemService;
         this.iDeliveryService = iDeliveryService;
         this.iPaymentService = iPaymentService;
         this.userService = userService;
-        this.iOrderDetailService = iOrderDetailService;
     }
 
     @Override
@@ -55,6 +55,32 @@ public class OrderService implements IOrderService {
         order.setDeliveryStatus("");
         orderRepository.save(order);
         return ResponseEntity.ok(new Notice("Đã hủy đơn hàng thành công"));
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> repurchase(Long orderId) {
+        Order order = findOrderById(orderId);
+        if(order == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng!"));
+        }
+
+        User user = order.getUser();
+        List<OrderDetail> orderDetailList = order.getOrderDetailList();
+        List<Long> cartItemIds = new ArrayList<>();
+
+        for(OrderDetail orderDetail : orderDetailList){
+            Book book = orderDetail.getBook();
+            CartItem cartItem = new CartItem();
+            cartItem.setBooks(book);
+            cartItem.setQuantity(orderDetail.getQuantity());
+            cartItem.setUser(user);
+            cartItem.setCreatedAt(LocalDateTime.now());
+            iCartItemService.saveCartItem(cartItem);
+            cartItemIds.add(cartItem.getCartItemId());
+        }
+
+        return ResponseEntity.ok(cartItemIds);
     }
 
     @Override

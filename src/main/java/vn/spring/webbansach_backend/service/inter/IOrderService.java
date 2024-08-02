@@ -8,6 +8,7 @@ public interface IOrderService {
     Order findOrderById(Long orderId);
     ResponseEntity<?> addOrder(OrderDto orderDto);
     ResponseEntity<?> cancelOder(Long orderId);
+    ResponseEntity<?> repurchase(Long orderId);
     ResponseEntity<?> getBooksOfOrder(Long orderId);
 
 }

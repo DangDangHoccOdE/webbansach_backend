@@ -5,6 +5,7 @@ import vn.spring.webbansach_backend.dto.CartItemDto;
 import vn.spring.webbansach_backend.entity.CartItem;
 
 public interface ICartItemService {
+    CartItem saveCartItem(CartItem cartItem);
     CartItem findCartItemById(long id);
     ResponseEntity<?> deleteCartItem(Long cartItemId);
     ResponseEntity<?> addCartItem(CartItemDto cartItemDto);

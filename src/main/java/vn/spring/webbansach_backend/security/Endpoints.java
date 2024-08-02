@@ -69,6 +69,7 @@ public class Endpoints {
             "/wishList/editWishListName",
             "/cart-items/updateQuantityOfCartItem/{cartItemId}",
             "/order/cancelOrder/{oderId}",
+            "/order/repurchase/{oderId}",
     };
 
     public static final String[] ADMIN_POST_ENDPOINTS={

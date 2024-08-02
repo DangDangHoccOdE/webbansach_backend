@@ -31,6 +31,12 @@ public class CartItemService implements ICartItemService {
     }
 
     @Override
+    @Transactional
+    public CartItem saveCartItem(CartItem cartItem) {
+        return cartItemRepository.save(cartItem);
+    }
+
+    @Override
     public CartItem findCartItemById(long id) {
        return cartItemRepository.findByCartItemId(id);
     }
