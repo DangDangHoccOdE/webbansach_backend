@@ -7,9 +7,13 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 import vn.spring.webbansach_backend.dao.UserRepository;
 import vn.spring.webbansach_backend.dto.CartItemDto;
+import vn.spring.webbansach_backend.entity.CartItem;
 import vn.spring.webbansach_backend.entity.User;
+import vn.spring.webbansach_backend.service.inter.ICartItemService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 import vn.spring.webbansach_backend.utils.SecurityUtils;
+
+import java.util.Map;
 
 @Aspect
 @Component
@@ -18,16 +22,34 @@ public class CartItemAOP {
 
     private final SecurityUtils securityUtils;
     private final UserRepository userRepository;
+    private final ICartItemService iCartItemService;
 
     @Autowired
-    public CartItemAOP(SecurityUtils securityUtils, UserRepository userRepository) {
+    public CartItemAOP(SecurityUtils securityUtils, UserRepository userRepository, ICartItemService iCartItemService) {
         this.securityUtils = securityUtils;
         this.userRepository = userRepository;
+        this.iCartItemService = iCartItemService;
     }
 
     @Before("execution(* vn.spring.webbansach_backend.controller.CartItemController.addCartItem(..)) && args(..,cartItemDto)")
     public void hasAccessByUsername(CartItemDto cartItemDto) throws AccessDeniedException {
         User user = userRepository.findByUserId(cartItemDto.getUserId());
+        if (user != null && !securityUtils.hasAccessByUserId(user.getUserId())) {
+            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
+        }
+    }
+    @Before(value = "execution(* vn.spring.webbansach_backend.controller.CartItemController.updateQuantityOfCartItem(..)) && args(..,cartItemId,map)", argNames = "cartItemId,map")
+    public void hasAccessByUsername(Long cartItemId,Map<String,Integer> map) throws AccessDeniedException {
+        CartItem cartItem = iCartItemService.findCartItemById(cartItemId);
+        User user = cartItem.getUser();
+        if (user != null && !securityUtils.hasAccessByUserId(user.getUserId())) {
+            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
+        }
+    }
+    @Before("execution(* vn.spring.webbansach_backend.controller.CartItemController.deleteBooksOfCart(..)) && args(..,cartItemId)")
+    public void hasAccessByUsername(Long cartItemId) throws AccessDeniedException {
+        CartItem cartItem = iCartItemService.findCartItemById(cartItemId);
+        User user = cartItem.getUser();
         if (user != null && !securityUtils.hasAccessByUserId(user.getUserId())) {
             throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
         }
