@@ -16,6 +16,8 @@ import vn.spring.webbansach_backend.service.inter.ICartItemService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CartItemService implements ICartItemService {
@@ -97,6 +99,20 @@ public class CartItemService implements ICartItemService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy sản phẩm cần xóa"));
         }
         cartItemRepository.delete(cartItem);
+        return ResponseEntity.ok(new Notice("Đã xóa thành công"));
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> deleteAllCartItemsIsChoose(List<Long> allCartItemIsChoose) {
+        for(Long cartItemId:allCartItemIsChoose){
+            CartItem cartItem = findCartItemById(cartItemId);
+
+            if(cartItem==null){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy sách trong giỏ hàng"));
+            }
+            cartItemRepository.delete(cartItem);
+        }
         return ResponseEntity.ok(new Notice("Đã xóa thành công"));
     }
 }

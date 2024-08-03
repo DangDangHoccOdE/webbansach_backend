@@ -14,6 +14,7 @@ import vn.spring.webbansach_backend.service.inter.IUserService;
 import vn.spring.webbansach_backend.utils.SecurityUtils;
 
 import java.util.Map;
+import java.util.*;
 
 @Aspect
 @Component
@@ -52,6 +53,17 @@ public class CartItemAOP {
         User user = cartItem.getUser();
         if (user != null && !securityUtils.hasAccessByUserId(user.getUserId())) {
             throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
+        }
+    }
+
+    @Before("execution(* vn.spring.webbansach_backend.controller.CartItemController.deleteAllCartItemsIsChoose(..)) && args(..,allCartItemsIsChoose)")
+    public void hasAccessByUsername(List<Long> allCartItemsIsChoose) throws AccessDeniedException {
+        for(Long cartItemId:allCartItemsIsChoose) {
+            CartItem cartItem = iCartItemService.findCartItemById(cartItemId);
+            User user = cartItem.getUser();
+            if (user != null && !securityUtils.hasAccessByUserId(user.getUserId())) {
+                throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
+            }
         }
     }
 }

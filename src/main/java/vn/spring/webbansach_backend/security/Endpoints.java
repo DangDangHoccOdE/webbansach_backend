@@ -42,7 +42,8 @@ public class Endpoints {
     public static final String[] USER_DELETE_ENDPOINTS={
             "/wishList/deleteWishList/**",
             "/wishList/deleteBookOfWishList/**",
-            "/cart-items/deleteCartItem/{cartItemId}"
+            "/cart-items/deleteCartItem/{cartItemId}",
+            "/cart-items/deleteAllCartItemsIsChoose"
     };
 
     public static final String[] ADMIN_GET_ENDPOINTS={

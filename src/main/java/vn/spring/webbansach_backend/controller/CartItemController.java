@@ -8,6 +8,7 @@ import vn.spring.webbansach_backend.dto.CartItemDto;
 import vn.spring.webbansach_backend.service.inter.ICartItemService;
 
 import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/cart-items")
@@ -32,5 +33,10 @@ public class CartItemController {
     @DeleteMapping("/deleteCartItem/{cartItemId}")
     public ResponseEntity<?> deleteBooksOfCart(@PathVariable Long cartItemId){
         return iCartItemService.deleteCartItem(cartItemId);
+    }
+
+    @DeleteMapping("/deleteAllCartItemsIsChoose")
+    public ResponseEntity<?> deleteAllCartItemsIsChoose(@RequestBody List<Long> allCartItemIsChoose){
+        return iCartItemService.deleteAllCartItemsIsChoose(allCartItemIsChoose);
     }
 }
