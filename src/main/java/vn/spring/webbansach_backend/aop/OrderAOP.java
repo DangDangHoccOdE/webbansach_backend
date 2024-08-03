@@ -30,7 +30,8 @@ public class OrderAOP {
     }
 
     @Before(value = "(execution(* vn.spring.webbansach_backend.controller.OrderController.getBooksOfOrder(..))" +
-            "||execution(* vn.spring.webbansach_backend.controller.OrderController.cancelOrder(..)))  && args(..,orderId)")
+            "||execution(* vn.spring.webbansach_backend.controller.OrderController.cancelOrder(..))"+
+            "||execution(* vn.spring.webbansach_backend.controller.OrderController.confirmReceivedOrder(..)))  && args(..,orderId)")
     public void checkAccess(Long orderId) throws AccessDeniedException{
         Order order = iOrderService.findOrderById(orderId);
         User user = order.getUser();
