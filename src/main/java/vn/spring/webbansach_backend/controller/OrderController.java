@@ -32,6 +32,10 @@ public class OrderController {
     public ResponseEntity<?> cancelOrder(@PathVariable Long orderId){
         return iOrderService.cancelOder(orderId);
     }
+    @PutMapping("/confirmReceivedOrder/{orderId}")
+    public ResponseEntity<?> confirmReceivedOrder(@PathVariable Long orderId){
+        return iOrderService.confirmReceivedOrder(orderId);
+    }
 
     @PutMapping("/repurchase/{orderId}")
     public ResponseEntity<?> repurchase(@PathVariable Long orderId){
