@@ -22,7 +22,7 @@ public class OrderReview {
 
     @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "orderId", nullable = false)
-    private Orders orders;
+    private Order order;
 
     @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "userId", nullable = false)

@@ -12,7 +12,7 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reviewId")
-    private long feedbackId;
+    private long reviewId;
 
     @Column(name = "rate")
     private float rate;
@@ -28,4 +28,27 @@ public class Review {
     @JoinColumn(name = "userId",nullable = false)
     private User user;
 
+    @Column(name = "imageOne",columnDefinition = "LONGTEXT")
+    @Lob
+    private String imageOne;
+
+    @Column(name = "imageTwo",columnDefinition = "LONGTEXT")
+    @Lob
+    private String imageTwo;
+
+    @Column(name = "imageThree",columnDefinition = "LONGTEXT")
+    @Lob
+    private String imageThree;
+
+    @Column(name = "imageFour",columnDefinition = "LONGTEXT")
+    @Lob
+    private String imageFour;
+
+    @Column(name = "imageFive",columnDefinition = "LONGTEXT")
+    @Lob
+    private String imageFive;
+
+    @Column(name = "video",columnDefinition = "LONGTEXT")
+    @Lob
+    private String video;
 }

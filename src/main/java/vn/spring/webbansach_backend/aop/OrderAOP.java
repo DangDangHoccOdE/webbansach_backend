@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 import vn.spring.webbansach_backend.dto.OrderDto;
-import vn.spring.webbansach_backend.entity.Orders;
+import vn.spring.webbansach_backend.entity.Order;
 import vn.spring.webbansach_backend.entity.User;
 import vn.spring.webbansach_backend.service.inter.IOrderService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
@@ -32,8 +32,8 @@ public class OrderAOP {
             "||execution(* vn.spring.webbansach_backend.controller.OrderController.cancelOrder(..))"+
             "||execution(* vn.spring.webbansach_backend.controller.OrderController.confirmReceivedOrder(..)))  && args(..,orderId)")
     public void checkAccess(Long orderId) throws AccessDeniedException{
-        Orders orders = iOrderService.findOrderById(orderId);
-        User user = orders.getUser();
+        Order order = iOrderService.findOrderById(orderId);
+        User user = order.getUser();
 
         checkAccessByUser(user);
     }

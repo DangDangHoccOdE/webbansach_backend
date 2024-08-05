@@ -10,7 +10,7 @@ import java.util.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "orders")
-public class Orders {
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "orderId")
@@ -50,7 +50,7 @@ public class Orders {
     @JoinColumn(name = "paymentId",nullable = false)
     private Payment payment;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "orders")
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "order")
     private List<OrderDetail> orderDetailList;
 
     @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
@@ -61,6 +61,6 @@ public class Orders {
     @JoinColumn(name = "deliveryId",nullable = false)
     private Delivery delivery;
 
-    @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST},mappedBy = "orders")
+    @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST},mappedBy = "order")
     private OrderReview orderReview;
 }

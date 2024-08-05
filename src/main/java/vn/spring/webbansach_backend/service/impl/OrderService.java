@@ -33,49 +33,49 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public Orders findOrderById(Long orderId) {
+    public Order findOrderById(Long orderId) {
         return orderRepository.findByOrderId(orderId);
     }
 
     @Override
     @Transactional
     public ResponseEntity<?> confirmReceivedOrder(Long orderId) {
-        Orders orders = findOrderById(orderId);
-        if(orders == null){
+        Order order = findOrderById(orderId);
+        if(order == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng!"));
         }
 
-        orders.setOrderStatus("Hoàn thành");
-        orderRepository.save(orders);
+        order.setOrderStatus("Hoàn thành");
+        orderRepository.save(order);
         return ResponseEntity.ok(new Notice("Xác nhận đã nhận đơn hàng thành công"));
     }
 
     @Override
     public ResponseEntity<?> cancelOder(Long orderId) {
-        Orders orders = findOrderById(orderId);
-        if(orders == null){
+        Order order = findOrderById(orderId);
+        if(order == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng!"));
         }
 
-        if(orders.getOrderStatus().equals("Đã hủy")){
+        if(order.getOrderStatus().equals("Đã hủy")){
             return ResponseEntity.badRequest().body(new Notice("Hủy đơn hàng thất bại"));
         }
-        orders.setOrderStatus("Đã hủy");
-        orders.setDeliveryStatus("");
-        orderRepository.save(orders);
+        order.setOrderStatus("Đã hủy");
+        order.setDeliveryStatus("");
+        orderRepository.save(order);
         return ResponseEntity.ok(new Notice("Đã hủy đơn hàng thành công"));
     }
 
     @Override
     @Transactional
     public ResponseEntity<?> repurchase(Long orderId) {
-        Orders orders = findOrderById(orderId);
-        if(orders == null){
+        Order order = findOrderById(orderId);
+        if(order == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng!"));
         }
 
-        User user = orders.getUser();
-        List<OrderDetail> orderDetailList = orders.getOrderDetailList();
+        User user = order.getUser();
+        List<OrderDetail> orderDetailList = order.getOrderDetailList();
         List<Long> cartItemIds = new ArrayList<>();
 
         for(OrderDetail orderDetail : orderDetailList){
@@ -94,12 +94,12 @@ public class OrderService implements IOrderService {
 
     @Override
     public ResponseEntity<?> getBooksOfOrder(Long orderId) {
-        Orders orders = findOrderById(orderId);
-        if(orders == null){
+        Order order = findOrderById(orderId);
+        if(order == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng!"));
         }
 
-        List<OrderDetail> orderDetailList = orders.getOrderDetailList();
+        List<OrderDetail> orderDetailList = order.getOrderDetailList();
         List<BookDtoOfOrder> books = orderDetailList.stream()
                 .map(orderDetail->{
                     Book book = orderDetail.getBook();
@@ -118,17 +118,17 @@ public class OrderService implements IOrderService {
     @Transactional
     public ResponseEntity<?> addOrder(OrderDto orderDto) {
         // Tạo order
-        Orders orders = new Orders();
-        orders.setDate(ConvertStringToDate.convertToLocalDateTime(orderDto.getDate()));
-        orders.setTotalProduct(orderDto.getTotalProduct());
-        orders.setDeliveryAddress(orderDto.getDeliveryAddress());
-        orders.setPaymentCost(orderDto.getPaymentCost());
-        orders.setOrderStatus(orderDto.getOrderStatus());
-        orders.setNoteFromUser(orderDto.getNoteFromUser());
-        orders.setDeliveryStatus(orderDto.getDeliveryStatus());
-        orders.setPurchaseAddress(orderDto.getPurchaseAddress());
-        orders.setShippingFee(orderDto.getShippingFeeVoucher());
-        orders.setTotalPrice(orderDto.getTotalPrice());
+        Order order = new Order();
+        order.setDate(ConvertStringToDate.convertToLocalDateTime(orderDto.getDate()));
+        order.setTotalProduct(orderDto.getTotalProduct());
+        order.setDeliveryAddress(orderDto.getDeliveryAddress());
+        order.setPaymentCost(orderDto.getPaymentCost());
+        order.setOrderStatus(orderDto.getOrderStatus());
+        order.setNoteFromUser(orderDto.getNoteFromUser());
+        order.setDeliveryStatus(orderDto.getDeliveryStatus());
+        order.setPurchaseAddress(orderDto.getPurchaseAddress());
+        order.setShippingFee(orderDto.getShippingFeeVoucher());
+        order.setTotalPrice(orderDto.getTotalPrice());
 
         // Tạo OrderDetail
         List<Integer> cartItemIdList = orderDto.getCartItems();
@@ -144,7 +144,7 @@ public class OrderService implements IOrderService {
             orderDetail.setQuantity(cartItem.getQuantity());
             orderDetail.setPrice(cartItem.getQuantity() * book.getPrice());
             orderDetail.setBook(book);
-            orderDetail.setOrders(orders);
+            orderDetail.setOrder(order);
 
             oderDetails.add(orderDetail);
         }
@@ -171,12 +171,12 @@ public class OrderService implements IOrderService {
         if(user==null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy người sử dụng"));
         }
-        orders.setUser(user);
-        orders.setOrderDetailList(oderDetails);
-        orders.setPayment(payment);
-        orders.setDelivery(delivery);
+        order.setUser(user);
+        order.setOrderDetailList(oderDetails);
+        order.setPayment(payment);
+        order.setDelivery(delivery);
 
-        orderRepository.save(orders);
+        orderRepository.save(order);
         return ResponseEntity.ok(new Notice("Đã tạo đơn hàng thành công, cảm ơn bạn đã tin tưởng dùng sản phẩm"));
     }
 }

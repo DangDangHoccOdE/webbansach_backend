@@ -16,7 +16,6 @@ public class Endpoints {
             "/user/confirmChangeEmail/**",
             "/user/confirmForgotPassword",
             "/vouchers/search/findByIsAvailableAndIsActive/**",
-            "/orders/**"
 
     };
     public static final String[] PUBLIC_POST_ENDPOINTS={
@@ -62,6 +61,7 @@ public class Endpoints {
          "/orders/search/**",
          "/order/getBooksOfOrder/{orderId}",
          "/order-detail/getOrderDetailsFromOrderId/{orderId}",
+         "orders/**"
  };
 
     public static final String[] USER_PUT_ENDPOINTS={
