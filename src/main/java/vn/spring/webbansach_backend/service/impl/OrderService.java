@@ -33,6 +33,12 @@ public class OrderService implements IOrderService {
     }
 
     @Override
+    @Transactional
+    public Order save(Order order) {
+        return orderRepository.save(order);
+    }
+
+    @Override
     public Order findOrderById(Long orderId) {
         return orderRepository.findByOrderId(orderId);
     }

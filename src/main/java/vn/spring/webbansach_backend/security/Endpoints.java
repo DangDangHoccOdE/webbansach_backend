@@ -35,7 +35,8 @@ public class Endpoints {
             "/wishList/addBookToWishList",
             "/cart-items/addCartItem",
             "/vouchers/saveVoucherByUser",
-            "/order/addOrder"
+            "/order/addOrder",
+            "/review/addReviewOrder/{orderId}"
     };
 
     public static final String[] USER_DELETE_ENDPOINTS={
