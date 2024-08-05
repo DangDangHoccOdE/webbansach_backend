@@ -4,14 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.*;
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "orders")
-public class Order {
+public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "orderId")
@@ -51,7 +50,7 @@ public class Order {
     @JoinColumn(name = "paymentId",nullable = false)
     private Payment payment;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "order")
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "orders")
     private List<OrderDetail> orderDetailList;
 
     @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
@@ -61,4 +60,7 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     @JoinColumn(name = "deliveryId",nullable = false)
     private Delivery delivery;
+
+    @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST},mappedBy = "orders")
+    private OrderReview orderReview;
 }

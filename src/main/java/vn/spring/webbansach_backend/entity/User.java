@@ -56,7 +56,7 @@ public class User {
     private List<WishList> wishList;
 
     @OneToMany(fetch = FetchType.LAZY,cascade ={CascadeType.ALL},mappedBy = "user")
-    private List<Order> orderList;
+    private List<Orders> ordersList;
 
     @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     @JoinTable(name = "user_role",joinColumns = @JoinColumn(name = "userId"),inverseJoinColumns = @JoinColumn(name = "roleId"))
@@ -67,6 +67,9 @@ public class User {
 
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     private List<UserVoucher> userVouchers;
+
+    @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST},mappedBy = "user")
+    private OrderReview orderReview;
 
     @Column(name = "isActive")
     private boolean isActive;

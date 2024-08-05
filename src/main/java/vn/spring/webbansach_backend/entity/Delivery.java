@@ -22,5 +22,5 @@ public class Delivery {
     private double shippingFee;
 
     @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST},mappedBy = "delivery")
-    private List<Order> orderList;
+    private List<Orders> ordersList;
 }

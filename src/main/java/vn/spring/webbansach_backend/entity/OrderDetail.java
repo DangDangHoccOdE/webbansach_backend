@@ -24,7 +24,7 @@ public class OrderDetail {
     @JsonIgnore
     @ManyToOne(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     @JoinColumn(name = "orderId",nullable = false)
-    private Order order;
+    private Orders orders;
 
     @JsonIgnore
     @ManyToOne(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})

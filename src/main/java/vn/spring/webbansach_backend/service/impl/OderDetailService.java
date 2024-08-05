@@ -7,9 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import vn.spring.webbansach_backend.dao.OrderDetailRepository;
 import vn.spring.webbansach_backend.entity.Notice;
-import vn.spring.webbansach_backend.entity.Order;
+import vn.spring.webbansach_backend.entity.Orders;
 import vn.spring.webbansach_backend.entity.OrderDetail;
-import vn.spring.webbansach_backend.entity.User;
 import vn.spring.webbansach_backend.service.inter.IOrderDetailService;
 import vn.spring.webbansach_backend.service.inter.IOrderService;
 
@@ -28,12 +27,12 @@ public class OderDetailService implements IOrderDetailService {
 
     @Override
     public ResponseEntity<?> getOrderDetailsFromOrder(Long orderId) {
-        Order order  = iOrderService.findOrderById(orderId);
-        if(order == null){
+        Orders orders = iOrderService.findOrderById(orderId);
+        if(orders == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng!"));
         }
 
-        List<OrderDetail> orderDetails = order.getOrderDetailList();
+        List<OrderDetail> orderDetails = orders.getOrderDetailList();
         return ResponseEntity.ok(orderDetails);
     }
 }

@@ -3,7 +3,7 @@ package vn.spring.webbansach_backend.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-import vn.spring.webbansach_backend.entity.Order;
+import vn.spring.webbansach_backend.entity.Orders;
 import vn.spring.webbansach_backend.entity.Review;
 import vn.spring.webbansach_backend.entity.Role;
 import vn.spring.webbansach_backend.entity.WishList;
@@ -47,7 +47,7 @@ public class UserDto {
 
         private List<WishList> wishListList;
 
-        private List<Order> orderList;
+        private List<Orders> ordersList;
 
         private List<Role> roleList;
 
