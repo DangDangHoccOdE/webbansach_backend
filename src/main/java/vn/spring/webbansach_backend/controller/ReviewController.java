@@ -17,6 +17,12 @@ public class ReviewController {
         this.iReviewService = iReviewService;
     }
 
+    @GetMapping("/getNumberOfStarReview/{bookId}")
+    public ResponseEntity<?> getNumberOfStarReview(@PathVariable("bookId") int bookId){
+        return iReviewService.getNumberOfStarReview(bookId);
+
+    }
+
     @PostMapping("/addReviewOrder/{orderId}")
     public ResponseEntity<?> addReview(@PathVariable Long orderId, @Validated @RequestBody ReviewDto reviewDto){
         return iReviewService.addReview(orderId,reviewDto);
