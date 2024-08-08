@@ -61,6 +61,6 @@ public class Order {
     @JoinColumn(name = "deliveryId",nullable = false)
     private Delivery delivery;
 
-    @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST},mappedBy = "order")
-    private OrderReview orderReview;
+    @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST},mappedBy = "order")
+    private List<OrderReview> orderReview;
 }

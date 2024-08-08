@@ -68,8 +68,8 @@ public class User {
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     private List<UserVoucher> userVouchers;
 
-    @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST},mappedBy = "user")
-    private OrderReview orderReview;
+    @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST},mappedBy = "user")
+    private List<OrderReview> orderReviews;
 
     @Column(name = "isActive")
     private boolean isActive;
