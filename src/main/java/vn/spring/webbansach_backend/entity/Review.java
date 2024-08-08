@@ -3,6 +3,8 @@ package vn.spring.webbansach_backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -51,4 +53,11 @@ public class Review {
     @Column(name = "video",columnDefinition = "LONGTEXT")
     @Lob
     private String video;
+
+    @Column(name = "date",nullable = false)
+    private LocalDateTime date;
+
+    @ManyToOne(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
+    @JoinColumn(name = "orderReviewId",nullable = false)
+    private OrderReview orderReview;
 }

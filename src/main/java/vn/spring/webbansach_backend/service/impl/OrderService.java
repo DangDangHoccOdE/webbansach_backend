@@ -53,6 +53,7 @@ public class OrderService implements IOrderService {
 
         order.setOrderStatus("Hoàn thành");
         orderRepository.save(order);
+
         return ResponseEntity.ok(new Notice("Xác nhận đã nhận đơn hàng thành công"));
     }
 
@@ -139,9 +140,9 @@ public class OrderService implements IOrderService {
         // Tạo OrderDetail
         List<Integer> cartItemIdList = orderDto.getCartItems();
         List<OrderDetail> oderDetails = new ArrayList<>();
-        for(Integer i:cartItemIdList){
-            CartItem cartItem = iCartItemService.findCartItemById(i);
-            if(cartItem==null){
+        for(Integer cartItemId:cartItemIdList) {
+            CartItem cartItem = iCartItemService.findCartItemById(cartItemId);
+            if (cartItem == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy sản phẩm trong giỏ hàng!"));
             }
             Book book = cartItem.getBooks();
@@ -153,6 +154,9 @@ public class OrderService implements IOrderService {
             orderDetail.setOrder(order);
 
             oderDetails.add(orderDetail);
+
+            iCartItemService.deleteCartItem(cartItem.getCartItemId()); // Xóa các sản phẩm trong giỏ hàng sau khi xác nhận mua hàng
+
         }
 
         // Tạo đối tượng payment

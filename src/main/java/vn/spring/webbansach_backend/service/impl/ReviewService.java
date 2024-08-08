@@ -11,6 +11,7 @@ import vn.spring.webbansach_backend.entity.*;
 import vn.spring.webbansach_backend.service.inter.IOrderReviewService;
 import vn.spring.webbansach_backend.service.inter.IOrderService;
 import vn.spring.webbansach_backend.service.inter.IReviewService;
+import vn.spring.webbansach_backend.utils.ConvertStringToDate;
 
 import java.awt.geom.Arc2D;
 import java.util.*;
@@ -79,7 +80,8 @@ public class ReviewService implements IReviewService {
                         if(image.size()>3) review.setImageOne(image.get(3));
                         if(image.size()>4) review.setImageOne(image.get(4));
                     });
-
+                    review.setOrderReview(orderReview);
+                    review.setDate(ConvertStringToDate.convertToLocalDateTime(reviewDto.getDate()));
                     reviewRepository.save(review);
                 });
 

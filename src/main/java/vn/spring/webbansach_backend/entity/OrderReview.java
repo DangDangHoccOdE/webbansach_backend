@@ -2,6 +2,7 @@ package vn.spring.webbansach_backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.*;
 
 @Getter
 @Setter
@@ -27,4 +28,7 @@ public class OrderReview {
     @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "userId", nullable = false)
     private User user;
+
+    @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST},mappedBy = "orderReview")
+    private List<Review> reviews;
 }
