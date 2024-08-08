@@ -35,7 +35,7 @@ public class BookDto {
     private Integer quantity;
 
     @NotNull(message = "Số sao đánh giá không được để trống")
-    private Double averageRate;
+    private Float averageRate;
 
     @NotNull(message = "Số lượng đã bán không được thể bỏ trống")
     @Min(value = 0,message = "Số lượng phải lớn hơn 0")

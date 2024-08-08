@@ -38,7 +38,7 @@ public class Book {
     private int quantity;
 
     @Column(name = "averageRate",nullable = false)
-    private double averageRate;
+    private float averageRate;
 
     @Column(name="soldQuantity",nullable = false)
     private int soldQuantity;
