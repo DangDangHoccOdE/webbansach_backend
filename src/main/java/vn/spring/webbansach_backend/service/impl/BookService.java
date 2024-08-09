@@ -41,6 +41,12 @@ public class BookService implements IBookService {
     }
 
     @Override
+    @Transactional
+    public Book save(Book book) {
+        return bookRepository.save(book);
+    }
+
+    @Override
     public Book findBookById(int bookId) {
         return bookRepository.findByBookId(bookId);
     }
