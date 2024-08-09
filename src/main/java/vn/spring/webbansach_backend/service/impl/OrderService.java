@@ -23,13 +23,15 @@ public class OrderService implements IOrderService {
     private final IDeliveryService iDeliveryService;
     private final IPaymentService iPaymentService;
     private final UserService userService;
+    private final IBookService iBookService;
     @Autowired
-    public OrderService(OrderRepository orderRepository, ICartItemService iCartItemService, IDeliveryService iDeliveryService, IPaymentService iPaymentService, UserService userService) {
+    public OrderService(OrderRepository orderRepository, ICartItemService iCartItemService, IDeliveryService iDeliveryService, IPaymentService iPaymentService, UserService userService, IBookService iBookService) {
         this.orderRepository = orderRepository;
         this.iCartItemService = iCartItemService;
         this.iDeliveryService = iDeliveryService;
         this.iPaymentService = iPaymentService;
         this.userService = userService;
+        this.iBookService = iBookService;
     }
 
     @Override
@@ -123,7 +125,7 @@ public class OrderService implements IOrderService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> addOrder(OrderDto orderDto) {
+    public ResponseEntity<?> addOrder(OrderDto orderDto,boolean isBuyNow) {
         // Tạo order
         Order order = new Order();
         order.setDate(ConvertStringToDate.convertToLocalDateTime(orderDto.getDate()));
@@ -137,26 +139,37 @@ public class OrderService implements IOrderService {
         order.setShippingFee(orderDto.getShippingFeeVoucher());
         order.setTotalPrice(orderDto.getTotalPrice());
 
-        // Tạo OrderDetail
-        List<Integer> cartItemIdList = orderDto.getCartItems();
         List<OrderDetail> oderDetails = new ArrayList<>();
-        for(Integer cartItemId:cartItemIdList) {
-            CartItem cartItem = iCartItemService.findCartItemById(cartItemId);
-            if (cartItem == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy sản phẩm trong giỏ hàng!"));
-            }
-            Book book = cartItem.getBooks();
+        // Tạo OrderDetail
+        if(!isBuyNow){
+            List<Integer> cartItemIdList = orderDto.getCartItems();
+            for(Integer cartItemId:cartItemIdList) {
+                CartItem cartItem = iCartItemService.findCartItemById(cartItemId);
+                if (cartItem == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy sản phẩm trong giỏ hàng!"));
+                }
+                Book book = cartItem.getBooks();
 
+                OrderDetail orderDetail = new OrderDetail();
+                orderDetail.setQuantity(cartItem.getQuantity());
+                orderDetail.setPrice(cartItem.getQuantity() * book.getPrice());
+                orderDetail.setBook(book);
+                orderDetail.setOrder(order);
+
+                oderDetails.add(orderDetail);
+
+                iCartItemService.deleteCartItem(cartItem.getCartItemId()); // Xóa các sản phẩm trong giỏ hàng sau khi xác nhận mua hàng
+            }
+        }else{
+            // Vì khi người dùng ấn vào mua ngay thì không tạo sản phẩm trong cartItem nên id cartItem sẽ là idBook
+            Book book = iBookService.findBookById(orderDto.getCartItems().get(0));
             OrderDetail orderDetail = new OrderDetail();
-            orderDetail.setQuantity(cartItem.getQuantity());
-            orderDetail.setPrice(cartItem.getQuantity() * book.getPrice());
+            orderDetail.setQuantity(orderDto.getTotalProduct());
+            orderDetail.setPrice(orderDto.getTotalProduct() * book.getPrice());
             orderDetail.setBook(book);
             orderDetail.setOrder(order);
 
             oderDetails.add(orderDetail);
-
-            iCartItemService.deleteCartItem(cartItem.getCartItemId()); // Xóa các sản phẩm trong giỏ hàng sau khi xác nhận mua hàng
-
         }
 
         // Tạo đối tượng payment

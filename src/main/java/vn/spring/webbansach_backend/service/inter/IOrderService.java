@@ -7,7 +7,7 @@ import vn.spring.webbansach_backend.entity.Order;
 public interface IOrderService {
     Order findOrderById(Long orderId);
     Order save(Order order);
-    ResponseEntity<?> addOrder(OrderDto orderDto);
+    ResponseEntity<?> addOrder(OrderDto orderDto,boolean isBuyNow);
     ResponseEntity<?> cancelOder(Long orderId);
     ResponseEntity<?> repurchase(Long orderId);
     ResponseEntity<?> confirmReceivedOrder(Long orderId);

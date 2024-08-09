@@ -40,7 +40,7 @@ public class OrderDto {
 
     @NotNull(message = "Số lượng sản phẩm không được bỏ trống!")
     @Min(value = 0,message = "Số lượng sản phẩm phải lớn hơn 0")
-    private Double totalProduct;
+    private Integer totalProduct;
 
     private String noteFromUser;
 

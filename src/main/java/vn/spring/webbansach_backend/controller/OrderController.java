@@ -25,8 +25,8 @@ public class OrderController {
     }
 
     @PostMapping("/addOrder")
-    public ResponseEntity<?> addOrder(@Validated @RequestBody OrderDto orderDto){
-        return iOrderService.addOrder(orderDto);
+    public ResponseEntity<?> addOrder(@Validated @RequestBody OrderDto orderDto,@RequestParam boolean isBuyNow){
+        return iOrderService.addOrder(orderDto,isBuyNow);
     }
     @PutMapping("/cancelOrder/{orderId}")
     public ResponseEntity<?> cancelOrder(@PathVariable Long orderId){

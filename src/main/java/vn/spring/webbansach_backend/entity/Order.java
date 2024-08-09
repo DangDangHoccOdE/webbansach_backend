@@ -26,7 +26,7 @@ public class Order {
     private String deliveryAddress;
 
     @Column(name = "totalProduct")
-    private double totalProduct;
+    private int totalProduct;
 
     @Column(name = "totalPrice")
     private double totalPrice;
