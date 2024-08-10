@@ -10,5 +10,6 @@ public class BookDtoOfOrder {
     private String bookName;
     private double price;
     private double listedPrice;
+    private float discountPercent;
 
 }

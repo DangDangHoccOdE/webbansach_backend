@@ -117,7 +117,8 @@ public class OrderService implements IOrderService {
                             book.getBookId(),
                             book.getBookName(),
                             book.getPrice(),
-                            book.getListedPrice()
+                            book.getListedPrice(),
+                            book.getDiscountPercent()
                     );
                 }).collect(Collectors.toList());
 
