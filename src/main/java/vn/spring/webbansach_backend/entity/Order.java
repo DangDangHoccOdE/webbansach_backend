@@ -19,6 +19,9 @@ public class Order {
     @Column(name = "date")
     private LocalDateTime date;
 
+    @Column(name = "orderCode",nullable = false)
+    private String orderCode;
+
     @Column(name = "purchaseAddress")
     private String purchaseAddress;
 

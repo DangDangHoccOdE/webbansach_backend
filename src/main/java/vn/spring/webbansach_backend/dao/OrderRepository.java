@@ -10,6 +10,7 @@ import vn.spring.webbansach_backend.entity.Order;
 @RepositoryRestResource(path = "orders")
 public interface OrderRepository extends JpaRepository<Order,Integer> {
     Order findByOrderId(Long orderId);
+    Order findByOrderCode(String orderCode);
     Page<Order> findByUser_UserIdAndOrderStatusContaining(@RequestParam("userId") Long userId, @RequestParam("orderStatus") String orderStatus, Pageable pageable);
     Page<Order> findByUser_UserId(@RequestParam("userId") Long userId, Pageable pageable);
 }

@@ -127,8 +127,12 @@ public class OrderService implements IOrderService {
     @Override
     @Transactional
     public ResponseEntity<?> addOrder(OrderDto orderDto,boolean isBuyNow) {
+        if(orderRepository.findByOrderCode(orderDto.getOrderCode())!=null){
+            return ResponseEntity.badRequest().body(new Notice("Tạo đơn hàng không thành công, lỗi mã đơn hàng tồn tại"));
+        }
         // Tạo order
         Order order = new Order();
+        order.setOrderCode(orderDto.getOrderCode());
         order.setDate(ConvertStringToDate.convertToLocalDateTime(orderDto.getDate()));
         order.setTotalProduct(orderDto.getTotalProduct());
         order.setDeliveryAddress(orderDto.getDeliveryAddress());
