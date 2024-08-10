@@ -1,5 +1,6 @@
 package vn.spring.webbansach_backend.service.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.transaction.Transactional;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,25 +16,21 @@ import vn.spring.webbansach_backend.service.inter.IOrderService;
 import vn.spring.webbansach_backend.service.inter.IReviewService;
 import vn.spring.webbansach_backend.utils.ConvertStringToDate;
 
-import java.awt.geom.Arc2D;
 import java.util.*;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class ReviewService implements IReviewService {
     private final ReviewRepository reviewRepository;
     private final IOrderService iOrderService;
-    private final UserService userService;
     private final IOrderReviewService iOrderReviewService;
     private final IBookService iBookService;
 
     @Autowired
-    public ReviewService(ReviewRepository reviewRepository, IOrderService iOrderService, UserService userService, IOrderReviewService iOrderReviewService, IBookService iBookService) {
+    public ReviewService(ReviewRepository reviewRepository, IOrderService iOrderService, IOrderReviewService iOrderReviewService, IBookService iBookService) {
         this.reviewRepository = reviewRepository;
         this.iOrderService = iOrderService;
-        this.userService = userService;
         this.iOrderReviewService = iOrderReviewService;
         this.iBookService = iBookService;
     }
@@ -45,17 +42,26 @@ public class ReviewService implements IReviewService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy sách"));
         }
 
+        JSONObject data = getNumberReviews(book);
+
+        return ResponseEntity.ok(data);
+    }
+
+    private JSONObject getNumberReviews(Book book){ // Lấy ra số lượng đánh giá ứng với từng sao
         List<Review> reviews = book.getReviewList();
+
         JSONObject data = new JSONObject();
 
-       int[] starCounts = new int[5]; // Mảng lưu trữ số lượng các đánh giá từ 1 sao đến 5 sao
+        int[] starCounts = new int[5]; // Mảng lưu trữ số lượng các đánh giá từ 1 sao đến 5 sao
+        float totalStar = 0;
 
-       reviews.forEach(review -> {
-           int rate = (int) review.getRate();
-           if(rate>=1 && rate<=5){
-               starCounts[rate-1]++;
-           }
-       });
+        for(Review review : reviews){
+            int rate = (int) review.getRate();
+            if(rate>=1 && rate<=5){
+                starCounts[rate-1]++;
+                totalStar+=rate;
+            }
+        }
 
         int oneStar = starCounts[0];
         int twoStar = starCounts[1];
@@ -63,13 +69,17 @@ public class ReviewService implements IReviewService {
         int fourStar = starCounts[3];
         int fiveStar = starCounts[4];
 
+        int totalReview = (oneStar+twoStar+threeStar+fourStar+fiveStar);
+        float averageRateNew = totalStar/totalReview;
+
         data.put("1",oneStar);
         data.put("2",twoStar);
         data.put("3",threeStar);
         data.put("4",fourStar);
         data.put("5",fiveStar);
+        data.put("averageRateNew",averageRateNew);
 
-        return ResponseEntity.ok(data);
+        return data;
     }
 
     @Override
@@ -112,7 +122,7 @@ public class ReviewService implements IReviewService {
                     Optional.ofNullable(getMapContentsOfBook.get(book.getBookId())).ifPresent(review::setContent);
                     // Set Image nếu có
                     Optional.ofNullable(getMapImagesOfBook.get(book.getBookId())).ifPresent(image->{
-                        if(image.size()>0) review.setImageOne(image.get(0));
+                        if(!image.isEmpty()) review.setImageOne(image.get(0));
                         if(image.size()>1) review.setImageTwo(image.get(1));
                         if(image.size()>2) review.setImageThree(image.get(2));
                         if(image.size()>3) review.setImageFour(image.get(3));
@@ -121,6 +131,13 @@ public class ReviewService implements IReviewService {
                     review.setOrderReview(orderReview);
                     review.setDate(ConvertStringToDate.convertToLocalDateTime(reviewDto.getDate()));
                     reviewRepository.save(review);
+
+                    // Cập nhật lại số sao trung bình của cuốn sách
+                    JSONObject starData = getNumberReviews(book);
+
+                    float rateNew = (float) starData.get("averageRateNew");
+                    book.setAverageRate(rateNew);
+                    iBookService.save(book);
                 });
 
         return ResponseEntity.ok(new Notice("Cảm ơn bạn đã đánh giá sản phẩm"));
