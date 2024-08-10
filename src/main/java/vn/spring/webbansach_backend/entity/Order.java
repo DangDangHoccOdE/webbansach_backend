@@ -66,4 +66,8 @@ public class Order {
 
     @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST},mappedBy = "order")
     private List<OrderReview> orderReview;
+
+    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
+    @JoinTable(name = "order_voucher",joinColumns = @JoinColumn(name = "orderId"),inverseJoinColumns = @JoinColumn(name = "voucherId"))
+    private List<Voucher> vouchers;
 }

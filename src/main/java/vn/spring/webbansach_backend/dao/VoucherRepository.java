@@ -15,7 +15,7 @@ public interface VoucherRepository extends JpaRepository<Voucher,Long> {
     List<Voucher> findByCodeContainingAndIsActive(@RequestParam("code") String code,@RequestParam("isActive") boolean isActive);
     List<Voucher> findByIsAvailableAndIsActive(@RequestParam("isAvailable") boolean isAvailable,@RequestParam("isActive") boolean isActive);
     Voucher findByCode(String code);
-    Voucher findByVoucherId(long id);
+    Voucher findByVoucherId(Long voucherId);
 
     boolean existsByCode(String code);
 }

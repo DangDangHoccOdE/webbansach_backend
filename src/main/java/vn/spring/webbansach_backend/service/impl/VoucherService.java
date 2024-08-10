@@ -3,7 +3,6 @@ package vn.spring.webbansach_backend.service.impl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
-import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +18,11 @@ import vn.spring.webbansach_backend.service.inter.IVoucherService;
 import vn.spring.webbansach_backend.utils.ConvertStringToDate;
 
 import java.sql.Date;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
 
 @Service
 public class VoucherService implements IVoucherService {
@@ -41,6 +37,11 @@ public class VoucherService implements IVoucherService {
         this.userService = userService;
         this.userVoucherRepository = userVoucherRepository;
         this.entityManager = entityManager;
+    }
+
+    @Override
+    public Voucher findVoucherById(long voucherId) {
+        return voucherRepository.findByVoucherId(voucherId);
     }
 
     @Override

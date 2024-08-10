@@ -25,14 +25,18 @@ public class OrderService implements IOrderService {
     private final IPaymentService iPaymentService;
     private final UserService userService;
     private final IBookService iBookService;
+    private final IVoucherService iVoucherService;
+    private final IUserVoucherService iUserVoucherService;
     @Autowired
-    public OrderService(OrderRepository orderRepository, ICartItemService iCartItemService, IDeliveryService iDeliveryService, IPaymentService iPaymentService, UserService userService, IBookService iBookService) {
+    public OrderService(OrderRepository orderRepository, ICartItemService iCartItemService, IDeliveryService iDeliveryService, IPaymentService iPaymentService, UserService userService, IBookService iBookService, IVoucherService iVoucherService, IUserVoucherService iUserVoucherService) {
         this.orderRepository = orderRepository;
         this.iCartItemService = iCartItemService;
         this.iDeliveryService = iDeliveryService;
         this.iPaymentService = iPaymentService;
         this.userService = userService;
         this.iBookService = iBookService;
+        this.iVoucherService = iVoucherService;
+        this.iUserVoucherService = iUserVoucherService;
     }
 
     @Override
@@ -131,6 +135,7 @@ public class OrderService implements IOrderService {
         if(orderRepository.findByOrderCode(orderDto.getOrderCode())!=null){
             return ResponseEntity.badRequest().body(new Notice("Tạo đơn hàng không thành công, lỗi mã đơn hàng tồn tại"));
         }
+
         // Tạo order
         Order order = new Order();
         order.setOrderCode(orderDto.getOrderCode());
@@ -177,13 +182,40 @@ public class OrderService implements IOrderService {
         if(user==null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy người sử dụng"));
         }
+
+        // Lấy ra những vouchers đã chọn để đặt hàng rồi giảm số lượng
+        List<Voucher> vouchers = voucherIsChooseToPayment(orderDto.getVoucherIds());
+        List<UserVoucher> userVouchers = user.getUserVouchers();
+        userVouchers.forEach(userVoucher -> {
+           for(Voucher voucher : vouchers){
+               if(userVoucher.getVoucher().getVoucherId().equals(voucher.getVoucherId())){
+                   int numberOfVoucher = userVoucher.getQuantity();
+                   userVoucher.setQuantity(numberOfVoucher-1);
+               }
+           }
+        });
+        iUserVoucherService.saveAll(userVouchers);
+
         order.setUser(user);
         order.setOrderDetailList(oderDetails);
         order.setPayment(payment);
         order.setDelivery(delivery);
+        order.setVouchers(vouchers);
 
         orderRepository.save(order);
         return ResponseEntity.ok(new Notice("Đã tạo đơn hàng thành công, cảm ơn bạn đã tin tưởng dùng sản phẩm"));
+    }
+
+    private List<Voucher> voucherIsChooseToPayment(List<Long> voucherIds){
+        List<Voucher> vouchers = new ArrayList<>();
+        voucherIds.forEach(voucherId->{
+            Voucher voucher = iVoucherService.findVoucherById(voucherId);
+            if(voucher == null){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy voucher");
+            }
+            vouchers.add(voucher);
+        });
+        return vouchers;
     }
 
     private Payment addAndUpdatePayment(String paymentMethod){

@@ -11,7 +11,7 @@ public class OrderDto {
     private Long orderId;
 
     @NotBlank(message = "Mã đơn hàng không được bỏ trống")
-    private String orderCode;;
+    private String orderCode;
 
 
     @Pattern(regexp = "\\d{4}/\\d{2}/\\d{2} \\d{2}:\\d{2}:\\d{2}", message = "Ngày đặt hàng không đúng định dạng: yyyy/MM/dd HH:mm:ss!")
@@ -59,4 +59,6 @@ public class OrderDto {
 
     @NotNull(message = "Mặt hàng không được bỏ trống")
     private List<Integer> cartItems;
+
+    private List<Long> voucherIds;
 }

@@ -2,9 +2,12 @@ package vn.spring.webbansach_backend.service.inter;
 
 import org.springframework.http.ResponseEntity;
 import vn.spring.webbansach_backend.dto.VoucherDto;
+import vn.spring.webbansach_backend.entity.Voucher;
+
 import java.util.*;
 
 public interface IVoucherService {
+    Voucher findVoucherById(long voucherId);
     ResponseEntity<?> showVoucherByUserId(Long userId);
     ResponseEntity<?> findVoucherByVoucherCodeAndUserId(String code,Long userId);
     ResponseEntity<?> addVoucherAdmin(VoucherDto voucherDto);
