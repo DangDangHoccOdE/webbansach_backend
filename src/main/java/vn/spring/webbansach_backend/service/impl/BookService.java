@@ -35,6 +35,12 @@ public class BookService implements IBookService {
 
     @Override
     @Transactional
+    public List<Book> saveAll(List<Book> books) {
+        return bookRepository.saveAll(books);
+    }
+
+    @Override
+    @Transactional
     public void addBook(BookDto bookDto) {
         Book book = new Book();
         updateAndSaveBook(bookDto,book);

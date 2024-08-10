@@ -108,6 +108,10 @@ public class ReviewService implements IReviewService {
         Map<Integer,String> getMapContentsOfBook = reviewDto.getMapContentsOfBook();
         Map<Integer, Float> getMapStarsOfBook = reviewDto.getMapStarsOfBook();
 
+        // Thu thập reviews và books cần cập nhật
+        List<Review> reviewsToSave = new ArrayList<>();
+        List<Book> booksToUpdate = new ArrayList<>();
+
         order.getOrderDetailList().stream()
                 .map(OrderDetail::getBook)
                 .forEach(book -> {
@@ -130,16 +134,18 @@ public class ReviewService implements IReviewService {
                     });
                     review.setOrderReview(orderReview);
                     review.setDate(ConvertStringToDate.convertToLocalDateTime(reviewDto.getDate()));
-                    reviewRepository.save(review);
+                    reviewsToSave.add(review);
 
                     // Cập nhật lại số sao trung bình của cuốn sách
                     JSONObject starData = getNumberReviews(book);
 
                     float rateNew = (float) starData.get("averageRateNew");
                     book.setAverageRate(rateNew);
-                    iBookService.save(book);
+                    booksToUpdate.add(book);
                 });
 
+        reviewRepository.saveAll(reviewsToSave);
+        iBookService.saveAll(booksToUpdate);
         return ResponseEntity.ok(new Notice("Cảm ơn bạn đã đánh giá sản phẩm"));
     }
 }
