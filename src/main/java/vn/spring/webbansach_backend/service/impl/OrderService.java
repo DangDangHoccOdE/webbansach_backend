@@ -2,6 +2,7 @@ package vn.spring.webbansach_backend.service.impl;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class OrderService implements IOrderService {
     private final IVoucherService iVoucherService;
     private final IUserVoucherService iUserVoucherService;
     @Autowired
-    public OrderService(OrderRepository orderRepository, ICartItemService iCartItemService, IDeliveryService iDeliveryService, IPaymentService iPaymentService, UserService userService, IBookService iBookService, IVoucherService iVoucherService, IUserVoucherService iUserVoucherService) {
+    public OrderService(OrderRepository orderRepository, ICartItemService iCartItemService, IDeliveryService iDeliveryService, @Lazy IPaymentService iPaymentService, UserService userService, IBookService iBookService, IVoucherService iVoucherService, IUserVoucherService iUserVoucherService) {
         this.orderRepository = orderRepository;
         this.iCartItemService = iCartItemService;
         this.iDeliveryService = iDeliveryService;
