@@ -1,6 +1,5 @@
 package vn.spring.webbansach_backend.service.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.transaction.Transactional;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +69,7 @@ public class ReviewService implements IReviewService {
         int fiveStar = starCounts[4];
 
         int totalReview = (oneStar+twoStar+threeStar+fourStar+fiveStar);
-        float averageRateNew = totalStar/totalReview;
+        float averageRateNew = totalReview>0 ? totalStar/totalReview : totalStar;
 
         data.put("1",oneStar);
         data.put("2",twoStar);
@@ -86,16 +85,38 @@ public class ReviewService implements IReviewService {
     @Transactional
     public ResponseEntity<?> addReview(Long orderId,ReviewDto reviewDto) {
         Order order = iOrderService.findOrderById(orderId);
-
         if(order == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng cần đánh giá"));
         }
+        if(order.getOrderReview()!=null){
+            return ResponseEntity.badRequest().body(new Notice("Đánh giá đã tồn tại, không thể thên"));
+        }
+        addAndEditReview(order,reviewDto);
+        return ResponseEntity.ok(new Notice("Cảm ơn bạn đã đánh giá sản phẩm"));
+    }
 
+    @Override
+    @Transactional
+    public ResponseEntity<?> editReview(Long orderId,ReviewDto reviewDto) {
+        Order order = iOrderService.findOrderById(orderId);
+        if(order == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng cần đánh giá"));
+        }
+        addAndEditReview(order,reviewDto);
+        return ResponseEntity.ok(new Notice("Cập nhật đánh giá sản phẩm thành công"));
+    }
+
+    @Override
+    public void addAndEditReview(Order order, ReviewDto reviewDto) {
         order.setOrderStatus("Đánh giá");
         iOrderService.save(order);
 
         // đánh giá đơn hàng
-        OrderReview orderReview = new OrderReview();
+        OrderReview orderReview = order.getOrderReview();
+        if(orderReview == null){ // Nếu chưa tồn tại đánh giá
+            orderReview = new OrderReview();
+        }
+
         orderReview.setOrder(order);
         orderReview.setDeliveryRate(reviewDto.getDeliveryRating());
         orderReview.setShopRate(reviewDto.getShopRating());
@@ -112,40 +133,52 @@ public class ReviewService implements IReviewService {
         List<Review> reviewsToSave = new ArrayList<>();
         List<Book> booksToUpdate = new ArrayList<>();
 
+        OrderReview finalOrderReview = orderReview;
         order.getOrderDetailList().stream()
                 .map(OrderDetail::getBook)
                 .forEach(book -> {
-                    Review review = new Review();
-                    review.setUser(order.getUser());
-                    review.setBook(book);
-                    // Set video nếu có
-                    Optional.ofNullable(getMapVideoOfBook.get(book.getBookId())).ifPresent(review::setVideo);
+                            Review review = reviewRepository.findByOrderReview_OrderReviewIdAndBook_BookId(finalOrderReview.getOrderReviewId(), book.getBookId());
+                            if (review == null) {
+                                review = new Review();
+                            }
+                            review.setUser(order.getUser());
+                            review.setBook(book);
+                            // Set video nếu có
+                            Optional.ofNullable(getMapVideoOfBook.get(book.getBookId())).ifPresent(review::setVideo);
 
-                    Optional.ofNullable(getMapStarsOfBook.get(book.getBookId())).ifPresent(review::setRate);
+                            Optional.ofNullable(getMapStarsOfBook.get(book.getBookId())).ifPresent(review::setRate);
 
-                    Optional.ofNullable(getMapContentsOfBook.get(book.getBookId())).ifPresent(review::setContent);
-                    // Set Image nếu có
-                    Optional.ofNullable(getMapImagesOfBook.get(book.getBookId())).ifPresent(image->{
-                        if(!image.isEmpty()) review.setImageOne(image.get(0));
-                        if(image.size()>1) review.setImageTwo(image.get(1));
-                        if(image.size()>2) review.setImageThree(image.get(2));
-                        if(image.size()>3) review.setImageFour(image.get(3));
-                        if(image.size()>4) review.setImageFive(image.get(4));
-                    });
-                    review.setOrderReview(orderReview);
-                    review.setDate(ConvertStringToDate.convertToLocalDateTime(reviewDto.getDate()));
-                    reviewsToSave.add(review);
+                            Optional.ofNullable(getMapContentsOfBook.get(book.getBookId())).ifPresent(review::setContent);
+                            // Set Image nếu có
+                            Review finalReview = review;
+                            review.setImageOne(null); // Sét tất cả ảnh thành null
+                            review.setImageTwo(null);
+                            review.setImageThree(null);
+                            review.setImageFour(null);
+                            review.setImageFive(null);
 
-                    // Cập nhật lại số sao trung bình của cuốn sách
-                    JSONObject starData = getNumberReviews(book);
+                            Optional.ofNullable(getMapImagesOfBook.get(book.getBookId())).ifPresent(image -> {
+                                if (!image.isEmpty()) finalReview.setImageOne(image.get(0));
+                                if (image.size() > 1) finalReview.setImageTwo(image.get(1));
+                                if (image.size() > 2) finalReview.setImageThree(image.get(2));
+                                if (image.size() > 3) finalReview.setImageFour(image.get(3));
+                                if (image.size() > 4) finalReview.setImageFive(image.get(4));
+                            });
+                            review.setOrderReview(finalOrderReview);
+                            review.setDate(ConvertStringToDate.convertToLocalDateTime(reviewDto.getDate()));
+                            reviewsToSave.add(finalReview);
 
-                    float rateNew = (float) starData.get("averageRateNew");
-                    book.setAverageRate(rateNew);
+                            // Cập nhật lại số sao trung bình của cuốn sách
+                            JSONObject starData = getNumberReviews(book);
+
+                            float rateNew = (float) starData.get("averageRateNew");
+
+                            book.setAverageRate(rateNew ==0 ? rateNew : reviewDto.getProductRating());
+
                     booksToUpdate.add(book);
                 });
 
         reviewRepository.saveAll(reviewsToSave);
         iBookService.saveAll(booksToUpdate);
-        return ResponseEntity.ok(new Notice("Cảm ơn bạn đã đánh giá sản phẩm"));
     }
 }

@@ -64,7 +64,8 @@ public class Endpoints {
          "/order/getBooksOfOrder/{orderId}",
          "/order-detail/getOrderDetailsFromOrderId/{orderId}",
          "/orders/**",
-         "/payment/**"
+         "/payment/**",
+         "/order-review/**"
  };
 
     public static final String[] USER_PUT_ENDPOINTS={
@@ -75,6 +76,7 @@ public class Endpoints {
             "/order/cancelOrder/{oderId}",
             "/order/repurchase/{oderId}",
             "/order/confirmReceivedOrder/{oderId}",
+            "/review/editReviewOrder/**"
     };
 
     public static final String[] ADMIN_POST_ENDPOINTS={

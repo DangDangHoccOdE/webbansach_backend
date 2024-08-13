@@ -11,5 +11,7 @@ import vn.spring.webbansach_backend.entity.Review;
 public interface ReviewRepository extends JpaRepository<Review,Long> {
     Page<Review> findByRateAndBook_BookId(@RequestParam("rate") Float rate, @RequestParam("bookId") int bookId,Pageable pageable);
     Page<Review> findByBook_BookId(@RequestParam("bookId") int bookId,Pageable pageable);
+
+    Review findByOrderReview_OrderReviewIdAndBook_BookId(long orderReview_orderReviewId, int book_bookId);
 }
 

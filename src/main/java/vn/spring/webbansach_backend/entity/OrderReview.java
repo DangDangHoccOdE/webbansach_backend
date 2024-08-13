@@ -21,7 +21,7 @@ public class OrderReview {
     @Column(name = "deliveryRate")
     private float deliveryRate;
 
-    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST})
+    @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "orderId", nullable = false)
     private Order order;
 
@@ -31,4 +31,5 @@ public class OrderReview {
 
     @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST},mappedBy = "orderReview")
     private List<Review> reviews;
+
 }

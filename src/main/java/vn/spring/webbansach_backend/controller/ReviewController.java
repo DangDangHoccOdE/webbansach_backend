@@ -27,4 +27,9 @@ public class ReviewController {
     public ResponseEntity<?> addReview(@PathVariable Long orderId, @Validated @RequestBody ReviewDto reviewDto){
         return iReviewService.addReview(orderId,reviewDto);
     }
+
+    @PutMapping("/editReviewOrder/{orderId}")
+    public ResponseEntity<?> editReview(@PathVariable Long orderId, @Validated @RequestBody ReviewDto reviewDto){
+        return iReviewService.editReview(orderId,reviewDto);
+    }
 }
