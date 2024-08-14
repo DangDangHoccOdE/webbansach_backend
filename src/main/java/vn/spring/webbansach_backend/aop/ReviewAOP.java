@@ -24,7 +24,8 @@ public class ReviewAOP {
         this.iOrderService = iOrderService;
     }
 
-    @Before(value = "execution(* vn.spring.webbansach_backend.controller.ReviewController.addReview(..)) && args(..,orderId,reviewDto)", argNames = "orderId,reviewDto")
+    @Before(value = "(execution(* vn.spring.webbansach_backend.controller.ReviewController.addReview(..))"
+            +"|| execution(* vn.spring.webbansach_backend.controller.ReviewController.editReview(..))) && args(..,orderId,reviewDto)", argNames = "orderId,reviewDto")
     public void hasAccess(Long orderId, ReviewDto reviewDto) throws AccessDeniedException {
         Order order = iOrderService.findOrderById(orderId);
         if(order!=null){
