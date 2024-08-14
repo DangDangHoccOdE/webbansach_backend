@@ -35,8 +35,8 @@ public class ReviewController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/deleteReview/{reviewId}")
-    public ResponseEntity<?> deleteReview(@PathVariable Long reviewId){
-        return iReviewService.deleteReview(reviewId);
+    @PutMapping("/hideReview/{reviewId}")
+    public ResponseEntity<?> hideReview(@PathVariable Long reviewId){
+        return iReviewService.hideReview(reviewId);
     }
 }

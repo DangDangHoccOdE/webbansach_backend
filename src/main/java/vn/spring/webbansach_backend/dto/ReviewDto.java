@@ -23,6 +23,8 @@ public class ReviewDto {
     private Map<Integer,String> mapVideoOfBook;
     private Map<Integer,Float> mapStarsOfBook;
 
+    private boolean isHide;
+
     @Pattern(regexp = "\\d{4}/\\d{2}/\\d{2} \\d{2}:\\d{2}:\\d{2}", message = "Ngày đánh giá không đúng định dạng: yyyy/MM/dd HH:mm:ss!")
     private String date;
 

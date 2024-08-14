@@ -90,7 +90,8 @@ public class Endpoints {
     public static final String[] ADMIN_PUT_ENDPOINTS={
         "/books/editBook/{bookId}",
          "/category/editCategory",
-         "/vouchers/editVoucherAdmin/{voucherId}"
+         "/vouchers/editVoucherAdmin/{voucherId}",
+            "/review/hideReview/{reviewId}"
 
     };
 
@@ -102,7 +103,6 @@ public class Endpoints {
         "/category/*/books/*",
         "/vouchers/deleteVoucherAdmin/{voucherId}",
          "/vouchers/deleteVouchersSelected",
-            "/review/deleteReview/{reviewId}"
     };
 
 

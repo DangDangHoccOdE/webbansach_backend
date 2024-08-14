@@ -2,6 +2,7 @@ package vn.spring.webbansach_backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -21,6 +22,10 @@ public class Review {
 
     @Column(name = "content")
     private String content;
+
+    @Column(name = "isHide",nullable = false)
+    @ColumnDefault("false")
+    private boolean isHide=false;
 
     @ManyToOne(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     @JoinColumn(name = "bookId",nullable = false)
@@ -57,7 +62,7 @@ public class Review {
     @Column(name = "date",nullable = false)
     private LocalDateTime date;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "orderReviewId",nullable = false)
     private OrderReview orderReview;
 }

@@ -47,7 +47,9 @@ public class ReviewService implements IReviewService {
     }
 
     private JSONObject getNumberReviews(Book book){ // Lấy ra số lượng đánh giá ứng với từng sao
-        List<Review> reviews = book.getReviewList();
+        List<Review> reviews = book.getReviewList().stream()
+                .filter(review -> !review.isHide())
+                .toList();
 
         JSONObject data = new JSONObject();
 
@@ -138,6 +140,9 @@ public class ReviewService implements IReviewService {
         Map<Integer,String> getMapContentsOfBook = reviewDto.getMapContentsOfBook();
         Map<Integer, Float> getMapStarsOfBook = reviewDto.getMapStarsOfBook();
 
+        List<Book> booksToSave = new ArrayList<>();
+        List<Review> reviewsToSave = new ArrayList<>();
+
         OrderReview finalOrderReview = orderReview;
         order.getOrderDetailList().stream()
                 .map(OrderDetail::getBook)
@@ -171,31 +176,39 @@ public class ReviewService implements IReviewService {
                             });
                             review.setOrderReview(finalOrderReview);
                             review.setDate(ConvertStringToDate.convertToLocalDateTime(reviewDto.getDate()));
-                            reviewRepository.save(finalReview);
-
-                            // Cập nhật lại số sao trung bình của cuốn sách
-                            updateAverageBook(book);
-                            iBookService.save(book);
+                            reviewsToSave.add(finalReview);
+                             booksToSave.add(book);
                 });
+        reviewRepository.saveAll(reviewsToSave);
 
+        for(Book book : booksToSave){
+            // Cập nhật lại số sao trung bình của cuốn sách
+            updateAverageBook(book);
+        }
+        iBookService.saveAll(booksToSave);
     }
 
     @Override
     @Transactional
-    public ResponseEntity<?> deleteReview(Long reviewId) {
+    public ResponseEntity<?> hideReview(Long reviewId) {
         Review review = reviewRepository.findByReviewId(reviewId);
         if (review == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đánh giá!"));
         }
 
+        if (review.isHide()) {
+            return ResponseEntity.badRequest().body(new Notice("Đánh giá đã bị ẩn!"));
+        }
+
             Book book = review.getBook();
-            reviewRepository.delete(review);
-            reviewRepository.flush(); // Đảm báo review sẽ bị xóa luôn để không bị lỗi rollbackonly
+            review.setHide(true);
+            reviewRepository.save(review);
+
             // Cập nhật lại số sao trung bình của cuốn sách
             updateAverageBook(book);
             iBookService.save(book);
 
-            return ResponseEntity.ok(new Notice("Đã xóa đánh giá thành công!"));
+            return ResponseEntity.ok(new Notice("Đã ẩn đánh giá thành công!"));
 
     }
 }
