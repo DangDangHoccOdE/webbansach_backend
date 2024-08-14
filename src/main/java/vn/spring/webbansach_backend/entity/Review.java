@@ -57,7 +57,7 @@ public class Review {
     @Column(name = "date",nullable = false)
     private LocalDateTime date;
 
-    @ManyToOne(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "orderReviewId",nullable = false)
     private OrderReview orderReview;
 }
