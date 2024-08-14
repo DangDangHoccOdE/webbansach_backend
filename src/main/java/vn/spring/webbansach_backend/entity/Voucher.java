@@ -50,6 +50,7 @@ public class Voucher {
     @OneToMany(mappedBy ="voucher",fetch = FetchType.LAZY,cascade = {CascadeType.DETACH,CascadeType.REFRESH,CascadeType.MERGE,CascadeType.PERSIST})
     private List<UserVoucher> userVouchers;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     @JoinTable(name = "order_voucher",joinColumns = @JoinColumn(name = "voucherId"),inverseJoinColumns = @JoinColumn(name = "orderId"))
     private List<Order> orders;
