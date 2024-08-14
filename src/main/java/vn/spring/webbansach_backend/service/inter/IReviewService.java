@@ -8,6 +8,7 @@ import vn.spring.webbansach_backend.entity.Review;
 public interface IReviewService {
     ResponseEntity<?> addReview(Long orderId,ReviewDto reviewDto);
     ResponseEntity<?> editReview(Long orderId,ReviewDto reviewDto);
+    ResponseEntity<?> deleteReview(Long reviewId);
     ResponseEntity<?> getNumberOfStarReview(int bookId);
     void addAndEditReview(Order order, ReviewDto reviewDto);
 }

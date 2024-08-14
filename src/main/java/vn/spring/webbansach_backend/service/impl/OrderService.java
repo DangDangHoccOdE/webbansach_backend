@@ -28,6 +28,7 @@ public class OrderService implements IOrderService {
     private final IBookService iBookService;
     private final IVoucherService iVoucherService;
     private final IUserVoucherService iUserVoucherService;
+
     @Autowired
     public OrderService(OrderRepository orderRepository, ICartItemService iCartItemService, IDeliveryService iDeliveryService, @Lazy IPaymentService iPaymentService, UserService userService, IBookService iBookService, IVoucherService iVoucherService, IUserVoucherService iUserVoucherService) {
         this.orderRepository = orderRepository;
@@ -55,68 +56,72 @@ public class OrderService implements IOrderService {
     @Transactional
     public ResponseEntity<?> confirmReceivedOrder(Long orderId) {
         Order order = findOrderById(orderId);
-        if(order == null){
+        if (order == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng!"));
         }
 
-        order.setOrderStatus("Hoàn thành");
-        orderRepository.save(order);
+            order.setOrderStatus("Hoàn thành");
+            orderRepository.save(order);
 
-        return ResponseEntity.ok(new Notice("Xác nhận đã nhận đơn hàng thành công"));
+            return ResponseEntity.ok(new Notice("Xác nhận đã nhận đơn hàng thành công"));
+
     }
 
     @Override
     public ResponseEntity<?> cancelOder(Long orderId) {
         Order order = findOrderById(orderId);
-        if(order == null){
+        if (order == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng!"));
         }
 
-        if(order.getOrderStatus().equals("Đã hủy")){
+        if (order.getOrderStatus().equals("Đã hủy")) {
             return ResponseEntity.badRequest().body(new Notice("Hủy đơn hàng thất bại"));
         }
-        order.setOrderStatus("Đã hủy");
-        order.setDeliveryStatus("");
-        orderRepository.save(order);
-        return ResponseEntity.ok(new Notice("Đã hủy đơn hàng thành công"));
+
+            order.setOrderStatus("Đã hủy");
+            order.setDeliveryStatus("");
+            orderRepository.save(order);
+            return ResponseEntity.ok(new Notice("Đã hủy đơn hàng thành công"));
+
     }
 
     @Override
     @Transactional
     public ResponseEntity<?> repurchase(Long orderId) {
         Order order = findOrderById(orderId);
-        if(order == null){
+        if (order == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng!"));
         }
 
-        User user = order.getUser();
-        List<OrderDetail> orderDetailList = order.getOrderDetailList();
-        List<Long> cartItemIds = new ArrayList<>();
+            User user = order.getUser();
+            List<OrderDetail> orderDetailList = order.getOrderDetailList();
+            List<Long> cartItemIds = new ArrayList<>();
 
-        for(OrderDetail orderDetail : orderDetailList){
-            Book book = orderDetail.getBook();
-            CartItem cartItem = new CartItem();
-            cartItem.setBooks(book);
-            cartItem.setQuantity(orderDetail.getQuantity());
-            cartItem.setUser(user);
-            cartItem.setCreatedAt(LocalDateTime.now());
-            iCartItemService.saveCartItem(cartItem);
-            cartItemIds.add(cartItem.getCartItemId());
-        }
+            for (OrderDetail orderDetail : orderDetailList) {
+                Book book = orderDetail.getBook();
+                CartItem cartItem = new CartItem();
+                cartItem.setBooks(book);
+                cartItem.setQuantity(orderDetail.getQuantity());
+                cartItem.setUser(user);
+                cartItem.setCreatedAt(LocalDateTime.now());
+                iCartItemService.saveCartItem(cartItem);
+                cartItemIds.add(cartItem.getCartItemId());
+            }
 
-        return ResponseEntity.ok(cartItemIds);
+            return ResponseEntity.ok(cartItemIds);
+
     }
 
     @Override
     public ResponseEntity<?> getBooksOfOrder(Long orderId) {
         Order order = findOrderById(orderId);
-        if(order == null){
+        if (order == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng!"));
         }
 
         List<OrderDetail> orderDetailList = order.getOrderDetailList();
         List<BookDtoOfOrder> books = orderDetailList.stream()
-                .map(orderDetail->{
+                .map(orderDetail -> {
                     Book book = orderDetail.getBook();
                     return new BookDtoOfOrder(
                             book.getBookId(),
@@ -132,96 +137,95 @@ public class OrderService implements IOrderService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> addOrder(OrderDto orderDto,boolean isBuyNow) {
-        if(orderRepository.findByOrderCode(orderDto.getOrderCode())!=null){
+    public ResponseEntity<?> addOrder(OrderDto orderDto, boolean isBuyNow) {
+        if (orderRepository.findByOrderCode(orderDto.getOrderCode()) != null) {
             return ResponseEntity.badRequest().body(new Notice("Tạo đơn hàng không thành công, lỗi mã đơn hàng tồn tại"));
         }
+         // Tạo order
+            Order order = new Order();
+            order.setOrderCode(orderDto.getOrderCode());
+            order.setDate(ConvertStringToDate.convertToLocalDateTime(orderDto.getDate()));
+            order.setTotalProduct(orderDto.getTotalProduct());
+            order.setDeliveryAddress(orderDto.getDeliveryAddress());
+            order.setPaymentCost(orderDto.getPaymentCost());
+            order.setOrderStatus(orderDto.getOrderStatus());
+            order.setNoteFromUser(orderDto.getNoteFromUser());
+            order.setDeliveryStatus(orderDto.getDeliveryStatus());
+            order.setPurchaseAddress(orderDto.getPurchaseAddress());
+            order.setShippingFee(orderDto.getShippingFeeVoucher());
+            order.setTotalPrice(orderDto.getTotalPrice());
 
-        // Tạo order
-        Order order = new Order();
-        order.setOrderCode(orderDto.getOrderCode());
-        order.setDate(ConvertStringToDate.convertToLocalDateTime(orderDto.getDate()));
-        order.setTotalProduct(orderDto.getTotalProduct());
-        order.setDeliveryAddress(orderDto.getDeliveryAddress());
-        order.setPaymentCost(orderDto.getPaymentCost());
-        order.setOrderStatus(orderDto.getOrderStatus());
-        order.setNoteFromUser(orderDto.getNoteFromUser());
-        order.setDeliveryStatus(orderDto.getDeliveryStatus());
-        order.setPurchaseAddress(orderDto.getPurchaseAddress());
-        order.setShippingFee(orderDto.getShippingFeeVoucher());
-        order.setTotalPrice(orderDto.getTotalPrice());
-
-        List<OrderDetail> oderDetails = new ArrayList<>();
-        // Tạo OrderDetail
+            List<OrderDetail> oderDetails = new ArrayList<>();
+            // Tạo OrderDetail
             List<Integer> cartItemIdList = orderDto.getCartItems();
-            for(Integer cartItemId:cartItemIdList) {
-                if(!isBuyNow) { // Nếu không phải người dùng ấn nút MUA NGAY
+            for (Integer cartItemId : cartItemIdList) {
+                if (!isBuyNow) { // Nếu không phải người dùng ấn nút MUA NGAY
                     CartItem cartItem = iCartItemService.findCartItemById(cartItemId);
                     if (cartItem == null) {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy sản phẩm trong giỏ hàng!"));
                     }
                     Integer bookId = cartItem.getBooks().getBookId();
-                    addOrderAndUpdateBook(oderDetails,bookId,cartItem.getQuantity(),order);
+                    addOrderAndUpdateBook(oderDetails, bookId, cartItem.getQuantity(), order);
                     iCartItemService.deleteCartItem(cartItem.getCartItemId()); // Xóa các sản phẩm trong giỏ hàng sau khi xác nhận mua hàng
 
-                }else{
+                } else {
                     // Vì khi người dùng ấn vào mua ngay thì không tạo sản phẩm trong cartItem nên id cartItem sẽ là idBook
                     Integer bookId = orderDto.getCartItems().get(0);
                     int totalBook = orderDto.getTotalProduct();
-                    addOrderAndUpdateBook(oderDetails,bookId,totalBook,order);
+                    addOrderAndUpdateBook(oderDetails, bookId, totalBook, order);
+                }
             }
-        }
 
-        // Tạo đối tượng payment
-        Payment payment = addAndUpdatePayment(orderDto.getPaymentMethod());
+            // Tạo đối tượng payment
+            Payment payment = addAndUpdatePayment(orderDto.getPaymentMethod());
 
-        // Tạo đối tượng delivery
-        Delivery delivery = addAndUpdateDelivery(orderDto.getDeliveryMethod(),orderDto.getShippingFee());
+            // Tạo đối tượng delivery
+            Delivery delivery = addAndUpdateDelivery(orderDto.getDeliveryMethod(), orderDto.getShippingFee());
 
-        // Lấy user
-        User user = userService.findUserByUserId(orderDto.getUserId());
-        if(user==null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy người sử dụng"));
-        }
+            // Lấy user
+            User user = userService.findUserByUserId(orderDto.getUserId());
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy người sử dụng"));
+            }
 
-        // Lấy ra những vouchers đã chọn để đặt hàng rồi giảm số lượng
-        List<Voucher> vouchers = voucherIsChooseToPayment(orderDto.getVoucherIds());
-        List<UserVoucher> userVouchers = user.getUserVouchers();
-        userVouchers.forEach(userVoucher -> {
-           for(Voucher voucher : vouchers){
-               if(userVoucher.getVoucher().getVoucherId().equals(voucher.getVoucherId())){
-                   int numberOfVoucher = userVoucher.getQuantity();
-                   userVoucher.setQuantity(numberOfVoucher-1);
-               }
-           }
-        });
-        iUserVoucherService.saveAll(userVouchers);
+            // Lấy ra những vouchers đã chọn để đặt hàng rồi giảm số lượng
+            List<Voucher> vouchers = voucherIsChooseToPayment(orderDto.getVoucherIds());
+            List<UserVoucher> userVouchers = user.getUserVouchers();
+            userVouchers.forEach(userVoucher -> {
+                for (Voucher voucher : vouchers) {
+                    if (userVoucher.getVoucher().getVoucherId().equals(voucher.getVoucherId())) {
+                        int numberOfVoucher = userVoucher.getQuantity();
+                        userVoucher.setQuantity(numberOfVoucher - 1);
+                    }
+                }
+            });
+            iUserVoucherService.saveAll(userVouchers);
 
-        order.setUser(user);
-        order.setOrderDetailList(oderDetails);
-        order.setPayment(payment);
-        order.setDelivery(delivery);
-        order.setVouchers(vouchers);
+            order.setUser(user);
+            order.setOrderDetailList(oderDetails);
+            order.setPayment(payment);
+            order.setDelivery(delivery);
+            order.setVouchers(vouchers);
 
-        orderRepository.save(order);
-        return ResponseEntity.ok(new Notice("Đã tạo đơn hàng thành công, cảm ơn bạn đã tin tưởng dùng sản phẩm"));
+            orderRepository.save(order);
+            return ResponseEntity.ok(new Notice("Đã tạo đơn hàng thành công, cảm ơn bạn đã tin tưởng dùng sản phẩm"));
     }
 
-    private List<Voucher> voucherIsChooseToPayment(List<Long> voucherIds){
+    private List<Voucher> voucherIsChooseToPayment(List<Long> voucherIds) {
         List<Voucher> vouchers = new ArrayList<>();
-        voucherIds.forEach(voucherId->{
+        voucherIds.forEach(voucherId -> {
             Voucher voucher = iVoucherService.findVoucherById(voucherId);
-            if(voucher == null){
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy voucher");
+            if (voucher == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy voucher");
             }
             vouchers.add(voucher);
         });
         return vouchers;
     }
 
-    private Payment addAndUpdatePayment(String paymentMethod){
+    private Payment addAndUpdatePayment(String paymentMethod) {
         Payment payment = iPaymentService.findByPaymentName(paymentMethod);
-        if(payment == null){ // Nếu phương thức thanh toán chưa tồn tại
+        if (payment == null) { // Nếu phương thức thanh toán chưa tồn tại
             payment = new Payment();
             payment.setPaymentName(paymentMethod);
             iPaymentService.save(payment);
@@ -229,9 +233,9 @@ public class OrderService implements IOrderService {
         return payment;
     }
 
-    private Delivery addAndUpdateDelivery(String deliveryMethod,double shippingFee){
+    private Delivery addAndUpdateDelivery(String deliveryMethod, double shippingFee) {
         Delivery delivery = iDeliveryService.findByDeliveryName(deliveryMethod);
-        if(delivery == null){ // Nếu phương thức thanh toán chưa tồn tại
+        if (delivery == null) { // Nếu phương thức thanh toán chưa tồn tại
             delivery = new Delivery();
             delivery.setDeliveryName(deliveryMethod);
             delivery.setShippingFee(shippingFee);
@@ -241,13 +245,13 @@ public class OrderService implements IOrderService {
         return delivery;
     }
 
-    private void addOrderAndUpdateBook(List<OrderDetail> orderDetails,Integer bookId, int quantity, Order order){
+    private void addOrderAndUpdateBook(List<OrderDetail> orderDetails, Integer bookId, int quantity, Order order) {
         Book book = iBookService.findBookById(bookId);
-        if(book == null){
+        if (book == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy sách!");
         }
 
-        book.setSoldQuantity(book.getSoldQuantity()+quantity);
+        book.setSoldQuantity(book.getSoldQuantity() + quantity);
         iBookService.save(book);
 
         OrderDetail orderDetail = new OrderDetail();
@@ -258,4 +262,6 @@ public class OrderService implements IOrderService {
 
         orderDetails.add(orderDetail);
     }
+
+
 }

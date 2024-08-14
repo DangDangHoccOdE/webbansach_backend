@@ -81,6 +81,15 @@ public class ReviewService implements IReviewService {
         return data;
     }
 
+    private void updateAverageBook(Book book){
+        JSONObject starData = getNumberReviews(book);
+
+        float rateNew = (float) starData.get("averageRateNew");
+
+        book.setAverageRate(rateNew);
+
+    }
+
     @Override
     @Transactional
     public ResponseEntity<?> addReview(Long orderId,ReviewDto reviewDto) {
@@ -91,8 +100,8 @@ public class ReviewService implements IReviewService {
         if(order.getOrderReview()!=null){
             return ResponseEntity.badRequest().body(new Notice("Đánh giá đã tồn tại, không thể thên"));
         }
-        addAndEditReview(order,reviewDto);
-        return ResponseEntity.ok(new Notice("Cảm ơn bạn đã đánh giá sản phẩm"));
+            addAndEditReview(order,reviewDto);
+            return ResponseEntity.ok(new Notice("Cảm ơn bạn đã đánh giá sản phẩm"));
     }
 
     @Override
@@ -102,8 +111,8 @@ public class ReviewService implements IReviewService {
         if(order == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng cần đánh giá"));
         }
-        addAndEditReview(order,reviewDto);
-        return ResponseEntity.ok(new Notice("Cập nhật đánh giá sản phẩm thành công"));
+            addAndEditReview(order,reviewDto);
+            return ResponseEntity.ok(new Notice("Cập nhật đánh giá sản phẩm thành công"));
     }
 
     @Override
@@ -128,10 +137,6 @@ public class ReviewService implements IReviewService {
         Map<Integer,String> getMapVideoOfBook = reviewDto.getMapVideoOfBook();
         Map<Integer,String> getMapContentsOfBook = reviewDto.getMapContentsOfBook();
         Map<Integer, Float> getMapStarsOfBook = reviewDto.getMapStarsOfBook();
-
-        // Thu thập reviews và books cần cập nhật
-        List<Review> reviewsToSave = new ArrayList<>();
-        List<Book> booksToUpdate = new ArrayList<>();
 
         OrderReview finalOrderReview = orderReview;
         order.getOrderDetailList().stream()
@@ -166,19 +171,31 @@ public class ReviewService implements IReviewService {
                             });
                             review.setOrderReview(finalOrderReview);
                             review.setDate(ConvertStringToDate.convertToLocalDateTime(reviewDto.getDate()));
-                            reviewsToSave.add(finalReview);
+                            reviewRepository.save(finalReview);
 
                             // Cập nhật lại số sao trung bình của cuốn sách
-                            JSONObject starData = getNumberReviews(book);
-
-                            float rateNew = (float) starData.get("averageRateNew");
-
-                            book.setAverageRate(rateNew ==0 ? rateNew : reviewDto.getProductRating());
-
-                    booksToUpdate.add(book);
+                            updateAverageBook(book);
+                            iBookService.save(book);
                 });
 
-        reviewRepository.saveAll(reviewsToSave);
-        iBookService.saveAll(booksToUpdate);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> deleteReview(Long reviewId) {
+        Review review = reviewRepository.findByReviewId(reviewId);
+        if (review == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đánh giá!"));
+        }
+
+            Book book = review.getBook();
+            reviewRepository.delete(review);
+            reviewRepository.flush(); // Đảm báo review sẽ bị xóa luôn để không bị lỗi rollbackonly
+            // Cập nhật lại số sao trung bình của cuốn sách
+            updateAverageBook(book);
+            iBookService.save(book);
+
+            return ResponseEntity.ok(new Notice("Đã xóa đánh giá thành công!"));
+
     }
 }

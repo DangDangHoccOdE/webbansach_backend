@@ -2,6 +2,7 @@ package vn.spring.webbansach_backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.spring.webbansach_backend.dto.ReviewDto;
@@ -31,5 +32,11 @@ public class ReviewController {
     @PutMapping("/editReviewOrder/{orderId}")
     public ResponseEntity<?> editReview(@PathVariable Long orderId, @Validated @RequestBody ReviewDto reviewDto){
         return iReviewService.editReview(orderId,reviewDto);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/deleteReview/{reviewId}")
+    public ResponseEntity<?> deleteReview(@PathVariable Long reviewId){
+        return iReviewService.deleteReview(reviewId);
     }
 }

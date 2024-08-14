@@ -77,11 +77,6 @@ public class GlobalExceptionHandler{
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Notice("Token không hợp lệ"));
     }
 
-    @ExceptionHandler(Exception.class) // Các lỗi kh
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<Notice> handleException(Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Notice(e.getMessage()));
-    }
 
 
 }
