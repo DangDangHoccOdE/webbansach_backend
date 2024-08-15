@@ -37,7 +37,9 @@ public class Endpoints {
             "/cart-items/addCartItem",
             "/vouchers/saveVoucherByUser",
             "/order/addOrder",
-            "/review/addReviewOrder/{orderId}"
+            "/review/addReviewOrder/{orderId}",
+            "/payment/create-payment",
+
     };
 
     public static final String[] USER_DELETE_ENDPOINTS={
@@ -65,7 +67,8 @@ public class Endpoints {
          "/order-detail/getOrderDetailsFromOrderId/{orderId}",
          "/orders/**",
          "/payment/**",
-         "/order-review/**"
+         "/order-review/**",
+         "/payment/payment-info",
  };
 
     public static final String[] USER_PUT_ENDPOINTS={
@@ -76,6 +79,7 @@ public class Endpoints {
             "/order/cancelOrder/{oderId}",
             "/order/repurchase/{oderId}",
             "/order/confirmReceivedOrder/{oderId}",
+            "/order/confirmSuccessfullyBankOrderPayment/{orderCode}",
             "/review/editReviewOrder/**"
     };
 
