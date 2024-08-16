@@ -56,7 +56,7 @@ public class Endpoints {
  public static final String[] USER_GET_ENDPOINTS={
         "/wishList/showWishList/**",
          "/wish-list/**",
-         "/user/findUserByUsername/**",
+         "/user/**",
          "/cart-items/**",
          "/vouchers/**",
          "/user-voucher/**",

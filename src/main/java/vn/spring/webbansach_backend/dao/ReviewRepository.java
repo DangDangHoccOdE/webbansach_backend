@@ -15,5 +15,7 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
     Review findByOrderReview_OrderReviewIdAndBook_BookId(Long orderReview_orderReviewId, Integer book_bookId);
 
     Review findByReviewId(Long reviewId);
+
+    long countBy();
 }
 

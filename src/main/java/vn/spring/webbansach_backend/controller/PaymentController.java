@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.spring.webbansach_backend.dto.OrderDto;
-import vn.spring.webbansach_backend.dto.TransactionDto;
 import vn.spring.webbansach_backend.service.impl.VNPayService;
 import vn.spring.webbansach_backend.service.inter.IPaymentService;
 
