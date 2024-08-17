@@ -69,6 +69,27 @@ public class OrderService implements IOrderService {
 
     @Override
     @Transactional
+    public ResponseEntity<?> saveOrderStatusChange(long orderId,OrderDto orderDto) {
+        Order order = findOrderById(orderId);
+        if (order == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng!"));
+        }
+
+        order.setDeliveryStatus(orderDto.getDeliveryStatus());
+
+        if(orderDto.getDeliveryStatus().equals("ĐANG GIAO")){
+            order.setOrderStatus("ĐANG VẬN CHUYỂN");
+        }else  if(orderDto.getDeliveryStatus().equals("TRẢ HÀNG")){
+            order.setOrderStatus("TRẢ HÀNG/ HOÀN TIỀN");
+        }
+        orderRepository.save(order);
+
+        return ResponseEntity.ok(new Notice("Lưu trạng thái đơn hàng thành công"));
+
+    }
+
+    @Override
+    @Transactional
     public ResponseEntity<?> confirmSuccessfullyBankOrderPayment(String orderCode) {
         Order order = orderRepository.findByOrderCode(orderCode);
         if (order == null) {

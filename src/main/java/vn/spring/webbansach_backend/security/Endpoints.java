@@ -79,6 +79,7 @@ public class Endpoints {
             "/order/repurchase/{oderId}",
             "/order/confirmReceivedOrder/{oderId}",
             "/order/confirmSuccessfullyBankOrderPayment/{orderCode}",
+            "/order/saveOrderStatusChange/{orderId}",
             "/review/editReviewOrder/**"
     };
 

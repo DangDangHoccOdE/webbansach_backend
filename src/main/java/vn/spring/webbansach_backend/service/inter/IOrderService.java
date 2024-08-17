@@ -12,6 +12,7 @@ public interface IOrderService {
     ResponseEntity<?> repurchase(Long orderId);
     ResponseEntity<?> confirmReceivedOrder(Long orderId);
     ResponseEntity<?> confirmSuccessfullyBankOrderPayment(String orderCode);
+    ResponseEntity<?> saveOrderStatusChange(long orderId,OrderDto orderDto);
     ResponseEntity<?> getBooksOfOrder(Long orderId);
 
 }

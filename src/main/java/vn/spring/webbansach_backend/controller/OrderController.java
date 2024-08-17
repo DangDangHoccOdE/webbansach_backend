@@ -42,6 +42,11 @@ public class OrderController {
         return iOrderService.confirmSuccessfullyBankOrderPayment(orderCode);
     }
 
+    @PutMapping("/saveOrderStatusChange/{orderId}")
+    public ResponseEntity<?> saveOrderStatusChange(@PathVariable long orderId,@RequestBody OrderDto orderDto){
+        return iOrderService.saveOrderStatusChange(orderId,orderDto);
+    }
+
     @PutMapping("/repurchase/{orderId}")
     public ResponseEntity<?> repurchase(@PathVariable Long orderId){
         return iOrderService.repurchase(orderId);
