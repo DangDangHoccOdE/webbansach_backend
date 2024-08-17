@@ -47,7 +47,7 @@ public class Voucher {
     private String typeVoucher;
 
     @JsonIgnore
-    @OneToMany(mappedBy ="voucher",fetch = FetchType.LAZY,cascade = {CascadeType.DETACH,CascadeType.REFRESH,CascadeType.MERGE,CascadeType.PERSIST})
+    @OneToMany(mappedBy ="voucher",fetch = FetchType.LAZY,cascade = {CascadeType.ALL})
     private List<UserVoucher> userVouchers;
 
     @JsonIgnore
