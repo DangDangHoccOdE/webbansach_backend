@@ -50,8 +50,7 @@ public class Endpoints {
     };
 
     public static final String[] ADMIN_GET_ENDPOINTS={
-        "/",
-         "/users/**"
+        "/**",
     };
  public static final String[] USER_GET_ENDPOINTS={
         "/wishList/showWishList/**",

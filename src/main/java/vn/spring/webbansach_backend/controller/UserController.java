@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import vn.spring.webbansach_backend.dto.EmailDto;
 import vn.spring.webbansach_backend.dto.PasswordDto;
 import vn.spring.webbansach_backend.dto.UserDto;
-import vn.spring.webbansach_backend.dto.VoucherDto;
 import vn.spring.webbansach_backend.entity.Notice;
 import vn.spring.webbansach_backend.entity.User;
 import vn.spring.webbansach_backend.security.JwtResponse;
@@ -37,28 +36,38 @@ public class UserController {
         this.jwtService = jwtService;
     }
 
-    @GetMapping("/findUserByUsername")
-    public ResponseEntity<JSONObject> findUserByUsername(@RequestParam String username){
-        User user = iUserService.findUserByUsername(username);
-        JSONObject data = new JSONObject();
-        if(user ==null){
-            data.put("notice","Không tìm thấy người sử dụng!");
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/findUserByCondition")
+    public ResponseEntity<JSONObject> findUserByCondition(@RequestParam String condition){
+        User user = iUserService.findUserByUsername(condition); // Tìm kiếm theo họ tên
+
+        if(user == null) { // Không tồn tại user theo username
+            user = iUserService.findUserByEmail(condition);
+        }
+
+        if(user == null){ // Nếu không tồn tai user theo email
+            JSONObject data = new JSONObject();
+            data.put("notice", "Không tìm thấy người sử dụng!");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(data);
         }
-        data.put("userId",user.getUserId());
-        data.put("firstName",user.getFirstName());
-        data.put("lastName",user.getLastName());
-        data.put("userName",user.getUserName());
-        data.put("dateOfBirth",user.getDateOfBirth());
-        data.put("phoneNumber",user.getPhoneNumber());
-        data.put("password",user.getPassword());
-        data.put("sex",user.getSex());
-        data.put("email",user.getEmail());
-        data.put("deliveryAddress",user.getDeliveryAddress());
-        data.put("purchaseAddress",user.getPurchaseAddress());
-        data.put("avatar",user.getAvatar());
-        data.put("active",user.isActive());
-        return ResponseEntity.ok(data);
+
+            JSONObject data = new JSONObject(); // nêu tồn tại user
+
+            data.put("userId",user.getUserId());
+            data.put("firstName",user.getFirstName());
+            data.put("lastName",user.getLastName());
+            data.put("userName",user.getUserName());
+            data.put("dateOfBirth",user.getDateOfBirth());
+            data.put("phoneNumber",user.getPhoneNumber());
+            data.put("password",user.getPassword());
+            data.put("sex",user.getSex());
+            data.put("email",user.getEmail());
+            data.put("deliveryAddress",user.getDeliveryAddress());
+            data.put("purchaseAddress",user.getPurchaseAddress());
+            data.put("avatar",user.getAvatar());
+            data.put("active",user.isActive());
+            return ResponseEntity.ok(data);
+
     }
 
     @PostMapping("/register")
@@ -153,5 +162,6 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable String username){
         return iUserService.deleteUser(username);
     }
+
 
 }

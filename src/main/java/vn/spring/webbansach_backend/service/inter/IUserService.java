@@ -4,19 +4,15 @@ import org.springframework.http.ResponseEntity;
 import vn.spring.webbansach_backend.dto.EmailDto;
 import vn.spring.webbansach_backend.dto.UserDto;
 import vn.spring.webbansach_backend.entity.User;
-import vn.spring.webbansach_backend.entity.WishList;
 
-import java.nio.file.AccessDeniedException;
-import java.security.Principal;
 import java.util.*;
 
 public interface IUserService {
-    User saveUser(User user);
-    List<User> saveAllUser(List<User> users);
     List<User> findAllUsers();
     Boolean existsUserByUsernameAndActiveIsTrue(String username);
     User findUserByUserId(Long id);
     User findUserByUsername(String username);
+    User findUserByEmail(String email);
 
     ResponseEntity<?> registerUser(UserDto user);
     ResponseEntity<?> activatedAccount(String email, String activationCode);

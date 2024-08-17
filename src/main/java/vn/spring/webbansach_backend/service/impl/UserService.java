@@ -14,6 +14,7 @@ import vn.spring.webbansach_backend.entity.Notice;
 import vn.spring.webbansach_backend.entity.User;
 import vn.spring.webbansach_backend.service.inter.IEmailService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
+import vn.spring.webbansach_backend.service.inter.IUserVoucherService;
 import vn.spring.webbansach_backend.utils.ConvertStringToDate;
 import vn.spring.webbansach_backend.utils.MaskEmail;
 
@@ -34,17 +35,6 @@ public class UserService implements IUserService {
     }
 
     @Override
-    @Transactional
-    public User saveUser(User user) {
-        return userRepository.save((user));
-    }
-
-    @Override
-    public List<User> saveAllUser(List<User> user) {
-        return userRepository.saveAll((user));
-    }
-
-    @Override
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
@@ -62,6 +52,11 @@ public class UserService implements IUserService {
     @Override
     public User findUserByUsername(String username) {
         return userRepository.findByUserName(username);
+    }
+
+    @Override
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override
@@ -320,5 +315,6 @@ public class UserService implements IUserService {
         userRepository.delete(user);
         return ResponseEntity.ok(new Notice("Đã xóa thành công!"));
     }
+
 
 }
