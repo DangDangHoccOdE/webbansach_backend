@@ -1,5 +1,4 @@
 package vn.spring.webbansach_backend.service.impl;
-
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,14 +10,16 @@ import vn.spring.webbansach_backend.dto.UserDto;
 import vn.spring.webbansach_backend.dao.UserRepository;
 import vn.spring.webbansach_backend.entity.CartItem;
 import vn.spring.webbansach_backend.entity.Notice;
+import vn.spring.webbansach_backend.entity.Role;
 import vn.spring.webbansach_backend.entity.User;
 import vn.spring.webbansach_backend.service.inter.IEmailService;
+import vn.spring.webbansach_backend.service.inter.IRoleService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
-import vn.spring.webbansach_backend.service.inter.IUserVoucherService;
 import vn.spring.webbansach_backend.utils.ConvertStringToDate;
 import vn.spring.webbansach_backend.utils.MaskEmail;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,11 +28,13 @@ public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final IEmailService iEmailService;
+    private final IRoleService iRoleService;
     @Autowired
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, IEmailService iEmailService) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, IEmailService iEmailService, IRoleService iRoleService) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.iEmailService = iEmailService;
+        this.iRoleService = iRoleService;
     }
 
     @Override
@@ -60,6 +63,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> registerUser(UserDto userDto){
         User user = new User();
         // check username and email valid
@@ -74,7 +78,7 @@ public class UserService implements IUserService {
         if(userDto.getAvatar() != null && !userDto.getAvatar().isEmpty()){
             byte[] compressedImage =  userDto.getAvatar().getBytes();
             if(compressedImage.length>1048576){
-                return ResponseEntity.badRequest().body(new Notice(("Đã gặp lỗi do dung luượng ảnh quá lớn hoặc bị lỗi, vui lòng chọn ảnh khác!")));
+                return ResponseEntity.badRequest().body(new Notice(("Đã gặp lỗi do dung lượng ảnh quá lớn hoặc bị lỗi, vui lòng chọn ảnh khác!")));
             }
         }
 
@@ -98,11 +102,18 @@ public class UserService implements IUserService {
         LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(10);
         user.setActivationExpiry(expiryTime);
 
+        // Set role User
+        Role role = iRoleService.findRoleByName("ROLE_USER");
+        if(user.getRoleList()==null){
+            user.setRoleList(new ArrayList<>());
+        }
+        user.getRoleList().add(role);
+
         // save user to DB
-        User registedUser = userRepository.save(user);
+        userRepository.save(user);
 
         // send Email
-        sendEmailActive(userDto.getEmail(),userDto.getActivationCode());
+        sendEmailActive(userDto.getEmail(),user.getActivationCode());
 
         return ResponseEntity.ok(new Notice("Đăng ký thành công, vui lòng kiểm tra email để kích hoạt!"));
     }
