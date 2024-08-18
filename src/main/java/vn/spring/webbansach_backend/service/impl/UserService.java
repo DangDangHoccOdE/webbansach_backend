@@ -248,7 +248,7 @@ public class UserService implements IUserService {
     public ResponseEntity<?> confirmChangeEmail(String email, String emailCode,String newEmail) {
         User user = userRepository.findByEmail(email);
         if(user==null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Người dùng không tồn tại!"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Địa chỉ email của bạn đã được thay đổi!"));
         }
         if(user.getEmailExpiry().isBefore(LocalDateTime.now())){
             return ResponseEntity.badRequest().body(new Notice("Mã xác nhận đã hết thời hạn!"));
