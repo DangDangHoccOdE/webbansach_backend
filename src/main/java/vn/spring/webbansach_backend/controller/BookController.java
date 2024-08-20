@@ -34,7 +34,7 @@ public class BookController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/editBook/{bookId}")
     public ResponseEntity<?> editBook(@PathVariable Integer bookId,@Validated @RequestBody BookDto bookDto) {
-            return bookService.editBook(bookId,bookDto);
+        return bookService.editBook(bookId,bookDto);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

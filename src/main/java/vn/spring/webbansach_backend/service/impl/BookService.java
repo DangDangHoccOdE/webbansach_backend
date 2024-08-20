@@ -62,7 +62,7 @@ public class BookService implements IBookService {
     public ResponseEntity<?> editBook(Integer bookId,BookDto bookDto) {
         Book book = bookRepository.findByBookId(bookId);
         if(book==null){
-          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Sách không tồn tại!"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Sách không tồn tại!"));
         }else {
 
             // XÓa ảnh
