@@ -77,10 +77,8 @@ public class OrderService implements IOrderService {
 
         order.setDeliveryStatus(orderDto.getDeliveryStatus());
 
-        if(orderDto.getDeliveryStatus().equals("ĐANG GIAO")){
-            order.setOrderStatus("ĐANG VẬN CHUYỂN");
-        }else  if(orderDto.getDeliveryStatus().equals("TRẢ HÀNG")){
-            order.setOrderStatus("TRẢ HÀNG/ HOÀN TIỀN");
+        if(orderDto.getDeliveryStatus().equals("Đang giao")){
+            order.setOrderStatus("Đang vận chuyển");
         }
         orderRepository.save(order);
 
