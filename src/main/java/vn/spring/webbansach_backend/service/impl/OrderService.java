@@ -15,6 +15,7 @@ import vn.spring.webbansach_backend.service.inter.*;
 import vn.spring.webbansach_backend.utils.ConvertStringToDate;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -102,7 +103,7 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public ResponseEntity<?> cancelOder(Long orderId) {
+    public ResponseEntity<?> cancelOder(Long orderId,Map<String,String> mapReason) {
         Order order = findOrderById(orderId);
         if (order == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy đơn hàng!"));
@@ -112,8 +113,16 @@ public class OrderService implements IOrderService {
             return ResponseEntity.badRequest().body(new Notice("Hủy đơn hàng thất bại"));
         }
 
+        String reason = mapReason.get("reason");
+        String date = mapReason.get("time");
+
             order.setOrderStatus("Đã hủy");
             order.setDeliveryStatus("");
+            order.setReasonCancelOrder(reason);
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
+            order.setCancelOrderTime(dateTime);
             orderRepository.save(order);
             return ResponseEntity.ok(new Notice("Đã hủy đơn hàng thành công"));
 

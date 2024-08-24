@@ -49,6 +49,12 @@ public class Order {
     @Column(name = "noteFromUser")
     private String noteFromUser;
 
+    @Column(name = "cancelOrderTime")
+    private LocalDateTime cancelOrderTime;
+
+    @Column(name = "reasonCancelOrder")
+    private String reasonCancelOrder;
+
     @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST})
     @JoinColumn(name = "paymentId",nullable = false)
     private Payment payment;

@@ -8,6 +8,8 @@ import vn.spring.webbansach_backend.dto.OrderDto;
 import vn.spring.webbansach_backend.service.impl.OrderService;
 import vn.spring.webbansach_backend.service.inter.IOrderService;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/order")
 public class OrderController {
@@ -29,8 +31,8 @@ public class OrderController {
         return iOrderService.addOrder(orderDto,isBuyNow);
     }
     @PutMapping("/cancelOrder/{orderId}")
-    public ResponseEntity<?> cancelOrder(@PathVariable Long orderId){
-        return iOrderService.cancelOder(orderId);
+    public ResponseEntity<?> cancelOrder(@PathVariable Long orderId,@RequestBody Map<String,String> mapReason){
+        return iOrderService.cancelOder(orderId,mapReason);
     }
     @PutMapping("/confirmReceivedOrder/{orderId}")
     public ResponseEntity<?> confirmReceivedOrder(@PathVariable Long orderId){
