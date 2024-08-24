@@ -6,5 +6,5 @@ import vn.spring.webbansach_backend.entity.OrderReview;
 
 @RepositoryRestResource(path = "order-review")
 public interface OrderReviewRepository extends JpaRepository<OrderReview,Long> {
-
+    int countBy();
 }
