@@ -73,13 +73,14 @@ public class CategoryService implements ICategoryService {
         if(category == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Thể loại không tồn tại!"));
         }
+
         String newCategoryName = categoryDto.getCategoryName();
-        if(newCategoryName.equals(category.getCategoryName())){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Notice("Tên thể loại mới không thể trùng tên thể loại cũ!"));
-        }
-        if(categoryRepository.existsByCategoryName(newCategoryName)){
+        Category categoryFind = categoryRepository.findByCategoryName(newCategoryName);
+
+        if(newCategoryName.equals(category.getCategoryName()) || (categoryFind!=null && categoryFind.getCategoryName().equals(newCategoryName))){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Notice("Tên thể loại mới đã tồn tại!"));
         }
+
         category.setCategoryName(newCategoryName);
         categoryRepository.save(category);
         return ResponseEntity.ok(new Notice("Chỉnh sửa tên thể loại thành công!"));

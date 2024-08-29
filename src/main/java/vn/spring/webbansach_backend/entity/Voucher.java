@@ -25,7 +25,13 @@ public class Voucher {
     private String describe;
 
     @Column(name = "discountValue")
-    private Double discountValue;
+    private Float discountValue;
+
+    @Column(name = "minimumSingleValue")
+    private Double minimumSingleValue;
+
+    @Column(name = "maximumOrderDiscount")
+    private Double maximumOrderDiscount;
 
     @Column(name = "quantity")
     private int quantity;

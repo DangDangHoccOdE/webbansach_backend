@@ -15,8 +15,16 @@ public class VoucherDto {
 
     @NotNull(message = "Phần trăm giảm giá không được bỏ trống!")
     @Max(value = 100,message = "Phần trăm giảm giá phải nhỏ hơn 100")
-    @Min(value = 0,message = "Phần trăm giảm giá phải lớn hơn 0")
-    private Double discountValue;
+    @Min(value = 0,message = "Phần trăm giảm giá phải lớn hơn hoặc bằng 0")
+    private Float discountValue;
+
+    @NotNull(message = "Đơn tối thiểu không được bỏ trống")
+    @Min(value = 0,message = "Đơn tối thiểu phải lớn hơn 0")
+    private Double minimumSingleValue;
+
+    @NotNull(message = "Giảm tối đa không được bỏ trống")
+    @Min(value = 0,message = "Đơn tối đa phải lớn hơn 0")
+    private Double maximumOrderDiscount;
 
     @NotNull(message = "Số lượng không được bỏ trống!")
     @Min(value = 0,message = "Số lượng phải lớn hơn 0")

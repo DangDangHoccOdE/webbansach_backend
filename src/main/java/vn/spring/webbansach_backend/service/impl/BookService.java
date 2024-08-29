@@ -69,6 +69,11 @@ public class BookService implements IBookService {
             for (Image i : book.getImageList()) {
                 iImageService.deleteImage(i);
             }
+            // Nếu thể loại bị thay đổi thì trừ 1 sô lượng sách trong thể loại
+            for(Category category : book.getCategoryList()){
+                category.setBookQuantity(category.getBookQuantity()-1);
+                iCategoryService.saveCategory(category);
+            }
 
             updateAndSaveBook(bookDto, book);
             return ResponseEntity.ok().body(new Notice("Chỉnh sửa sách thành công!"));
@@ -109,11 +114,10 @@ public class BookService implements IBookService {
             imageList.add(thumbnailImage);
         }
 
-
         book.setImageList(imageList);
 
         // lưu category
-        List<Category> categoryList = new ArrayList<>();
+        List<Category> categoryList = new ArrayList<>(); // danh sách category mới của sách
         for(int id : bookDto.getCategoryList()){
             Category category = iCategoryService.findCategoryByCategoryId(id);
             category.setBookQuantity(category.getBookQuantity()+1);

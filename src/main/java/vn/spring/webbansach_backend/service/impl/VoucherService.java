@@ -217,6 +217,10 @@ public class VoucherService implements IVoucherService {
         voucher.setExpiredDate(date);
         voucher.setIsAvailable(voucherDto.getIsAvailable());
         voucher.setTypeVoucher(voucherDto.getTypeVoucher());
+        voucher.setMinimumSingleValue(voucherDto.getMinimumSingleValue());
+        if(voucherDto.getMaximumOrderDiscount()>0){
+            voucher.setMaximumOrderDiscount(voucherDto.getMaximumOrderDiscount());
+        }
     }
 
     @Override
