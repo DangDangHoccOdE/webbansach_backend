@@ -1,12 +1,10 @@
 package vn.spring.webbansach_backend.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -16,7 +14,7 @@ public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cartItemId")
-    private Long cartItemId;
+    private long cartItemId;
 
     @Column(name = "quantity",nullable = false,columnDefinition = "int default 0")
     private int quantity=0;

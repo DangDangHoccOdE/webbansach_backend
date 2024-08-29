@@ -142,10 +142,16 @@ public class OrderService implements IOrderService {
 
             for (OrderDetail orderDetail : orderDetailList) {
                 Book book = orderDetail.getBook();
-                CartItem cartItem = new CartItem();
-                cartItem.setBooks(book);
-                cartItem.setQuantity(orderDetail.getQuantity());
-                cartItem.setUser(user);
+
+                CartItem cartItem = iCartItemService.findByUserIdAndBookId(user.getUserId(),book.getBookId());
+                if(cartItem == null){ // Kiểm tra xem cartItem đã tồn tại chưa, nếu tồn tại tăng số lượng sách thêm 1
+                     cartItem = new CartItem();
+                    cartItem.setBooks(book);
+                    cartItem.setQuantity(orderDetail.getQuantity());
+                    cartItem.setUser(user);
+                }
+
+                cartItem.setQuantity(cartItem.getQuantity()+orderDetail.getQuantity());
                 cartItem.setCreatedAt(LocalDateTime.now());
                 iCartItemService.saveCartItem(cartItem);
                 cartItemIds.add(cartItem.getCartItemId());

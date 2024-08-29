@@ -7,6 +7,7 @@ import java.util.*;
 
 public interface ICartItemService {
     CartItem saveCartItem(CartItem cartItem);
+    CartItem findByUserIdAndBookId(Long userId, int bookId);
     CartItem findCartItemById(long id);
     ResponseEntity<?> deleteCartItem(Long cartItemId);
     ResponseEntity<?> addCartItem(CartItemDto cartItemDto);

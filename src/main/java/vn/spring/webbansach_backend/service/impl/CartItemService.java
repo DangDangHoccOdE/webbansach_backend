@@ -44,6 +44,11 @@ public class CartItemService implements ICartItemService {
     }
 
     @Override
+    public CartItem findByUserIdAndBookId(Long userId, int bookId) {
+        return cartItemRepository.findByBooks_BookIdAndUser_UserId(bookId,userId);
+    }
+
+    @Override
     public ResponseEntity<?> updateQuantityOfCartItem(Long cartItemId,int quantity) {
         CartItem cartItem = cartItemRepository.findByCartItemId(cartItemId);
         if(cartItem == null){
