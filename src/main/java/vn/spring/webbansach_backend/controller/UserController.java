@@ -36,6 +36,13 @@ public class UserController {
         this.jwtService = jwtService;
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUserByUserId(@PathVariable Long userId){
+        User user = iUserService.findUserByUserId(userId);
+
+        return putUserData(user);
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/findUserByCondition")
     public ResponseEntity<JSONObject> findUserByCondition(@RequestParam String condition){
@@ -44,30 +51,34 @@ public class UserController {
         if(user == null) { // Không tồn tại user theo username
             user = iUserService.findUserByEmail(condition);
         }
+        // Nếu không tồn tai user theo email
+        return putUserData(user);
+    }
 
+    private ResponseEntity<JSONObject> putUserData(User user){
         if(user == null){ // Nếu không tồn tai user theo email
             JSONObject data = new JSONObject();
             data.put("notice", "Không tìm thấy người sử dụng!");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(data);
         }
 
-            JSONObject data = new JSONObject(); // nêu tồn tại user
+        JSONObject data = new JSONObject(); // nêu tồn tại user
 
-            data.put("userId",user.getUserId());
-            data.put("firstName",user.getFirstName());
-            data.put("lastName",user.getLastName());
-            data.put("userName",user.getUserName());
-            data.put("dateOfBirth",user.getDateOfBirth());
-            data.put("phoneNumber",user.getPhoneNumber());
-            data.put("password",user.getPassword());
-            data.put("sex",user.getSex());
-            data.put("email",user.getEmail());
-            data.put("deliveryAddress",user.getDeliveryAddress());
-            data.put("purchaseAddress",user.getPurchaseAddress());
-            data.put("avatar",user.getAvatar());
-            data.put("active",user.isActive());
-            return ResponseEntity.ok(data);
+        data.put("userId",user.getUserId());
+        data.put("firstName",user.getFirstName());
+        data.put("lastName",user.getLastName());
+        data.put("userName",user.getUserName());
+        data.put("dateOfBirth",user.getDateOfBirth());
+        data.put("phoneNumber",user.getPhoneNumber());
+        data.put("password",user.getPassword());
+        data.put("sex",user.getSex());
+        data.put("email",user.getEmail());
+        data.put("deliveryAddress",user.getDeliveryAddress());
+        data.put("purchaseAddress",user.getPurchaseAddress());
+        data.put("avatar",user.getAvatar());
+        data.put("active",user.isActive());
 
+        return ResponseEntity.ok(data);
     }
 
     @PostMapping("/register")

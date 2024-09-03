@@ -1,5 +1,6 @@
 package vn.spring.webbansach_backend.service.inter;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import vn.spring.webbansach_backend.dto.BookDto;
 import vn.spring.webbansach_backend.entity.Book;
@@ -12,5 +13,5 @@ public interface IBookService {
     Book findBookById(int bookId);
     ResponseEntity<?> editBook(Integer bookId,BookDto bookDto);
     ResponseEntity<?> deleteBook(Integer bookId);
-
+    Page<Book> getBooksInWishList(Integer wishListId,int page,int size);
 }

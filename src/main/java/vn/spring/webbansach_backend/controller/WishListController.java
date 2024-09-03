@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import vn.spring.webbansach_backend.annotation.UserCheckAuthorize;
 import vn.spring.webbansach_backend.dto.WishListDto;
-import vn.spring.webbansach_backend.service.MySecurityService;
 import vn.spring.webbansach_backend.service.inter.IWishListService;
 
 import java.util.Map;
@@ -53,5 +51,6 @@ public class WishListController {
         int wishListId = map.get("wishListId");
         return iWishListService.deleteBookOfWishList(bookId,wishListId);
     }
+
 
 }

@@ -3,6 +3,9 @@ package vn.spring.webbansach_backend.service.impl;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -55,6 +58,12 @@ public class BookService implements IBookService {
     @Override
     public Book findBookById(int bookId) {
         return bookRepository.findByBookId(bookId);
+    }
+
+    @Override
+    public Page<Book> getBooksInWishList(Integer wishListId, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        return bookRepository.findBooksInWishList(wishListId,pageable);
     }
 
     @Override

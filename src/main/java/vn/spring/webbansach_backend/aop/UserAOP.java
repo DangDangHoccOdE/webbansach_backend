@@ -25,9 +25,10 @@ public class UserAOP {
         this.userRepository = userRepository;
     }
 
-    @Before("execution(* vn.spring.webbansach_backend.controller.UserController.findUserByUsername(..)) && args(..,username)")
-    public void hasAccessByUsername(String username) throws AccessDeniedException {
-        checkAccessByUsername(username);
+    @Before("execution(* vn.spring.webbansach_backend.controller.UserController.getUserByUserId(..)) && args(..,userId)")
+    public void hasAccessByUsername(Long userId) throws AccessDeniedException {
+        User user = userRepository.findByUserId(userId);
+        checkAccessByUser(user);
     }
 
     @Before(value = "execution(* vn.spring.webbansach_backend.controller.UserController.changeInfo(..)) && args(..,userDto)")
