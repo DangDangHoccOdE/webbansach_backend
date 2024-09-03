@@ -110,6 +110,10 @@ public class UserController {
             if (authentication.isAuthenticated()) {
                 final String jwt = jwtService.generateToken(loginRequest.getUsername());
                 final String refreshToken = jwtService.generateRefreshToken(loginRequest.getUsername());
+
+                User user = iUserService.findUserByUsername(loginRequest.getUsername()); // Lưu refreshToken vào db
+                user.setRefreshToken(refreshToken);
+                iUserService.saveUser(user);
                 return ResponseEntity.ok(new JwtResponse(jwt, refreshToken));
             }
         } catch (AuthenticationException e) {
@@ -126,8 +130,11 @@ public class UserController {
         if (refreshToken != null && jwtService.validateRefreshToken(refreshToken, JwtService.SECRET_REFRESH_TOKEN)) {
             String username = jwtService.extractUserName(refreshToken, JwtService.SECRET_REFRESH_TOKEN);
             if (username != null) {
-                String newAccessToken = jwtService.generateToken(username);
-                return ResponseEntity.ok(new JwtResponse(newAccessToken, refreshToken));
+                User user = iUserService.findUserByUsername(username);
+                if(user.getRefreshToken().equals(refreshToken)){
+                    String newAccessToken = jwtService.generateToken(username);
+                    return ResponseEntity.ok(new JwtResponse(newAccessToken, refreshToken));
+                }
             }
         }
         return ResponseEntity.badRequest().body(new Notice("Refresh token không hợp lệ!"));

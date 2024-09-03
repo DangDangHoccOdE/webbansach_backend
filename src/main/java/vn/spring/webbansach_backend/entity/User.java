@@ -48,6 +48,9 @@ public class User {
     @Column(name = "purchaseAddress")
     private String purchaseAddress;
 
+    @Column(name = "refreshToken")
+    private String refreshToken;
+
     @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.ALL},mappedBy = "user")
     private List<Review> reviewList;
 

@@ -13,6 +13,7 @@ public interface IUserService {
     User findUserByUserId(Long id);
     User findUserByUsername(String username);
     User findUserByEmail(String email);
+    User saveUser(User user);
 
     ResponseEntity<?> registerUser(UserDto user);
     ResponseEntity<?> activatedAccount(String email, String activationCode);
