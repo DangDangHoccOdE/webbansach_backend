@@ -10,7 +10,6 @@ import vn.spring.webbansach_backend.dto.CartItemDto;
 import vn.spring.webbansach_backend.entity.CartItem;
 import vn.spring.webbansach_backend.entity.User;
 import vn.spring.webbansach_backend.service.inter.ICartItemService;
-import vn.spring.webbansach_backend.service.inter.IUserService;
 import vn.spring.webbansach_backend.utils.SecurityUtils;
 
 import java.util.Map;
@@ -31,10 +30,25 @@ public class CartItemAOP {
         this.userRepository = userRepository;
         this.iCartItemService = iCartItemService;
     }
+    @Before(value = "execution(* vn.spring.webbansach_backend.controller.CartItemController.findCartItemsByUserId(..)) && args(..,userId,page,size)", argNames = "userId,page,size")
+    public void hasAccessByUsername(Long userId,int page,int size) throws AccessDeniedException {
+        User user = userRepository.findByUserId(userId);
+        if (user != null && !securityUtils.hasAccessByUserId(user.getUserId())) {
+            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
+        }
+    }
 
     @Before("execution(* vn.spring.webbansach_backend.controller.CartItemController.addCartItem(..)) && args(..,cartItemDto)")
     public void hasAccessByUsername(CartItemDto cartItemDto) throws AccessDeniedException {
         User user = userRepository.findByUserId(cartItemDto.getUserId());
+        if (user != null && !securityUtils.hasAccessByUserId(user.getUserId())) {
+            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
+        }
+    }
+
+    @Before(value = "execution(* vn.spring.webbansach_backend.controller.CartItemController.findCartItemsByUserId(..)) && args(..,userId,page,size,sort,direction)", argNames = "userId,page,size,sort,direction")
+    public void hasAccessByUsername(Long userId,int page, int size, String sort,String direction) throws AccessDeniedException {
+        User user = userRepository.findByUserId(userId);
         if (user != null && !securityUtils.hasAccessByUserId(user.getUserId())) {
             throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
         }

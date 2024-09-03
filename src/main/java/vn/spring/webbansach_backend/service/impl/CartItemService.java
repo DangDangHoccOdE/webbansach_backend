@@ -2,6 +2,10 @@ package vn.spring.webbansach_backend.service.impl;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,7 +20,6 @@ import vn.spring.webbansach_backend.service.inter.ICartItemService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,6 +49,12 @@ public class CartItemService implements ICartItemService {
     @Override
     public CartItem findByUserIdAndBookId(Long userId, int bookId) {
         return cartItemRepository.findByBooks_BookIdAndUser_UserId(bookId,userId);
+    }
+
+    @Override
+    public Page<CartItem> findCartItemsByUser_UserId(Long userId, int page, int size, Sort sort) {
+        Pageable pageable = PageRequest.of(page,size,sort);
+        return cartItemRepository.findCartItemsByUser_UserId(userId,pageable);
     }
 
     @Override

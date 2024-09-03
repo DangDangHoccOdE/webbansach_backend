@@ -1,5 +1,7 @@
 package vn.spring.webbansach_backend.service.inter;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import vn.spring.webbansach_backend.dto.CartItemDto;
 import vn.spring.webbansach_backend.entity.CartItem;
@@ -13,4 +15,5 @@ public interface ICartItemService {
     ResponseEntity<?> addCartItem(CartItemDto cartItemDto);
     ResponseEntity<?> updateQuantityOfCartItem(Long cartItemId,int quantity);
     ResponseEntity<?> deleteAllCartItemsIsChoose(List<Long> allCartItemIsChoose);
+    Page<CartItem> findCartItemsByUser_UserId(Long userId, int page, int size, Sort sort);
 }

@@ -5,7 +5,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.web.bind.annotation.RequestParam;
 import vn.spring.webbansach_backend.entity.Voucher;
 
-import java.awt.print.Pageable;
 import java.util.*;
 
 @RepositoryRestResource(path = "vouchers")
