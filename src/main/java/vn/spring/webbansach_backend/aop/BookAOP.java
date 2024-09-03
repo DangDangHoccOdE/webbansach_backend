@@ -25,10 +25,6 @@ public class BookAOP {
     @Before(value = "execution(* vn.spring.webbansach_backend.controller.BookController.getBooksInWishList(..)) && args(..,wishListId,page,size)", argNames = "wishListId,page,size")
     public void hasAccessByWishListId(int wishListId,int page,int size) throws AccessDeniedException {
         User user = userRepository.findUserByWishList_WishListId(wishListId);
-        checkAccessByUser(user);
-    }
-
-    private void checkAccessByUser(User user) throws AccessDeniedException {
         if (user != null && !securityUtils.hasAccessByUserId(user.getUserId())) {
             throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
         }

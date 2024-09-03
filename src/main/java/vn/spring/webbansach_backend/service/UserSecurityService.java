@@ -15,8 +15,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserSecurityService implements IUserSecurityService{
+    private final UserRepository userRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    public UserSecurityService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public User findByUserName(String username) {

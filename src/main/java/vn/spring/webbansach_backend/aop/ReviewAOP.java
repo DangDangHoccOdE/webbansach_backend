@@ -30,14 +30,10 @@ public class ReviewAOP {
         Order order = iOrderService.findOrderById(orderId);
         if(order!=null){
             User user = order.getUser();
-            checkAccessByUser(user);
+            if (user != null && !securityUtils.hasAccessByUserId(user.getUserId())) {
+                throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
+            }
         }
 
-    }
-
-    private void checkAccessByUser(User user) throws AccessDeniedException {
-        if (user != null && !securityUtils.hasAccessByUserId(user.getUserId())) {
-            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
-        }
     }
 }

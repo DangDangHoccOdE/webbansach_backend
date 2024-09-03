@@ -9,8 +9,13 @@ import vn.spring.webbansach_backend.service.IUserSecurityService;
 
 @Component
 public class SecurityUtils {
+    private final IUserSecurityService iUserSecurityService;
+
     @Autowired
-    private IUserSecurityService iUserSecurityService;
+    public SecurityUtils(IUserSecurityService iUserSecurityService) {
+        this.iUserSecurityService = iUserSecurityService;
+    }
+
     public boolean hasAccessByUserId(Long userId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return isAdmin(authentication) ||  isUserIdMatch(authentication,userId);

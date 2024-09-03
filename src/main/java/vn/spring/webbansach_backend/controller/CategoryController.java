@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import vn.spring.webbansach_backend.dao.CategoryRepository;
 import vn.spring.webbansach_backend.dto.CategoryDto;
 import vn.spring.webbansach_backend.service.inter.ICategoryService;
 
