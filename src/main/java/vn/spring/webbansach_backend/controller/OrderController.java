@@ -2,6 +2,7 @@ package vn.spring.webbansach_backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.spring.webbansach_backend.dto.OrderDto;
@@ -45,6 +46,7 @@ public class OrderController {
     }
 
     @PutMapping("/saveOrderStatusChange/{orderId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> saveOrderStatusChange(@PathVariable long orderId,@RequestBody OrderDto orderDto){
         return iOrderService.saveOrderStatusChange(orderId,orderDto);
     }

@@ -24,8 +24,4 @@ public class OrderDetailController {
         return iOrderDetailService.getOrderDetailsFromOrder(orderId);
     }
 
-//    @GetMapping("/getOrderDetailFromUser/{userId}")
-//    public ResponseEntity<?> getOrderDetailsFromUser(@PathVariable Long userId){
-//        return iOrderDetailService.getOrderDetailsFromUser(userId);
-//    }
 }

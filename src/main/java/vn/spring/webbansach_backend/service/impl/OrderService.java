@@ -31,7 +31,7 @@ public class OrderService implements IOrderService {
     private final IUserVoucherService iUserVoucherService;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, ICartItemService iCartItemService, IDeliveryService iDeliveryService, @Lazy IPaymentService iPaymentService, UserService userService, IBookService iBookService, IVoucherService iVoucherService, IUserVoucherService iUserVoucherService) {
+    public OrderService(OrderRepository orderRepository, ICartItemService iCartItemService,@Lazy IDeliveryService iDeliveryService, @Lazy IPaymentService iPaymentService, UserService userService, IBookService iBookService, IVoucherService iVoucherService, IUserVoucherService iUserVoucherService) {
         this.orderRepository = orderRepository;
         this.iCartItemService = iCartItemService;
         this.iDeliveryService = iDeliveryService;
@@ -80,6 +80,10 @@ public class OrderService implements IOrderService {
 
         if(orderDto.getDeliveryStatus().equals("Đang giao")){
             order.setOrderStatus("Đang vận chuyển");
+        }
+
+        if(orderDto.getDeliveryStatus().equals("Đã giao")){
+            order.setOrderStatus("Đã giao");
         }
         orderRepository.save(order);
 

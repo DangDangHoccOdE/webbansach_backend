@@ -69,7 +69,8 @@ public class Endpoints {
          "/payment/**",
          "/order-review/**",
          "/payment/payment-info",
-         "/order-detail/search/findByOrder_OrderId"
+         "/order-detail/search/findByOrder_OrderId",
+         "/delivery/**"
  };
 
     public static final String[] USER_PUT_ENDPOINTS={
