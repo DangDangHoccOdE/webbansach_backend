@@ -20,6 +20,7 @@ import vn.spring.webbansach_backend.security.LoginRequest;
 import vn.spring.webbansach_backend.service.impl.JwtService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
 
+import java.security.Principal;
 import java.util.Map;
 import net.minidev.json.JSONObject;
 
@@ -43,7 +44,11 @@ public class UserController {
         return putUserData(user);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/user")
+    public Principal user(Principal principal){
+        return principal;
+    }
+
     @GetMapping("/findUserByCondition")
     public ResponseEntity<JSONObject> findUserByCondition(@RequestParam String condition){
         User user = iUserService.findUserByUsername(condition); // Tìm kiếm theo họ tên

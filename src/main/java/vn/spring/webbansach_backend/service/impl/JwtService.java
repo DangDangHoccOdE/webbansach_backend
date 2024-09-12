@@ -24,12 +24,20 @@ public class JwtService {
     private final long ACCESS_TOKEN_EXPIRATION = 2*60 * 60 * 1000; // 2 hours
     private final long REFRESH_TOKEN_EXPIRATION = 7*24*60 * 60 * 1000; // 7 dáys
 
+    private final IUserSecurityService iUserSecurityService;
+
     @Autowired
-    private IUserSecurityService iUserSecurityService;
+    public JwtService(IUserSecurityService iUserSecurityService) {
+        this.iUserSecurityService = iUserSecurityService;
+    }
 
     public String generateToken(String userName) {
         Map<String, Object> claim = new HashMap<>();
         User user = iUserSecurityService.findByUserName(userName);
+
+        if(user == null){
+            user = iUserSecurityService.findByEmail(userName); // Trường hợp đăng nhập bằng gmail
+        }
         claim.put("enable", user.isActive());
         claim.put("userId", user.getUserId());
         claim.put("type","accessToken");
@@ -45,10 +53,6 @@ public class JwtService {
                     isAdmin = true;
                     break;
                 }
-                if (role.getRoleName().equals("ROLE_STAFF")) {
-                    isStaff = true;
-                    break;
-                }
                 if (role.getRoleName().equals("ROLE_USER")) {
                     isUser = true;
                     break;
@@ -56,7 +60,6 @@ public class JwtService {
             }
         }
         claim.put("isAdmin", isAdmin);
-        claim.put("isStaff", isStaff);
         claim.put("isUser", isUser);
 
         return createToken(claim, userName, ACCESS_TOKEN_EXPIRATION, SECRET_ACCESS_TOKEN);

@@ -18,21 +18,20 @@ public class Endpoints {
             "/vouchers/search/findByIsAvailableAndIsActive/**",
             "/reviews/**",
             "review/getNumberOfStarReview/{bookId}",
-            "/user/findUserByCondition/**"
+            "/user/findUserByCondition/**",
+            "/user/user"
     };
     public static final String[] PUBLIC_POST_ENDPOINTS={
         "/user/register",
         "/user/login",
          "/user/forgotPassword",
-            "/user/passwordChange"
-
+            "/user/passwordChange",
     };
 
     public static final String[] PUBLIC_PUT_ENDPOINTS={
             "/vouchers/updateIsActive/{voucherId}",
     };
     public static final String[] USER_POST_ENDPOINTS={
-            "/user/refreshToken",
             "/wishList/addWishList",
             "/wishList/addBookToWishList",
             "/cart-items/addCartItem",
@@ -40,6 +39,7 @@ public class Endpoints {
             "/order/addOrder",
             "/review/addReviewOrder/{orderId}",
             "/payment/create-payment",
+            "/user/refreshToken",
 
     };
 
@@ -93,6 +93,7 @@ public class Endpoints {
          "/vouchers/addVoucherAdmin",
          "/vouchers/giftVouchersToUsers",
          "/vouchers/addVouchersToVoucherAvailable",
+
     };
 
     public static final String[] ADMIN_PUT_ENDPOINTS={

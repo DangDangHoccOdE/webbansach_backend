@@ -42,10 +42,17 @@ public class SecurityUtils {
 
     private Long getUserIdFromPrincipal(Authentication authentication){
         User user = iUserSecurityService.findByUserName(authentication.getName());
+
+        if(user == null){
+            user = iUserSecurityService.findByEmail(authentication.getName()); // Trường hợp đăng nhập = gg không có tài khoản
+        }
         return user.getUserId();
     }
     private String getUsernameFromPrincipal(Authentication authentication){
         User user = iUserSecurityService.findByUserName(authentication.getName());
+        if(user == null){
+            user = iUserSecurityService.findByEmail(authentication.getName()); // Trường hợp đăng nhập = gg không có tài khoản
+        }
         return user.getUserName();
     }
 }

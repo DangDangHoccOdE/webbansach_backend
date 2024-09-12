@@ -15,6 +15,8 @@ public interface IUserService {
     User findUserByEmail(String email);
     User saveUser(User user);
 
+    User saveUserWithRole(User user,List<String> roleName);
+
     ResponseEntity<?> registerUser(UserDto user);
     ResponseEntity<?> activatedAccount(String email, String activationCode);
     ResponseEntity<?> resendActivationCode(String email);

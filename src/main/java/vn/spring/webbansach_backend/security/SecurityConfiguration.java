@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,12 +19,22 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import vn.spring.webbansach_backend.filter.JwtFilter;
+import vn.spring.webbansach_backend.oauth2.CustomOAuth2UserService;
+import vn.spring.webbansach_backend.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+import vn.spring.webbansach_backend.oauth2.OAuth2AuthenticationFailureHandler;
+import vn.spring.webbansach_backend.oauth2.OAuth2AuthenticationSuccessHandler;
 import vn.spring.webbansach_backend.service.IUserSecurityService;
+import vn.spring.webbansach_backend.service.UserSecurityService;
 
 import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(
+        securedEnabled = true,
+        jsr250Enabled = true,
+        prePostEnabled = true
+)
 public class SecurityConfiguration {
     @Autowired
     private CustomBasicAuthenticationEntryPoint customBasicAuthenticationEntryPoint;
@@ -34,6 +45,21 @@ public class SecurityConfiguration {
     @Autowired
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver handlerExceptionResolver;
+
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
+
+    @Autowired
+    private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+
+    @Autowired
+    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+
+    @Autowired
+    private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+
+    @Autowired
+    private UserSecurityService userSecurityService;
 
     @Bean
     public JwtFilter jwtFilter(){
@@ -52,6 +78,16 @@ public class SecurityConfiguration {
         dap.setPasswordEncoder(passwordEncoder());
 
         return dap;
+    }
+
+    /*
+Theo mặc định, Spring OAuth2 sử dụng HttpSessionOAuth2AuthorizationRequestRepository để lưu
+  yêu cầu ủy quyền. Tuy nhiên, vì dịch vụ của chúng tôi không có trạng thái nên chúng tôi không thể lưu nó trong
+  phiên họp. Thay vào đó, chúng tôi sẽ lưu yêu cầu trong cookie được mã hóa Base64.
+*/
+    @Bean
+    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+        return new HttpCookieOAuth2AuthorizationRequestRepository();
     }
 
     @Bean
@@ -73,9 +109,11 @@ public class SecurityConfiguration {
                 .cors(cors->{
                     cors.configurationSource(request -> {
                         CorsConfiguration configuration = new CorsConfiguration();
-                        configuration.addAllowedOrigin((Endpoints.front_end_host)); // add resource can access app
+                        configuration.addAllowedOrigin((Endpoints.front_end_host)); // Thêm đươờng dẫn Frontend
                         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
                         configuration.addAllowedHeader("*"); // permission sth can access
+                        configuration.setAllowCredentials(true);
+                        configuration.setMaxAge(3600L);
 
                         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
                         source.registerCorsConfiguration("/**",configuration);
@@ -86,16 +124,30 @@ public class SecurityConfiguration {
                         .accessDeniedHandler(customAccessDeniedHandler)
                 )
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .httpBasic(httpBasic->httpBasic.authenticationEntryPoint(customBasicAuthenticationEntryPoint)) //Tùy chọn cách xác thực ngoại lệ đăng nhập
-               .csrf(csrfConfigurer->csrfConfigurer.disable());
+                .csrf(csrfConfigurer->csrfConfigurer.disable())
+                .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(authorization -> authorization
+                                .baseUri("/oauth2/authorize")  // URL endpoint xác thực OAuth2
+                                .authorizationRequestRepository(cookieAuthorizationRequestRepository()) // Repository cho request OAuth2
+                        )
+                        .redirectionEndpoint(redirection -> redirection
+                                .baseUri("/oauth2/callback/*")  // URL callback sau khi xác thực
+                        )
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)  // Dịch vụ lấy thông tin người dùng OAuth2
+                        )
+                        .successHandler(oAuth2AuthenticationSuccessHandler)
+                        .failureHandler(oAuth2AuthenticationFailureHandler)
+                )
+                .userDetailsService(userSecurityService); // Nếu không phải đăng nhập bằng oauth thì cái nay lấy thông tin người dùng
 
         return httpSecurity.build();
     }
 
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
-        return config.getAuthenticationManager(); // only authenticationManager in app
+        return config.getAuthenticationManager(); //
     }
 }

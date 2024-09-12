@@ -1,6 +1,7 @@
 package vn.spring.webbansach_backend.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 
@@ -98,4 +99,9 @@ public class User {
     @Column(name = "avatar", columnDefinition = "LONGTEXT")
     @Lob
     private String avatar;
+
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
+
+    private String providerId;
 }

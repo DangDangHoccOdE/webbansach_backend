@@ -1,0 +1,51 @@
+logging:
+    level:
+        org:
+            springframework:
+                security: DEBUG
+server:
+    max-http-request-header-size: 10000000
+spring:
+    application:
+        name: webbansach_backend
+    datasource:
+        password: ''
+        url: jdbc:mysql://localhost:4306/web_ban_sach
+        username: root
+    jpa:
+        hibernate:
+            ddl-auto: update
+        open-in-view: false
+        properties:
+            hibernate:
+                enable_lazy_load_no_trans: true
+    mail:
+        host: smtp.gmail.com
+        password: rnsmddbxngmybmat
+        port: 587
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+        username: danghoangtest1@gmail.com
+    security:
+        oauth2:
+            client:
+                registration:
+                    google:
+                        client-id: 266524089188-is2h75iv3mp7363ufomjaolkdpans15s.apps.googleusercontent.com
+                        client-secret: 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
+                        scope: email,profile
+                        redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+app:
+    oauth2:
+        # After successfully authenticating with the OAuth2 Provider,
+        # we'll be generating an auth token for the user and sending the token to the
+        # redirectUri mentioned by the client in the /oauth2/authorize request.
+        # We're not using cookies because they won't work well in mobile clients.
+        authorizedRedirectUris:
+            - http://localhost:3000/oauth2/redirect
+            - bookstore://oauth2/redirect
+

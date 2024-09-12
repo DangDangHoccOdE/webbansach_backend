@@ -28,13 +28,17 @@ public class UserSecurityService implements IUserSecurityService{
     }
 
     @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = findByUserName(username);
 
         if(username == null){
             throw new UsernameNotFoundException("Tài khoản không tồn tại!");
         }
-
         return new org.springframework.security.core.userdetails.User(user.getUserName(),user.getPassword(),roleToAuthorities(user.getRoleList()));
     }
 

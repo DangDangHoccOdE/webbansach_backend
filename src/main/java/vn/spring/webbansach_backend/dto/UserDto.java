@@ -1,12 +1,10 @@
 package vn.spring.webbansach_backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-import vn.spring.webbansach_backend.entity.Order;
-import vn.spring.webbansach_backend.entity.Review;
-import vn.spring.webbansach_backend.entity.Role;
-import vn.spring.webbansach_backend.entity.WishList;
+import vn.spring.webbansach_backend.entity.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -58,4 +56,7 @@ public class UserDto {
         private LocalDateTime activationExpiry;
 
         private String avatar;
+
+        @NotNull
+        private String authProvider;
 }

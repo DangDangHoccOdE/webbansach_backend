@@ -11,21 +11,29 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import vn.spring.webbansach_backend.entity.User;
+import vn.spring.webbansach_backend.oauth2.CustomOAuth2UserService;
 import vn.spring.webbansach_backend.service.IUserSecurityService;
 import vn.spring.webbansach_backend.service.impl.JwtService;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
+
 public class JwtFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver resolver;
     @Autowired
     private JwtService jwtService;
     @Autowired
     private IUserSecurityService iUserSecurityService;
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
+
     public JwtFilter(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
         this.resolver = resolver;
     }
@@ -37,7 +45,6 @@ public class JwtFilter extends OncePerRequestFilter {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 authHeader = request.getHeader("X-Refresh-Token");
             }
-            System.out.println("Header: " + authHeader);
             String token = null;
             String username = null;
             String tokenType = null;
@@ -49,7 +56,20 @@ public class JwtFilter extends OncePerRequestFilter {
             }
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = iUserSecurityService.loadUserByUsername(username);
+                UserDetails userDetails;
+
+                // Kiểm tra xem người dùng có phải là người dùng OAuth2 không
+                User user = iUserSecurityService.findByEmail(username);
+                if (user != null && user.getProvider() != null) { // OAuth2 user logic
+                    userDetails = new org.springframework.security.core.userdetails.User(
+                            user.getEmail(),
+                            "", // Password không có
+                            user.getRoleList().stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(Collectors.toList())
+                    );
+                } else {
+                    // Xử lý user
+                    userDetails = iUserSecurityService.loadUserByUsername(username);
+                }
 
                 boolean isTokenValid = jwtService.validateToken(token, userDetails, tokenType);
                 if (isTokenValid) {
@@ -60,7 +80,13 @@ public class JwtFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-            resolver.resolveException(request,response,null,e);
+            resolver.resolveException(request, response, null, e);
+        }
     }
+
+    private boolean isOAuth2User(String username) {
+        // Triển khai logic để xác định xem người dùng có phải là người dùng OAuth2 hay không
+        return username.contains("@") && iUserSecurityService.findByEmail(username) != null;
     }
+
 }

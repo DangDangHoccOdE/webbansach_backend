@@ -6,4 +6,6 @@ import vn.spring.webbansach_backend.entity.User;
 public interface IUserSecurityService extends UserDetailsService {
     User findByUserName(String username);
 
+    User findByEmail(String email);
+
 }

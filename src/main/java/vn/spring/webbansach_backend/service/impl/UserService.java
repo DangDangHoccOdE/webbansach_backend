@@ -8,10 +8,7 @@ import org.springframework.stereotype.Service;
 import vn.spring.webbansach_backend.dto.EmailDto;
 import vn.spring.webbansach_backend.dto.UserDto;
 import vn.spring.webbansach_backend.dao.UserRepository;
-import vn.spring.webbansach_backend.entity.CartItem;
-import vn.spring.webbansach_backend.entity.Notice;
-import vn.spring.webbansach_backend.entity.Role;
-import vn.spring.webbansach_backend.entity.User;
+import vn.spring.webbansach_backend.entity.*;
 import vn.spring.webbansach_backend.service.inter.IEmailService;
 import vn.spring.webbansach_backend.service.inter.IRoleService;
 import vn.spring.webbansach_backend.service.inter.IUserService;
@@ -29,6 +26,7 @@ public class UserService implements IUserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final IEmailService iEmailService;
     private final IRoleService iRoleService;
+    private AuthProvider authProvider;
     @Autowired
     public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, IEmailService iEmailService, IRoleService iRoleService) {
         this.userRepository = userRepository;
@@ -100,22 +98,17 @@ public class UserService implements IUserService {
         user.setDateOfBirth(ConvertStringToDate.convert(userDto.getDateOfBirth()));
         user.setPhoneNumber(userDto.getPhoneNumber());
         user.setSex(userDto.getSex());
-
+        user.setProvider(AuthProvider.local);
         // set activation info
         user.setActivationCode(createRandomCode());
         user.setActive(false);
         LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(10);
         user.setActivationExpiry(expiryTime);
 
-        // Set role User
-        Role role = iRoleService.findRoleByName("ROLE_USER");
-        if(user.getRoleList()==null){
-            user.setRoleList(new ArrayList<>());
-        }
-        user.getRoleList().add(role);
-
-        // save user to DB
-        userRepository.save(user);
+        // save user với role user
+        List<String> roles = new ArrayList<>();
+        roles.add("ROLE_USER");
+        saveUserWithRole(user,roles);
 
         // send Email
         sendEmailActive(userDto.getEmail(),user.getActivationCode());
@@ -125,6 +118,22 @@ public class UserService implements IUserService {
 
     private String createRandomCode(){
         return UUID.randomUUID().toString();
+    }
+
+    @Transactional
+    @Override
+    public User saveUserWithRole(User user, List<String> roleName) { // Tránh lỗi bị detached Role khi lưu bên oauth register
+        List<Role> roles = new ArrayList<>();
+        for(String role:roleName){
+            Role findRole = iRoleService.findRoleByName(role);
+            if(findRole == null){
+                findRole = new Role();
+                findRole.setRoleName(role);
+            }
+            roles.add(findRole);
+        }
+        user.setRoleList(roles);
+       return userRepository.save(user);
     }
 
     @Override
