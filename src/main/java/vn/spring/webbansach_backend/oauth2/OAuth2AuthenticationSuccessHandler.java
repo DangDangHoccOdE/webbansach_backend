@@ -61,6 +61,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
 
+        // Check xem cookie có redirect_url k
         if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
             throw new BadRequestException("Lấy làm tiếc! Chúng tôi có URI chuyển hướng trái phép và không thể tiến hành xác thực");
         }
@@ -74,6 +75,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         user.setRefreshToken(refreshToken);
         iUserService.saveUser(user);
 
+        // ĐƯờng dẫn trả về về là http://localhost:3000/oauth2/redirect?accessToken=...&refreshToken=...
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("accessToken", accessToken)
                 .queryParam("refreshToken",refreshToken)

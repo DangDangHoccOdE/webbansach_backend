@@ -129,7 +129,7 @@ Theo mặc định, Spring OAuth2 sử dụng HttpSessionOAuth2AuthorizationRequ
                 .csrf(csrfConfigurer->csrfConfigurer.disable())
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(authorization -> authorization
-                                .baseUri("/oauth2/authorize")  // URL endpoint xác thực OAuth2
+                                .baseUri("/oauth2/authorize")  // URL endpoint xác thực OAuth2, nếu không chỉ định giá trị baseUri(), Spring Security sẽ sử dụng giá trị mặc định là "/oauth2/authorization/{registrationId}"
                                 .authorizationRequestRepository(cookieAuthorizationRequestRepository()) // Repository cho request OAuth2
                         )
                         .redirectionEndpoint(redirection -> redirection

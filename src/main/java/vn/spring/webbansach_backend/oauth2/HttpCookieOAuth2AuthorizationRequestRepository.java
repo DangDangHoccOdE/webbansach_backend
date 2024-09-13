@@ -20,6 +20,7 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
                 .orElse(null);
     }
 
+    // Khi login gọi save trước, nếu chuyển từ trang login bên react thì tức là có chứa parameter redirect_url thì add vào cookie
     @Override
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response) {
         if (authorizationRequest == null) {
