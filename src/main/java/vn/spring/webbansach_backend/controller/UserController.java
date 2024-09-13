@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.spring.webbansach_backend.dto.EmailDto;
 import vn.spring.webbansach_backend.dto.PasswordDto;
 import vn.spring.webbansach_backend.dto.UserDto;
+import vn.spring.webbansach_backend.dto.UserOauth2Dto;
 import vn.spring.webbansach_backend.entity.Notice;
 import vn.spring.webbansach_backend.entity.User;
 import vn.spring.webbansach_backend.security.JwtResponse;
@@ -82,6 +83,7 @@ public class UserController {
         data.put("purchaseAddress",user.getPurchaseAddress());
         data.put("avatar",user.getAvatar());
         data.put("active",user.isActive());
+        data.put("authProvider",user.getProvider());
 
         return ResponseEntity.ok(data);
     }
@@ -149,6 +151,11 @@ public class UserController {
     @PutMapping("/changeInfo")
     public ResponseEntity<?> changeInfo(@Validated @RequestBody UserDto userDto) {
         return iUserService.changeInformation(userDto);
+    }
+
+    @PutMapping("/changeInfoOauth2")  // Thay đổi thông tin nếu tài khoản đó provider là google không có username password
+    public ResponseEntity<?> changeInfoOauth2(@Validated @RequestBody UserOauth2Dto userOauth2Dto) {
+        return iUserService.changeInformationOauth2(userOauth2Dto);
     }
 
     @PutMapping("/changeEmail")

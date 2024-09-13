@@ -55,11 +55,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         User user;
         if(userOptional != null) {
             user = userOptional;
-            if(!user.getProvider().equals(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))) {
-                throw new OAuth2AuthenticationProcessingException("Có vẻ như bạn đã đăng ký với " +
-                        user.getProvider() + " tài khoản. Vui lòng sử dụng " + user.getProvider() +
-                        " tài khoản để đăng nhập.");
-            }
+//            if(!user.getProvider().equals(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))) {
+//                throw new OAuth2AuthenticationProcessingException("Có vẻ như bạn đã đăng ký với " +
+//                        user.getProvider() + " tài khoản. Vui lòng sử dụng " + user.getProvider() +
+//                        " tài khoản để đăng nhập.");
+//            }  // Nếu sau này không muốn ng dùng k cần đăng ký mà chỉ cần dùng tài khoản gg vừa login và signup
             user = updateExistingUser(user, oAuth2UserInfo);
         } else {
             user = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
@@ -69,10 +69,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
-        if (iUserService.findUserByEmail(oAuth2UserInfo.getEmail()) != null) {
-            throw new OAuth2AuthenticationProcessingException("Tài khoản google đã được dùng để đăng ký cho tài khoản khác!");
-        }
-
         User user = new User();
         user.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
         user.setProviderId(oAuth2UserInfo.getId());

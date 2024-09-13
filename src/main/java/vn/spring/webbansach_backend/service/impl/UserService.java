@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import vn.spring.webbansach_backend.dto.EmailDto;
 import vn.spring.webbansach_backend.dto.UserDto;
 import vn.spring.webbansach_backend.dao.UserRepository;
+import vn.spring.webbansach_backend.dto.UserOauth2Dto;
 import vn.spring.webbansach_backend.entity.*;
 import vn.spring.webbansach_backend.service.inter.IEmailService;
 import vn.spring.webbansach_backend.service.inter.IRoleService;
@@ -200,11 +201,6 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<?> changeInformation(UserDto userDto) {
         User user = userRepository.findByUserName(userDto.getUserName());
-
-        if(userRepository.existsByEmail(userDto.getEmail()) && !userDto.getEmail().equals(user.getEmail())){
-            return ResponseEntity.badRequest().body(new Notice("Email đã tồn tại !"));
-        }
-        user.setEmail(userDto.getEmail());
         user.setSex(userDto.getSex());
         user.setPhoneNumber(userDto.getPhoneNumber());
         user.setLastName(userDto.getLastName());
@@ -213,6 +209,26 @@ public class UserService implements IUserService {
         user.setAvatar(userDto.getAvatar());
         user.setPurchaseAddress(userDto.getPurchaseAddress());
         user.setDeliveryAddress(userDto.getDeliveryAddress());
+        try{
+            userRepository.save(user);
+            return ResponseEntity.ok(new Notice("Đã thay đổi thông tin thành công!"));
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return ResponseEntity.badRequest().body(new Notice("Đã gặp lỗi, không thể chỉnh sửa thông tin thành công!"));
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> changeInformationOauth2(UserOauth2Dto userOauth2Dto) { // Thay đổi thông tin nếu tài khoản đó provider là google không có username password
+        User user = userRepository.findByEmail(userOauth2Dto.getEmail());
+        user.setSex(userOauth2Dto.getSex());
+        user.setPhoneNumber(userOauth2Dto.getPhoneNumber());
+        user.setLastName(userOauth2Dto.getLastName());
+        user.setFirstName(userOauth2Dto.getFirstName());
+        user.setDateOfBirth(ConvertStringToDate.convert(userOauth2Dto.getDateOfBirth()));
+        user.setAvatar(userOauth2Dto.getAvatar());
+        user.setPurchaseAddress(userOauth2Dto.getPurchaseAddress());
+        user.setDeliveryAddress(userOauth2Dto.getDeliveryAddress());
 
         try{
             userRepository.save(user);
@@ -221,7 +237,6 @@ public class UserService implements IUserService {
             System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(new Notice("Đã gặp lỗi, không thể chỉnh sửa thông tin thành công!"));
         }
-
     }
 
     @Override

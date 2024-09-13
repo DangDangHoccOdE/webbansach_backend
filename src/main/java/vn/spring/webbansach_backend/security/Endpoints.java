@@ -76,6 +76,7 @@ public class Endpoints {
 
     public static final String[] USER_PUT_ENDPOINTS={
             "/user/changeInfo",
+            "/user/changeInfoOauth2",
             "/user/changeEmail",
             "/wishList/editWishListName",
             "/cart-items/updateQuantityOfCartItem/{cartItemId}",

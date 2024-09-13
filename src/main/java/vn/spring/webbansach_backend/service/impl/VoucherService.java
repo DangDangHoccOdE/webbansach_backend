@@ -82,7 +82,7 @@ public class VoucherService implements IVoucherService {
             }
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Notice("Không tìm thấy voucher"));
+        return ResponseEntity.ok(new ArrayList<UserVoucher>());
     }
 
     @Override
