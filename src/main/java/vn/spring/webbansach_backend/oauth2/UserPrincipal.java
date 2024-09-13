@@ -9,9 +9,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import vn.spring.webbansach_backend.entity.User;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 //  tích hợp với cả OAuth2 và hệ thống xác thực cơ bản của Spring Security
 public class UserPrincipal implements OAuth2User, UserDetails {
@@ -32,8 +32,10 @@ public class UserPrincipal implements OAuth2User, UserDetails {
     }
 
     public static UserPrincipal create(User user) {
-        List<GrantedAuthority> authorities = Collections.
-                singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        List<GrantedAuthority> authorities = user.getRoleList().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
+                .collect(Collectors.toList());
+
 
         return new UserPrincipal(
                 user.getUserId(),
