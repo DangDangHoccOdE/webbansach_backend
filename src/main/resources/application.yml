@@ -43,10 +43,10 @@ spring:
                         redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
 app:
     oauth2:
-        # After successfully authenticating with the OAuth2 Provider,
-        # we'll be generating an auth token for the user and sending the token to the
-        # redirectUri mentioned by the client in the /oauth2/authorize request.
-        # We're not using cookies because they won't work well in mobile clients.
+        # Sau khi xác thực thành công với Nhà cung cấp OAuth2,
+        # tạo mã thông báo xác thực cho người dùng và gửi mã thông báo đến
+        # redirectUri được khách hàng đề cập trong yêu cầu /oauth2/authorize.
+        # Không sử dụng cookie vì chúng không hoạt động tốt trên ứng dụng khách di động.
         authorizedRedirectUris:
             - http://localhost:3000/oauth2/redirect
             - bookstore://oauth2/redirect
