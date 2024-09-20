@@ -81,9 +81,9 @@ public class SecurityConfiguration {
     }
 
     /*
-Theo mặc định, Spring OAuth2 sử dụng HttpSessionOAuth2AuthorizationRequestRepository để lưu
-  yêu cầu ủy quyền. Tuy nhiên, vì dịch vụ của chúng tôi không có trạng thái nên chúng tôi không thể lưu nó trong
-  phiên họp. Thay vào đó, chúng tôi sẽ lưu yêu cầu trong cookie được mã hóa Base64.
+   Theo mặc định, Spring OAuth2 sử dụng HttpSessionOAuth2AuthorizationRequestRepository để lưu
+  yêu cầu ủy quyền. Tuy nhiên, vì dịch vụ không có trạng thái nên không thể lưu nó trong
+  phiên họp. Thay vào đó,  sẽ lưu yêu cầu trong cookie được mã hóa Base64.
 */
     @Bean
     public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
