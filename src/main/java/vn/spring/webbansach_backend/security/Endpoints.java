@@ -19,7 +19,7 @@ public class Endpoints {
             "/reviews/**",
             "review/getNumberOfStarReview/{bookId}",
             "/user/findUserByCondition/**",
-            "/user/user"
+            "/user/findByUserName/**",
     };
     public static final String[] PUBLIC_POST_ENDPOINTS={
         "/user/register",

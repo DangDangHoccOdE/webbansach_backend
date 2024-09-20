@@ -45,11 +45,6 @@ public class UserController {
         return putUserData(user);
     }
 
-    @GetMapping("/user")
-    public Principal user(Principal principal){
-        return principal;
-    }
-
     @GetMapping("/findUserByCondition")
     public ResponseEntity<JSONObject> findUserByCondition(@RequestParam String condition){
         User user = iUserService.findUserByUsername(condition); // Tìm kiếm theo họ tên
@@ -57,6 +52,14 @@ public class UserController {
         if(user == null) { // Không tồn tại user theo username
             user = iUserService.findUserByEmail(condition);
         }
+        // Nếu không tồn tai user theo email
+        return putUserData(user);
+    }
+
+    @GetMapping("/findByUserName")
+    public ResponseEntity<JSONObject> findByUserName(@RequestParam String username){ // Chỉ tìm kiếm theo username, trong trường hợp quên pass
+        User user = iUserService.findUserByUsername(username); // Tìm kiếm theo họ tên
+
         // Nếu không tồn tai user theo email
         return putUserData(user);
     }
