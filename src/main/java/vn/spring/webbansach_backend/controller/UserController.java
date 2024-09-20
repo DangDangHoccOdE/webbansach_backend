@@ -60,7 +60,7 @@ public class UserController {
     public ResponseEntity<JSONObject> findByUserName(@RequestParam String username){ // Chỉ tìm kiếm theo username, trong trường hợp quên pass
         User user = iUserService.findUserByUsername(username); // Tìm kiếm theo họ tên
 
-        // Nếu không tồn tai user theo email
+        // Nếu không tồn tai user
         return putUserData(user);
     }
 
